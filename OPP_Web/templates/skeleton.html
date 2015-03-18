@@ -1,0 +1,65 @@
+<!doctype html>
+
+<html>
+<head>
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<title>Online Papers in Philosophy</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<script type="text/javascript" src="{{ url_for('static', filename='jquery.js') }}"></script>
+</head>
+<body>
+
+<div id="wrap">
+
+  <div id="title">
+    <h1><a href="./">Online Papers in <span>Philosophy</span></a></h1>
+
+    <div id="login" class="">
+    {% if session.logged_in %}
+      Logged in as. <a href="logout">Log out</a>
+    {% else %}
+      <a href="login">Log in</a>
+    {% endif %}
+    </div>
+  </div>
+
+  <div id="sidebar">
+
+    <h3>Site Controls</h3>
+
+    <div class='sidebox'>
+      <form action='./' method='GET'>
+      <div>
+        <input type="checkbox" checked="checked" id="toggleAbstracts"
+         class="pref" onclick="state.set('abstracts', this.checked)">
+        Show Abstracts<br>
+        <input type="checkbox" checked="checked" id="toggleJunk"
+         class="pref" onclick="state.set('junk', this.checked)">
+        Show Junk<br>
+      </div>
+      </form>
+    </div>
+
+    <h3>RSS Feeds:</h3>
+
+    <div class='sidebox'>
+      <a href="http://www.umsu.de/opp/rss.xml">Daily Updates</a>
+    </div>
+
+  </div>
+
+  <div id="content" class="html">
+
+  {% for message in get_flashed_messages() %}
+    <div class="msg">{{ message }}</div>
+  {% endfor %}
+
+  {% block body %}
+  {% endblock %}
+  
+  </div>
+
+</div>
+
+</body>
+</html>

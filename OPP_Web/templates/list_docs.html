@@ -1,0 +1,32 @@
+{% extends "skeleton.html" %}
+{% block body %}
+  <ol class='doclist'>
+  {% for doc in docs %}
+    <li id='{{ doc.document_id }}'>
+      <div class='iType'>
+        <img src='static/{{ doc.filetype }}.png' alt='{{ doc.filetype }}'><br>
+        {{ doc.filesize }}
+      </div>
+      <div class='iContent'>
+        <div class='iTitle'>
+          <a href='{{ doc.url }}'>{{ doc.authors }}: {{ doc.title }}</a>
+          {% if doc.error %}
+            <div class='error'>{{ doc.error }}<div>
+          {% endif %}
+        </div>
+        <div class='iUrl'>
+          <a href='{{ doc.url }}'>x{{ doc.short_url }} [{{ doc.location_id }}]</a>
+        </div>
+        <div class='iAbstract'>{{ doc.abstract }}</div>
+      </div>
+      <div class='iDate'>
+        <div>{{ doc.found_date }}</div>
+        <div class='iEdit' onclick='edit()'>Edit</div>
+      </div>
+      <div class='iClear'></div>
+    </li>
+  {% else %}
+    <li class="msg">No documents found.</li>
+  {% endfor %}
+  </ol>
+{% endblock %}
