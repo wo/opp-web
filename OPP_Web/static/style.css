@@ -62,6 +62,9 @@ ol.doclist {
 .iAbstract {
   color: #444; line-height: 1.4; word-wrap: break-word; font-size: 90%;
 }
+.iFooter {
+  color: #069; font-size:small; margin-top:2px; 
+}
 
 #nav {
   margin:30px 0 30px; text-align: center;

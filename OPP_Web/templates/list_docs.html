@@ -16,9 +16,13 @@
           {% endif %}
         </div>
         <div class='iUrl'>
-          <a href='{{ doc.url }}'>{{ doc.short_url }} [{{ doc.location_id }}]</a>
+          <a href='{{ doc.url }}'>{{ doc.short_url }}</a>
         </div>
         <div class='iAbstract'>{{ doc.abstract|safe }}</div>
+        <div class='iFooter'>
+          <span>[doc {{ doc.document_id }}]</span>
+          <span>[{{ doc.found_date }}]</span>
+        </div>
       </div>
       <div class='iClear'></div>
     </li>
