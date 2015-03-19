@@ -3,30 +3,32 @@
   <ol class='doclist'>
   {% for doc in docs %}
     <li id='{{ doc.document_id }}'>
-      <div class='iType'>
-        <img src='static/{{ doc.filetype }}.png' alt='{{ doc.filetype }}'><br>
-        {{ doc.filesize }}
+      <div class='iMeta'>
+        <div class='iType'><a href='{{ doc.url }}'><img src='static/{{ doc.filetype }}.png' alt='{{ doc.filetype }}'></a></div>
+        <div class='iSize'>{{ doc.filesize }}</div>
+        <div class='iDate'>{{ doc.reldate|safe }}</div>
       </div>
       <div class='iContent'>
         <div class='iTitle'>
-          <a href='{{ doc.url }}'>{{ doc.authors }}: {{ doc.title }}</a>
+          <a href='{{ doc.url }}'>{{ doc.authors }}: {{ doc.title|safe }}</a>
           {% if doc.error %}
             <div class='error'>{{ doc.error }}<div>
           {% endif %}
         </div>
         <div class='iUrl'>
-          <a href='{{ doc.url }}'>x{{ doc.short_url }} [{{ doc.location_id }}]</a>
+          <a href='{{ doc.url }}'>{{ doc.short_url }} [{{ doc.location_id }}]</a>
         </div>
-        <div class='iAbstract'>{{ doc.abstract }}</div>
-      </div>
-      <div class='iDate'>
-        <div>{{ doc.found_date }}</div>
-        <div class='iEdit' onclick='edit()'>Edit</div>
+        <div class='iAbstract'>{{ doc.abstract|safe }}</div>
       </div>
       <div class='iClear'></div>
     </li>
-  {% else %}
-    <li class="msg">No documents found.</li>
   {% endfor %}
   </ol>
+  <div id='nav'>
+  {% if docs[0] %} 
+    <a href='?before={{ docs[-1].document_id }}'>Next</a>
+  {% else %}
+    No more documents.
+  {% endif %}
+  </div>
 {% endblock %}
