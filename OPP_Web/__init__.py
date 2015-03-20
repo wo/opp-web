@@ -14,12 +14,10 @@ mysql.init_app(app)
 @app.route("/")
 def list_docs():
     cursor = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
-    limit = 10
+    limit = app.config['DOCS_PER_PAGE']
     max_spam = app.config['MAX_SPAM']
     min_confidence = app.config['MIN_CONFIDENCE']
-    before_id = 99999999
-    if request.args.get('before'):
-        before_id = int(request.args.get('before'))
+    offset = int(request.args.get('start') or 0);
     query = '''
          SELECT
             D.*,
@@ -39,13 +37,13 @@ def list_docs():
             AND S.source_id = R.source_id
             AND spamminess <= %s
             AND meta_confidence >= %s
-            AND D.document_id < %s
             AND L.status = 1
          GROUP BY D.document_id
          ORDER BY D.found_date DESC
          LIMIT %s
+         OFFSET %s
     '''
-    cursor.execute(query, (max_spam, min_confidence, before_id, limit))
+    cursor.execute(query, (max_spam, min_confidence, limit, offset))
     rows = cursor.fetchall()
     for row in rows: 
         row['src'] = row['srcs']
@@ -54,7 +52,9 @@ def list_docs():
         row['filesize'] = pretty_filesize(row['filesize'])
         row['reldate'] = relative_date(row['found_date'])
 
-    return render_template('list_docs.html', docs=rows)
+    return render_template('list_docs.html', 
+                           docs=rows,
+                           next_offset=offset+limit)
 
 def pretty_filesize(size):
     size = int(size)/1000
@@ -63,18 +63,13 @@ def pretty_filesize(size):
 
 def shorten_url(url):
     url = re.sub(r'^https?://', '', url);
-    if len(url) > 60:
-        url = url[:28] + '...' + url[-28:]
+    if len(url) > 70:
+        url = url[:33] + '...' + url[-34:]
     return url
 
 def relative_date(time):
     now = datetime.now()
-    if type(time) is int:
-        diff = now - datetime.fromtimestamp(time)
-    elif isinstance(time,datetime):
-        diff = now - time
-    elif not time:
-        diff = now - now
+    diff = now - time
     second_diff = diff.seconds
     day_diff = diff.days
     

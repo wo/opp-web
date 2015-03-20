@@ -30,7 +30,7 @@
   </ol>
   <div id='nav'>
   {% if docs[0] %} 
-    <a href='?before={{ docs[-1].document_id }}'>Next</a>
+    <a href='?start={{ next_offset }}'>Next</a>
   {% else %}
     No more documents.
   {% endif %}
