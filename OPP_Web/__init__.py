@@ -3,7 +3,7 @@ import MySQLdb.cursors
 import config
 from datetime import datetime
 from flask import Flask, request, g, url_for, render_template
-from flaskext.mysql import MySQL
+from flask.ext.mysql import MySQL
 
 app = Flask(__name__)
 app.config.from_object('config')
