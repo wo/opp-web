@@ -13,6 +13,7 @@ mysql.init_app(app)
 
 @app.route("/")
 def list_docs():
+    user = request.args.get('user') or None;
     cursor = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
     limit = app.config['DOCS_PER_PAGE']
     max_spam = app.config['MAX_SPAM']
@@ -53,6 +54,7 @@ def list_docs():
         row['reldate'] = relative_date(row['found_date'])
 
     return render_template('list_docs.html', 
+                           user=user,
                            docs=rows,
                            next_offset=offset+limit)
 

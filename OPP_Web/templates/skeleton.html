@@ -31,10 +31,8 @@
     </span>
 
     <span id="user">
-    {% if user.email %}
-      {{ user.email }} <a href="logout">Log out</a>
-    {% else %}
-      <a href="login">Log in</a>
+    {% if user %}
+      Hello {{ user }}
     {% endif %}
     </span>
   </div>
