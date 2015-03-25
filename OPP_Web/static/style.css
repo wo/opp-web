@@ -32,7 +32,6 @@ a {
   text-decoration: none; color: #39c;
 }
 
-
 #content {
   margin:50px auto 20px auto; max-width:800px;
 }
@@ -45,24 +44,12 @@ ol.doclist {
   list-style: none;  margin-left: 0; padding-left: 0;
 }
 .doclist li {
-  border-bottom: 1px solid #eee; padding: 15px 0px 15px 100px;
-}
-.iMeta {
-  float: left; width: 90px; margin-left: -100px; text-align: center;
-}
-.iContent { 
-  float: left; width: 100%;
+  border-bottom: 1px solid #eee; padding: 15px 0px 15px 0px;
 }
 .iClear { 
   clear: both; 
 }
 
-.iDate {
-  color: #333; margin-top: 5px; font-size: 90%;
-}
-.iSize {
-  color: #333; font-size: 90%;
-}
 .iTitle a {
   color: #01b; text-decoration: none; font-size:120%;
 }

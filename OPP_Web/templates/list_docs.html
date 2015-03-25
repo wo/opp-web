@@ -3,28 +3,21 @@
   <ol class='doclist'>
   {% for doc in docs %}
     <li id='{{ doc.document_id }}'>
-      <div class='iMeta'>
-        <div class='iType'><a href='{{ doc.url }}'><img src='static/{{ doc.filetype }}.png' alt='{{ doc.filetype }}'></a></div>
-        <div class='iSize'>{{ doc.filesize }}</div>
-        <div class='iDate'>{{ doc.reldate|safe }}</div>
+      <div class='iTitle'>
+        <a href='{{ doc.url }}'>{{ doc.authors }}: {{ doc.title|safe }}</a>
+        {% if doc.error %}
+          <div class='error'>{{ doc.error }}<div>
+        {% endif %}
       </div>
-      <div class='iContent'>
-        <div class='iTitle'>
-          <a href='{{ doc.url }}'>{{ doc.authors }}: {{ doc.title|safe }}</a>
-          {% if doc.error %}
-            <div class='error'>{{ doc.error }}<div>
-          {% endif %}
-        </div>
-        <div class='iUrl'>
-          <a href='{{ doc.url }}'>{{ doc.short_url }}</a>
-        </div>
-        <div class='iAbstract'>{{ doc.abstract|safe }}</div>
-        <div class='iFooter'>
-          <span>[doc {{ doc.document_id }}]</span>
-          <span>[{{ doc.found_date }}]</span>
-        </div>
+      <div class='iUrl'>
+        <a href='{{ doc.url }}'>{{ doc.short_url|safe }} ({{ doc.filetype }}, {{ doc.filesize }})</a>
       </div>
-      <div class='iClear'></div>
+      <div class='iAbstract'>{{ doc.abstract|safe }}</div>
+      <div class='iFooter'>
+        <span>Found {{ doc.reldate|safe }} on <a href="{{ doc.src }}">{{ doc.short_src }}</a></span>
+        <span>[doc {{ doc.document_id }}]</span>
+        <span>[{{ doc.found_date }}]</span>
+      </div>
     </li>
   {% endfor %}
   </ol>

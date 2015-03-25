@@ -49,7 +49,8 @@ def list_docs():
     for row in rows: 
         row['src'] = row['srcs']
         row['url'] = row['locs']
-        row['short_url'] = shorten_url(row['url'])
+        row['short_url'] = short_url(row['url'])
+        row['short_src'] = short_url(row['src'])
         row['filesize'] = pretty_filesize(row['filesize'])
         row['reldate'] = relative_date(row['found_date'])
 
@@ -63,10 +64,11 @@ def pretty_filesize(size):
     size = "{} KB".format(size)
     return size
 
-def shorten_url(url):
-    url = re.sub(r'^https?://', '', url);
-    if len(url) > 70:
-        url = url[:33] + '...' + url[-34:]
+def short_url(url):
+    url = re.sub(r'^https?://', '', url)
+    if len(url) > 80:
+        url = url[:38] + '...' + url[-39:]
+    #url = re.sub(r'(\.\w+)$', r'<b>\1</b>', url)
     return url
 
 def relative_date(time):
