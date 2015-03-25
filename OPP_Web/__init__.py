@@ -71,27 +71,24 @@ def shorten_url(url):
 
 def relative_date(time):
     now = datetime.now()
-    diff = now - time
-    second_diff = diff.seconds
-    day_diff = diff.days
-    
-    if second_diff < 120:
-        return "1&nbsp;minute ago"
-    if second_diff < 3600:
-        return str(second_diff / 60) + "&nbsp;minutes ago"
-    if second_diff < 7200:
-        return "1&nbsp;hour ago"
-    if second_diff < 86400:
-        return str(second_diff / 3600) + "&nbsp;hours ago"
-    if day_diff == 1:
+    delta = now - time
+    if delta.days > 365:
+        return str(day_delta / 365) + "&nbsp;years ago"
+    if delta.days > 31:
+        return str(day_delta / 30) + "&nbsp;months ago"
+    if delta.days > 7:
+        return str(day_delta / 7) + "&nbsp;weeks ago"
+    if delta.days > 1:
+        return str(day_delta) + "&nbsp;days ago"
+    if delta.days == 1:
         return "Yesterday"
-    if day_diff < 7:
-        return str(day_diff) + "&nbsp;days ago"
-    if day_diff < 31:
-        return str(day_diff / 7) + "&nbsp;weeks ago"
-    if day_diff < 365:
-        return str(day_diff / 30) + "&nbsp;months ago"
-    return str(day_diff / 365) + "&nbsp;years ago"
+    if second_delta > 7200:
+        return str(second_delta / 3600) + "&nbsp;hours ago"
+    if second_delta > 3600:
+        return "1&nbsp;hour ago"
+    if second_delta > 120:
+        return str(second_delta / 60) + "&nbsp;minutes ago"
+    return "1&nbsp;minute ago"
 
 if __name__ == "__main__":
     app.run()
