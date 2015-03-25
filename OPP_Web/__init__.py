@@ -73,21 +73,21 @@ def relative_date(time):
     now = datetime.now()
     delta = now - time
     if delta.days > 365:
-        return str(day_delta / 365) + "&nbsp;years ago"
+        return str(delta.days / 365) + "&nbsp;years ago"
     if delta.days > 31:
-        return str(day_delta / 30) + "&nbsp;months ago"
+        return str(delta.days / 30) + "&nbsp;months ago"
     if delta.days > 7:
-        return str(day_delta / 7) + "&nbsp;weeks ago"
+        return str(delta.days / 7) + "&nbsp;weeks ago"
     if delta.days > 1:
-        return str(day_delta) + "&nbsp;days ago"
+        return str(delta.days) + "&nbsp;days ago"
     if delta.days == 1:
         return "Yesterday"
-    if second_delta > 7200:
-        return str(second_delta / 3600) + "&nbsp;hours ago"
-    if second_delta > 3600:
+    if delta.seconds > 7200:
+        return str(delta.seconds / 3600) + "&nbsp;hours ago"
+    if delta.seconds > 3600:
         return "1&nbsp;hour ago"
-    if second_delta > 120:
-        return str(second_delta / 60) + "&nbsp;minutes ago"
+    if delta.seconds > 120:
+        return str(delta.seconds / 60) + "&nbsp;minutes ago"
     return "1&nbsp;minute ago"
 
 if __name__ == "__main__":
