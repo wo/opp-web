@@ -16,8 +16,8 @@ def list_docs():
     user = request.args.get('user') or None;
     cursor = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
     limit = app.config['DOCS_PER_PAGE']
-    max_spam = app.config['MAX_SPAM']
-    min_confidence = app.config['MIN_CONFIDENCE']
+    max_spam = user=='wo' and 0.9 or app.config['MAX_SPAM']
+    min_confidence = user=='wo' and 0.1 and app.config['MIN_CONFIDENCE']
     offset = int(request.args.get('start') or 0);
     query = '''
          SELECT
@@ -53,7 +53,7 @@ def list_docs():
         row['short_src'] = short_url(row['src'])
         row['filesize'] = pretty_filesize(row['filesize'])
         row['reldate'] = relative_date(row['found_date'])
-
+ 
     return render_template('list_docs.html', 
                            user=user,
                            docs=rows,
