@@ -75,16 +75,13 @@ ol.doclist {
   color:#c00; font-weight:bold;
 }
 .broken {
-  border-left:5px solid #c66; padding:3px;
+  background:#fcc;
 }
 .spam {
-  border-left:5px solid #c60; padding:3px;
+  background:#ff9;
 }
 .unsure {
-  border-left:5px solid #cc0; padding:3px;
-}
-.normal {
-  border-left:5px solid #9c9; padding:3px;
+  background:#ccf;
 }
 
 .admin { color:#c00; }
