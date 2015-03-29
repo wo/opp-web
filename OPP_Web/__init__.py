@@ -16,8 +16,8 @@ def list_docs():
     user = request.args.get('user') or None;
     cursor = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
     limit = app.config['DOCS_PER_PAGE']
-    max_spam = user=='wo' and 0.9 or app.config['MAX_SPAM']
-    min_confidence = user=='wo' and 0.1 and app.config['MIN_CONFIDENCE']
+    max_spam = app.config['MAX_SPAM']
+    min_confidence = app.config['MIN_CONFIDENCE']
     offset = int(request.args.get('start') or 0);
     query = '''
          SELECT
@@ -91,6 +91,80 @@ def relative_date(time):
     if delta.seconds > 120:
         return str(delta.seconds / 60) + "&nbsp;minutes ago"
     return "1&nbsp;minute ago"
+
+@app.route("/all")
+def list_locs():
+    user = request.args.get('user') or None;
+    cursor = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
+    limit = app.config['DOCS_PER_PAGE']
+    offset = int(request.args.get('start') or 0);
+    query = '''
+         SELECT
+            L.*,
+            D.*,
+            S.url as source_url,
+            S.default_author as source_author
+         FROM
+            locations L
+         LEFT JOIN
+            documents D USING (document_id)
+         INNER JOIN
+            links USING (location_id)
+         INNER JOIN
+            sources S USING (source_id)
+         WHERE L.status > 0
+         ORDER BY L.last_checked DESC
+         LIMIT %s
+         OFFSET %s
+    '''
+    cursor.execute(query, (limit, offset))
+    rows = cursor.fetchall()
+    for row in rows: 
+        row['short_url'] = short_url(row['url'])
+        if row['status'] <= 1:
+            row['error'] = ''
+            if row['spamminess'] > app.config['MAX_SPAM']:
+                row['type'] = 'spam'
+            elif row['meta_confidence'] < app.config['MIN_CONFIDENCE']:
+                row['type'] = 'unsure'
+            else:
+                row['type'] = 'normal'
+        else:
+            row['type'] = 'broken'
+            row['error'] = error.get(str(row['status']), 'unknown error {}'.format(row['status']))
+
+    return render_template('list_locs.html', 
+                           user=user,
+                           locs=rows,
+                           next_offset=offset+limit)
+
+error = {
+   '30': 'process_links terminated during processing',
+   '42': 'cannot read local file',
+   '43': 'cannot save local file',
+   '49': 'Cannot allocate memory',
+   '50': 'unknown parser failure',
+   '51': 'unsupported filetype',
+   '58': 'OCR failed',
+   '59': 'gs failed',
+   '60': 'pdftohtml produced garbage',
+   '61': 'pdftohtml failed',
+   '62': 'no text found in converted document',
+   '63': 'rtf2pdf failed',
+   '64': 'unoconv failed',
+   '65': 'htmldoc failed',
+   '66': 'wkhtmltopdf failed',
+   '67': 'ps2pdf failed',
+   '68': 'html2xml failed',
+   '69': 'pdf conversion failed',
+   '70': 'parser error',
+   '71': 'non-UTF8 characters in metadata',
+   '92': 'database error',
+   '900': 'cannot fetch document',
+   '901': 'document is empty',
+   '950': 'steppingstone to already known location',
+   '1000': 'subpage with more links'
+}
 
 if __name__ == "__main__":
     app.run()
