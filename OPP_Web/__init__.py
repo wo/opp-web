@@ -131,7 +131,7 @@ def list_locs():
                 row['type'] = 'normal'
         else:
             row['type'] = 'broken'
-            row['error'] = error.get(str(row['status']), 'unknown error {}'.format(row['status']))
+            row['error'] = error.get(str(row['status']), 'error {}'.format(row['status']))
 
     return render_template('list_locs.html', 
                            user=user,

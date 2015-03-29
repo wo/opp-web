@@ -5,10 +5,11 @@
     <li id='{{ loc.location_id }}' class='{{ loc.type }}'>
       <div class='iLoc'>
         <span>Location {{ loc.location_id }}</span>:
-        <a href='{{ loc.url }}'>{{ loc.url }}</a>
+        <a href='{{ loc.url }}'>{{ loc.url }}</a> ({{ loc.filetype}})
       </div>
       <div class='iFooter'>
         <span class='iInfo'>Checked: {{ loc.last_checked }}</span>
+        | <span class='iInfo'>Spamminess: {{ loc.spamminess }}</span>
         | Source: <a href='{{ loc.source_url }}'>{{ loc.source_url }}</a>
       </div>
       {% if loc.document_id %}
@@ -18,7 +19,6 @@
         <div class='iAbstract'>{{ loc.abstract|safe }}</div>
         <div class='iFooter'>
           <span class='iInfo'>Document: {{ loc.document_id }}</span>
-          | <span class='iInfo'>Spamminess: {{ loc.spamminess }}</span>
           | <span class='iInfo'>Confidence: {{ loc.meta_confidence }}</span>
           | <span class='iInfo'>Found on {{ loc.found_date }}</span>
       {% endif %}
