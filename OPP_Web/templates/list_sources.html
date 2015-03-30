@@ -1,0 +1,13 @@
+{% extends "skeleton.html" %}
+{% block body %}
+  <h2>Tracked source pages</h2>
+  <div id='sources'>
+  {% for src in srcs %}
+    {% if src.default_author %}
+      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.default_author }}</a>
+    {% else %}
+      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.url }}</a>
+    {% endif %}
+  {% endfor %}
+  </div>
+{% endblock %}
