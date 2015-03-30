@@ -173,7 +173,7 @@ def list_sources():
     cursor.execute(query)
     rows = cursor.fetchall()
     for row in rows:
-        if row['default_author'] == '':
+        if row['default_author'].strip() == '':
             row['default_author'] = None
 
     return render_template('list_sources.html', srcs=rows)
