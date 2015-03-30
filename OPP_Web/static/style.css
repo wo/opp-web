@@ -85,7 +85,10 @@ ol.doclist {
 }
 
 #sources a {
-   padding:2px 5px; color:#f99;
+   padding:2px 5px; color:#c09;
+}
+#sources a.src404 {
+   color:#c00;
 }
 #sources a.src1 {
    color:#069;
