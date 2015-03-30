@@ -172,6 +172,10 @@ def list_sources():
     query = 'SELECT * FROM sources WHERE parent_id IS NULL ORDER BY default_author'
     cursor.execute(query)
     rows = cursor.fetchall()
+    for row in rows:
+        if row['default_author'] == '':
+            row['default_author'] = None
+
     return render_template('list_sources.html', srcs=rows)
 
 
