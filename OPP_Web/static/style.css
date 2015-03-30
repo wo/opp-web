@@ -90,6 +90,9 @@ ol.doclist {
 #sources a.src404 {
    color:#c00;
 }
+#sources a.src0 {
+   color:#096;
+}
 #sources a.src1 {
    color:#069;
 }
