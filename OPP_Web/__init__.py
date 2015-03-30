@@ -166,6 +166,15 @@ error = {
    '1000': 'subpage with more links'
 }
 
+@app.route("/sources")
+def list_sources():
+    cursor = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
+    query = 'SELECT * FROM sources WHERE parent_id IS NULL ORDER BY default_author'
+    cursor.execute(query)
+    rows = cursor.fetchall()
+    return render_template('list_sources.html', srcs=rows)
+
+
 if __name__ == "__main__":
     app.run()
 

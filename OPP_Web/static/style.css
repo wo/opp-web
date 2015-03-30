@@ -84,6 +84,13 @@ ol.doclist {
   background:#ccf;
 }
 
+#sources a {
+   padding:2px 5px; color:#f99;
+}
+#sources a.src1 {
+   color:#069;
+}
+
 .admin { color:#c00; }
 .adminform { margin:0; padding:3px 0 0; color:#c00; font-size:0.9em; }
 .adminform div { float:right; }
