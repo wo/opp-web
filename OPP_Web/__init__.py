@@ -15,10 +15,6 @@ mysql.init_app(app)
 def list_docs():
     user = request.args.get('user') or None;
     cursor = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
-    limit = app.config['DOCS_PER_PAGE']
-    max_spam = app.config['MAX_SPAM']
-    min_confidence = app.config['MIN_CONFIDENCE']
-    offset = int(request.args.get('start') or 0);
     query = '''
          SELECT
             D.*,
@@ -36,15 +32,23 @@ def list_docs():
             D.document_id = L.document_id
             AND L.location_id = R.location_id
             AND S.source_id = R.source_id
-            AND spamminess <= %s
-            AND meta_confidence >= %s
             AND L.status = 1
+            AND {0}
          GROUP BY D.document_id
          ORDER BY D.found_date DESC
-         LIMIT %s
-         OFFSET %s
+         LIMIT {1}
+         OFFSET {2}
     '''
-    cursor.execute(query, (max_spam, min_confidence, limit, offset))
+    limit = app.config['DOCS_PER_PAGE']
+    offset = int(request.args.get('start') or 0);
+    max_spam = app.config['MAX_SPAM']
+    min_confidence = app.config['MIN_CONFIDENCE']
+    where = "spamminess <= {0} AND meta_confidence >= {1}".format(max_spam, min_confidence)
+    # temporary hack to let me pass handmade queries for debugging:
+    if user == 'wo' and request.args.get('where'):
+       where = request.args.get('where')
+    query = query.format(where, limit, offset)
+    cursor.execute(query)
     rows = cursor.fetchall()
     for row in rows: 
         row['src'] = row['srcs']
