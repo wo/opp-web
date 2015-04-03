@@ -46,7 +46,7 @@ def list_docs():
     where = "spamminess <= {0} AND meta_confidence >= {1}".format(max_spam, min_confidence)
     # temporary hack to let me pass handmade queries for debugging:
     if user == 'wo' and request.args.get('where'):
-       where = request.args.get('where')
+        where = request.args.get('where')
     query = query.format(where, limit, offset)
     cursor.execute(query)
     rows = cursor.fetchall()
