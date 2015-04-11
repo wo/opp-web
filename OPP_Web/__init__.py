@@ -55,18 +55,13 @@ def list_docs():
         row['url'] = row['locs']
         row['short_url'] = short_url(row['url'])
         row['short_src'] = short_url(row['src'])
-        row['filesize'] = pretty_filesize(row['filesize'])
+        row['filetype'] = row['filetype'].upper()
         row['reldate'] = relative_date(row['found_date'])
  
     return render_template('list_docs.html', 
                            user=user,
                            docs=rows,
                            next_offset=offset+limit)
-
-def pretty_filesize(size):
-    size = int(size)/1000
-    size = "{} KB".format(size)
-    return size
 
 def short_url(url):
     url = re.sub(r'^https?://', '', url)
