@@ -2,15 +2,25 @@
 
 ## Installation
 
-First, we need the [opp-tools](http://github.com/wo/opp-tools) package. 
-Then:
+1. Install the [opp-tools](http://github.com/wo/opp-tools) package.
+
+2. Then add a line to opp-tools/config.pl saying
+
+    OPP_WEB => 1,
+
+3. Install [scikit-learn](http://scikit-learn.org/stable/install.html).
+
+4. Set up and edit the config file:
 
     cd opp-web
     mv config-default.py config.py
-    vim config.py 
-    pip install scikit-learn
+    vim config.py
 
-And for the frontend
+5. Set up the database tables:
+
+    mysql -u dbuser -p dbname < setup.sql 
+
+6. For the frontend:
 
     sudo pip install virtualenv
     virtualenv venv

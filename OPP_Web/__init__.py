@@ -44,7 +44,7 @@ def index():
                     ''')
     
     for doc in docs:
-        print "doc {}".format(doc['doc_id'])
+        app.logger.info("doc {}".format(doc['doc_id']))
         doc['topics'] = dict(zip(doc['topics'].split(','), 
                                  [float(s) for s in doc['strengths'].split(',')]))
         # unclassified topics have value -1 now (see COALESCE above)

@@ -12,7 +12,7 @@ execfile(activate_this, dict(__file__=activate_this))
 sys.path.insert(0, root)
 
 # logging:
-logging.basicConfig(stream=sys.stderr)
+logging.basicConfig(filename='error.log',level=logging.DEBUG)
 
 # start application:
 from OPP_Web import app as application
