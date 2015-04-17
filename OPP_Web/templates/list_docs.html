@@ -1,8 +1,20 @@
 {% extends "skeleton.html" %}
 {% block body %}
+  {% if topic %}
+    <h3>{{ topic }}</h3>
+  {% endif %}
   <ol class='doclist'>
   {% for doc in docs %}
-    <li id='{{ doc.document_id }}'>
+    <li id='{{ doc.doc_id }}'>
+      {% if admin %}
+        <div class='iTrain'>
+        <a href="{{ url_for('train') }}?topic={{topic}}&topic_id={{doc.topic_id}}&doc={{doc.doc_id}}&class=1"
+           ><img src="{{ url_for('static', filename='up.png') }}" alt="up" height="20" class="up"></a><br>
+        {{ doc.strength }}<br>
+        <a href="{{ url_for('train') }}?topic={{topic}}&topic_id={{doc.topic_id}}&doc={{doc.doc_id}}&class=0"
+           ><img src="{{ url_for('static', filename='down.png') }}" alt="down" height="20" class="down"></a><br>
+        </div>
+      {% endif %}
       <div class='iTitle'>
         <a href='{{ doc.url }}'>{{ doc.authors }}: {{ doc.title|safe }}</a>
         {% if doc.error %}
@@ -13,6 +25,13 @@
         <a href='{{ doc.url }}'>{{ doc.short_url|safe }} ({{ doc.filetype }}, {{ doc.length }} Words)</a>
       </div>
       <div class='iAbstract'>{{ doc.abstract|safe }}</div>
+      {% if doc.topics %}
+      <div class='iTopics'>
+        {% for topic, strength in doc.topics.iteritems() %}
+           <a class='iTopic{{strength}}' href='{{ url_for('list_topic', topic=topic) }}'>{{ topic }}</a>
+        {% endfor %}
+      </div>
+      {% endif %}
       <div class='iFooter'>
         <span>Found {{ doc.reldate|safe }} on <a href="{{ doc.src }}">{{ doc.short_src }}</a></span>
         {% if user %}

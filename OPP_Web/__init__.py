@@ -1,9 +1,13 @@
+from pprint import pprint
 import re
+import sys
+sys.path.insert(0, '../')
 import MySQLdb.cursors
 import config
 from datetime import datetime
-from flask import Flask, request, g, url_for, render_template
+from flask import Flask, request, g, url_for, render_template, flash, redirect, abort
 from flask.ext.mysql import MySQL
+from classifier import BinaryClassifier, Doc
 
 app = Flask(__name__)
 app.config.from_object('config')
@@ -11,8 +15,214 @@ app.config.from_object('config')
 mysql = MySQL()
 mysql.init_app(app)
 
+def get_db():
+    if not hasattr(g, 'db'):
+        g.db = mysql.connect()
+    return g.db
+
+@app.teardown_appcontext
+def db_disconnect(exception=None):
+    if hasattr(g, 'db'):
+        g.db.close()
+
+def get_user():
+    if app.debug:
+        return 'wo'
+    return request.args.get('user')
+
 @app.route("/")
-def list_docs():
+def index():
+    docs = get_docs('''SELECT D.*,
+                       GROUP_CONCAT(T.label) AS topics,
+                       GROUP_CONCAT(COALESCE(M.strength, -1)) AS strengths
+                       FROM docs D
+                       LEFT JOIN docs2topics M USING (doc_id) 
+                       LEFT JOIN topics T USING (topic_id)
+                       WHERE T.is_default = 1
+                       GROUP By D.doc_id
+                       ORDER BY D.found_date DESC
+                    ''')
+    
+    for doc in docs:
+        print "doc {}".format(doc['doc_id'])
+        doc['topics'] = dict(zip(doc['topics'].split(','), 
+                                 [float(s) for s in doc['strengths'].split(',')]))
+        # unclassified topics have value -1 now (see COALESCE above)
+        pprint(doc['topics'])
+    topics = get_default_topics()
+    for (topic_id, topic) in topics:
+        print "({}, {})".format(topic_id, topic)
+        unclassified = [doc for doc in docs if doc['topics'][topic] == -1]
+        if unclassified:
+            print "unclassified documents for topic {}".format(topic_id)
+            classify(unclassified, topic_id)
+
+    for doc in docs:
+        doc['topics'] = dict([(t,int(s*10)) for (t,s) in doc['topics'].iteritems() if s > 0.5]) 
+
+    return render_template('list_docs.html', 
+                           user=get_user(),
+                           docs=docs,
+                           next_offset=get_next_offset())
+
+
+@app.route("/t/<topic>")
+def list_topic(topic):
+    min_p = float(request.args.get('min') or 0.5);
+    # Get latest documents classified into <topic> or not yet
+    # classified for <topic> at all, classify the unclassified ones,
+    # and keep getting more documents until we have DOCS_PER_PAGE
+    # many:
+    docs = []
+    offset = int(request.args.get('start') or 0)
+    while True:
+        batch = get_docs('''SELECT D.*, M.strength, T.topic_id
+                            FROM topics T, docs D
+                            LEFT JOIN docs2topics M USING (doc_id)
+                            WHERE T.label = '{0}' AND M.topic_id = T.topic_id
+                            AND (strength >= {1} OR strength IS NULL)
+                            ORDER BY D.found_date DESC
+                         '''.format(topic, min_p), offset=offset)
+        if not batch:
+            break
+        docs += [row for row in batch if row['strength'] > min_p]
+        unclassified = [row for row in batch if row['strength'] is None]
+        if unclassified:
+            classify(unclassified, batch[0]['topic_id'])
+            docs += [row for row in unclassified if row['strength'] > min_p]
+        if len(docs) >= app.config['DOCS_PER_PAGE']:
+            docs = docs[:app.config['DOCS_PER_PAGE']]
+            break
+        # Previously unclassified entries are now classified, so to
+        # get further candidates from DB, we need to look past the
+        # first len(doc) matches to the above query:
+        offset += len(docs)
+
+    return render_template('list_docs.html', 
+                           user=get_user(),
+                           docs=docs,
+                           topic=topic,
+                           admin=is_admin(),
+                           next_offset=get_next_offset())
+
+def is_admin():
+    return get_user() == 'wo'
+
+def get_next_offset():
+    offset = int(request.args.get('start') or 0)
+    limit = app.config['DOCS_PER_PAGE']
+    return offset + limit
+    
+def get_docs(select, 
+             limit=app.config['DOCS_PER_PAGE'],
+             offset=None):
+    if offset is None:
+        offset = int(request.args.get('start') or 0)
+    query = select+" LIMIT {0} OFFSET {1}".format(limit, offset)
+    print query
+    cur = get_db().cursor(MySQLdb.cursors.DictCursor)
+    cur.execute(query);
+    rows = cur.fetchall()
+    rows = [prettify(row) for row in rows]
+    return rows
+
+def get_default_topics():
+    query = "SELECT topic_id, label FROM topics WHERE is_default=1"
+    cur = get_db().cursor()
+    cur.execute(query);
+    rows = cur.fetchall()
+    return rows
+
+def classify(rows, topic_id):
+    docs = [Doc(row) for row in rows]
+    clf = BinaryClassifier(topic_id)
+    clf.load()
+    probs = clf.classify(docs)
+    db = get_db()
+    cursor = db.cursor()
+    for i, (p_spam, p_ham) in enumerate(probs):
+        rows[i]['strength'] = "{0:.2f}".format(p_ham)
+        query = '''
+            INSERT INTO docs2topics (doc_id, topic_id, strength)
+            VALUES ({0},{1},{2})
+            ON DUPLICATE KEY UPDATE strength={2}
+        '''
+        query = query.format(rows[i]['doc_id'], topic_id, p_ham);
+        cursor.execute(query)
+    db.commit()
+
+@app.route("/train")
+def train():
+    if get_user() != 'wo':
+        abort(401)
+    topic_id = int(request.args.get('topic_id'))
+    topic = request.args.get('topic')
+    doc_id = int(request.args.get('doc'))
+    hamspam = int(request.args.get('class'))
+    db = mysql.connect()
+    cursor = db.cursor()
+    query = '''
+        INSERT INTO docs2topics (doc_id, topic_id, strength, is_training)
+        VALUES ({0},{1},{2},1)
+        ON DUPLICATE KEY UPDATE strength={2}, is_training=1
+    '''
+    query = query.format(doc_id, topic_id, hamspam);
+    cursor.execute(query)
+    db.commit()
+    flash('retraining classifier and updating document labels...')
+    return render_template('redirect.html',
+                           target='update_classifier?topic_id={}&next={}'.format(topic_id, request.referrer))
+
+@app.route("/update_classifier")
+def update_classifier():
+    if get_user() != 'wo':
+        abort(401)
+
+    print "update_classifier()"
+    topic_id = int(request.args.get('topic_id'))
+    db = mysql.connect()
+    cursor = db.cursor(MySQLdb.cursors.DictCursor)
+    query = '''
+         SELECT D.*, M.strength
+         FROM docs D, docs2topics M
+         WHERE M.doc_id = D.doc_id AND M.topic_id = {0} AND M.is_training = 1
+         ORDER BY D.found_date DESC
+         LIMIT 100
+    '''
+    cursor.execute(query.format(topic_id))
+    rows = cursor.fetchall()
+    docs = [Doc(row) for row in rows]
+    classes = [row['strength'] for row in rows]
+    if (0 in classes and 1 in classes):
+        clf = BinaryClassifier(topic_id)
+        clf.train(docs, classes)
+        clf.save()
+
+        # We might reclassify all documents now, but we postpone this step
+        # until the documents are actually displayed (which may be never
+        # for sufficiently old ones). So we simply undefine the topic
+        # strengths to mark that no classification has yet been made.
+        query = "UPDATE docs2topics SET strength = NULL WHERE topic_id = {0} AND is_training < 1"
+        cursor.execute(query.format(topic_id))
+        db.commit()
+    else:
+        print "not updating because only positive or only negative training samples"
+
+    return redirect(request.args.get('next'))
+
+def prettify(doc):
+    # Adds and modifies some values of document objects retrieved from
+    # DB for pretty display
+    doc['short_url'] = short_url(doc['url'])
+    doc['short_src'] = short_url(doc['source_url'])
+    doc['filetype'] = doc['filetype'].upper()
+    doc['reldate'] = relative_date(doc['found_date'])
+    if 'strength' in doc and doc['strength'] is not None:
+        doc['strength'] = "{0:.2f}".format(doc['strength'])
+    return doc
+
+@app.route("/opp")
+def list_opp_docs():
     user = request.args.get('user') or None;
     cursor = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
     query = '''
@@ -91,8 +301,8 @@ def relative_date(time):
         return str(delta.seconds / 60) + "&nbsp;minutes ago"
     return "1&nbsp;minute ago"
 
-@app.route("/all")
-def list_locs():
+@app.route("/opp-all")
+def list_opp_locs():
     user = request.args.get('user') or None;
     cursor = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
     limit = app.config['DOCS_PER_PAGE']
@@ -165,7 +375,7 @@ error = {
    '1000': 'subpage with more links'
 }
 
-@app.route("/sources")
+@app.route("/opp-sources")
 def list_sources():
     cursor = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
     query = 'SELECT * FROM sources WHERE parent_id IS NULL ORDER BY default_author'

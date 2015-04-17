@@ -23,10 +23,10 @@ a {
   margin:0; border-top: 1px solid #fff; border-bottom:1px solid #39c; background:#fff;
 }
 #title h1 {
-  margin:0 auto 0 auto; padding:20px 0 10px 20px; max-width:800px; font-size: 250%;
+  margin:0 auto 0 auto; padding:20px 0 10px 0; max-width:800px; font-size: 250%;
 }
 #title h2 {
- margin:0 auto 0 auto; padding:0 0 20px 20px; max-width:800px; font-size: 130%; color:#666; font-weight:normal;
+ margin:0 auto 0 auto; padding:0 0 20px 0; max-width:800px; font-size: 130%; color:#666; font-weight:normal;
 }
 #title a {
   text-decoration: none; color: #39c;
@@ -44,12 +44,24 @@ ol.doclist {
   list-style: none;  margin-left: 0; padding-left: 0;
 }
 .doclist li {
-  border-bottom: 1px solid #eee; padding: 15px 0px 15px 0px;
+  border-bottom: 1px solid #eee; padding: 15px 0px 15px 0;
 }
 .iClear { 
   clear: both; 
 }
 
+.iTrain { 
+  float: left; width: 40px; margin:0 0 0 -40px; text-align:center; color:#666;
+}
+.iTrain img { 
+  border:1px outset #999;
+}
+.iTrain .up:hover { 
+  border:1px outset #0c0;
+}
+.iTrain .down:hover { 
+  border:1px outset $c00;
+}
 .iTitle a {
   color: #01b; text-decoration: none; font-size:120%;
 }
@@ -62,6 +74,16 @@ ol.doclist {
 .iAbstract {
   color: #444; line-height: 1.4; word-wrap: break-word; font-size: 90%;
 }
+.iTopics a {
+  padding-right:1em; font-size:90%; text-decoration:none;
+}
+a.iTopic5 { color:#dba; }
+a.iTopic6 { color:#d98; }
+a.iTopic7 { color:#d86; }
+a.iTopic8 { color:#c73; }
+a.iTopic9 { color:#c50; }
+a.iTopic10 { color:#c50; }
+
 .iFooter {
   color: #069; font-size:small; margin-top:2px; 
 }
