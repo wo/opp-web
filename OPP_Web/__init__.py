@@ -2,6 +2,7 @@ import pprint
 import logging.handlers
 import re
 import sys
+from os.path import abspath, dirname, join
 sys.path.insert(0, '../')
 import MySQLdb.cursors
 import config
@@ -14,8 +15,9 @@ app = Flask(__name__)
 app.config.from_object('config')
 
 app.logger.setLevel(logging.DEBUG)
+logfile = join(abspath(dirname(__file__)), '../error.log')
 handler = logging.handlers.RotatingFileHandler(
-    'error.log',
+    logfile,
     maxBytes=100000,
     backupCount=1
     )
