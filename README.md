@@ -28,7 +28,8 @@
     pip install Flask
     pip install flask-mysql
 
-For production, I use mod_wsgi, set up as described in the [Flask manual](http://flask.pocoo.org/docs/0.10/deploying/mod_wsgi/). 
+For production, I use mod_wsgi, set up as described in the [Flask manual](http://flask.pocoo.org/docs/0.10/deploying/mod_wsgi/), 
+except for [this tweak to make it play with scipy](http://serverfault.com/questions/514242/non-responsive-apache-mod-wsgi-after-installing-scipy)
 
 
 

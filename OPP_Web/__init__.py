@@ -1,4 +1,5 @@
-from pprint import pprint
+import pprint
+import logging.handlers
 import re
 import sys
 sys.path.insert(0, '../')
@@ -11,6 +12,14 @@ from classifier import BinaryClassifier, Doc
 
 app = Flask(__name__)
 app.config.from_object('config')
+
+app.logger.setLevel(logging.DEBUG)
+handler = logging.handlers.RotatingFileHandler(
+    'error.log',
+    maxBytes=100000,
+    backupCount=2
+    )
+app.logger.addHandler(handler)
 
 mysql = MySQL()
 mysql.init_app(app)
@@ -32,6 +41,7 @@ def get_user():
 
 @app.route("/")
 def index():
+    app.logger.debug("/")
     docs = get_docs('''SELECT D.*,
                        GROUP_CONCAT(T.label) AS topics,
                        GROUP_CONCAT(COALESCE(M.strength, -1)) AS strengths
@@ -44,21 +54,23 @@ def index():
                     ''')
     
     for doc in docs:
-        app.logger.info("doc {}".format(doc['doc_id']))
+        app.logger.debug("retrieved doc {}".format(doc['doc_id']))
         doc['topics'] = dict(zip(doc['topics'].split(','), 
                                  [float(s) for s in doc['strengths'].split(',')]))
         # unclassified topics have value -1 now (see COALESCE above)
-        pprint(doc['topics'])
+        app.logger.debug(pprint.pformat(doc['topics']))
     topics = get_default_topics()
     for (topic_id, topic) in topics:
-        print "({}, {})".format(topic_id, topic)
         unclassified = [doc for doc in docs if doc['topics'][topic] == -1]
         if unclassified:
             print "unclassified documents for topic {}".format(topic_id)
             classify(unclassified, topic_id)
 
+    # prepare for display:
     for doc in docs:
-        doc['topics'] = dict([(t,int(s*10)) for (t,s) in doc['topics'].iteritems() if s > 0.5]) 
+        doc['topics'] = sorted(
+            [(t,int(s*10)) for (t,s) in doc['topics'].iteritems() if s > 0.4],
+            key=lambda x:x[1], reverse=True)
 
     return render_template('list_docs.html', 
                            user=get_user(),
@@ -68,6 +80,7 @@ def index():
 
 @app.route("/t/<topic>")
 def list_topic(topic):
+    app.logger.debug("/t/{}".format(topic))
     min_p = float(request.args.get('min') or 0.5);
     # Get latest documents classified into <topic> or not yet
     # classified for <topic> at all, classify the unclassified ones,
@@ -88,6 +101,7 @@ def list_topic(topic):
         docs += [row for row in batch if row['strength'] > min_p]
         unclassified = [row for row in batch if row['strength'] is None]
         if unclassified:
+            app.logger.debug("{} unclassified docs".format(len(uncleassified)))
             classify(unclassified, batch[0]['topic_id'])
             docs += [row for row in unclassified if row['strength'] > min_p]
         if len(docs) >= app.config['DOCS_PER_PAGE']:
@@ -97,6 +111,7 @@ def list_topic(topic):
         # get further candidates from DB, we need to look past the
         # first len(doc) matches to the above query:
         offset += len(docs)
+        app.logger.debug("retrieving more docs")
 
     return render_template('list_docs.html', 
                            user=get_user(),
@@ -113,13 +128,13 @@ def get_next_offset():
     limit = app.config['DOCS_PER_PAGE']
     return offset + limit
     
-def get_docs(select, 
+def get_docs(select,
              limit=app.config['DOCS_PER_PAGE'],
              offset=None):
     if offset is None:
         offset = int(request.args.get('start') or 0)
-    query = select+" LIMIT {0} OFFSET {1}".format(limit, offset)
-    print query
+    query = "{0} LIMIT {1} OFFSET {2}".format(select, limit, offset)
+    app.logger.debug(query)
     cur = get_db().cursor(MySQLdb.cursors.DictCursor)
     cur.execute(query);
     rows = cur.fetchall()
@@ -127,11 +142,12 @@ def get_docs(select,
     return rows
 
 def get_default_topics():
-    query = "SELECT topic_id, label FROM topics WHERE is_default=1"
-    cur = get_db().cursor()
-    cur.execute(query);
-    rows = cur.fetchall()
-    return rows
+    if not hasattr(g, 'default_topics'):
+        query = "SELECT topic_id, label FROM topics WHERE is_default=1"
+        cur = get_db().cursor()
+        cur.execute(query);
+        g.default_topics = cur.fetchall()
+    return g.default_topics
 
 def classify(rows, topic_id):
     docs = [Doc(row) for row in rows]
@@ -141,6 +157,8 @@ def classify(rows, topic_id):
     db = get_db()
     cursor = db.cursor()
     for i, (p_spam, p_ham) in enumerate(probs):
+        app.logger.debug("{} classified for topic {}: {}".format(
+            rows[i]['title'], topic_id, p_ham))
         rows[i]['strength'] = "{0:.2f}".format(p_ham)
         query = '''
             INSERT INTO docs2topics (doc_id, topic_id, strength)
@@ -155,6 +173,7 @@ def classify(rows, topic_id):
 def train():
     if get_user() != 'wo':
         abort(401)
+    app.logger.debug("/train")
     topic_id = int(request.args.get('topic_id'))
     topic = request.args.get('topic')
     doc_id = int(request.args.get('doc'))
@@ -178,7 +197,7 @@ def update_classifier():
     if get_user() != 'wo':
         abort(401)
 
-    print "update_classifier()"
+    app.logger.debug("/update_classifier")
     topic_id = int(request.args.get('topic_id'))
     db = mysql.connect()
     cursor = db.cursor(MySQLdb.cursors.DictCursor)
@@ -206,7 +225,7 @@ def update_classifier():
         cursor.execute(query.format(topic_id))
         db.commit()
     else:
-        print "not updating because only positive or only negative training samples"
+        app.log.debug("not updating because not enough training samples")
 
     return redirect(request.args.get('next'))
 

@@ -77,6 +77,7 @@ ol.doclist {
 .iTopics a {
   padding-right:1em; font-size:90%; text-decoration:none;
 }
+a.iTopic4 { color:#ecb; }
 a.iTopic5 { color:#dba; }
 a.iTopic6 { color:#d98; }
 a.iTopic7 { color:#d86; }
