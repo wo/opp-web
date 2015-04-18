@@ -1,5 +1,6 @@
 import pprint
 import logging.handlers
+from datetime import datetime
 import re
 import sys
 from os.path import abspath, dirname, join
@@ -36,14 +37,18 @@ def db_disconnect(exception=None):
     if hasattr(g, 'db'):
         g.db.close()
 
-def get_user():
-    if app.debug:
-        return 'wo'
-    return request.args.get('user')
+@app.before_request
+def log_request():
+    if 'text/html' in request.headers['Accept']:
+        app.logger.info("\n".join([
+            "\n=====",
+            str(datetime.now()),
+            request.url,
+            request.method,
+            request.remote_addr]))
 
 @app.route("/")
 def index():
-    app.logger.debug("/")
     docs = get_docs('''SELECT D.*,
                        GROUP_CONCAT(T.label) AS topics,
                        GROUP_CONCAT(T.topic_id) AS topic_ids,
@@ -85,7 +90,6 @@ def index():
 
 @app.route("/t/<topic>")
 def list_topic(topic):
-    app.logger.debug("/t/{}".format(topic))
     min_p = float(request.args.get('min') or 0.5);
     # Get latest documents classified into <topic> or not yet
     # classified for <topic> at all, classify the unclassified ones,
@@ -126,6 +130,11 @@ def list_topic(topic):
                            topic=topic,
                            admin=is_admin(),
                            next_offset=get_next_offset())
+
+def get_user():
+    if app.debug:
+        return 'wo'
+    return request.args.get('user')
 
 def is_admin():
     return get_user() == 'wo'
