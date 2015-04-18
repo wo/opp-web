@@ -45,7 +45,9 @@ def log_request():
 
 @app.context_processor
 def set_rootdir():
-    return dict(rootdir='opp/')
+    rootdir = request.args.get('root') or request.url_root
+    rootdir = re.sub(r'^https?://[^/]+', '', rootdir)
+    return dict(rootdir=rootdir)
 
 @app.route("/")
 def index():
