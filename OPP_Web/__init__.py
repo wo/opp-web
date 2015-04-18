@@ -65,7 +65,7 @@ def index():
         doc['topics'] = dict(zip(doc['topics'].split(','), 
                                  map(float, doc['strengths'].split(','))))
         # unclassified topics have value -1 now (see COALESCE above)
-        app.logger.debug("doc {} {}".format(doc['doc_id'], doc['title']))
+        app.logger.debug("doc {}".format(doc['doc_id']))
         app.logger.debug(pprint.pformat(doc['topics']))
 
     if (docs):
@@ -174,7 +174,7 @@ def classify(rows, topic, topic_id):
     cursor = db.cursor()
     for i, (p_spam, p_ham) in enumerate(probs):
         app.logger.debug("{} classified for topic {}: {}".format(
-            rows[i]['title'], topic_id, p_ham))
+            rows[i]['doc_id'], topic_id, p_ham))
         rows[i]['topics'][topic] = p_ham
         query = '''
             INSERT INTO docs2topics (doc_id, topic_id, strength)
