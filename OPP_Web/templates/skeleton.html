@@ -34,6 +34,10 @@
   </div>
 
   <div id="content">
+  url {{ request.url }}
+  url_root {{ request.url_root }}
+  path {{ request.path }}
+
 
   {% for message in get_flashed_messages() %}
     <div class="msg">{{ message }}</div>
