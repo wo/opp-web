@@ -8,11 +8,11 @@
     <li id='{{ doc.doc_id }}'>
       {% if admin %}
         <div class='iTrain'>
-        <a href="{{ rootdir }}/train?topic={{topic}}&topic_id={{doc.topic_id}}&doc={{doc.doc_id}}&class=1"
-           ><img src="{{ rootdir }}/static/up.png" alt="up" height="20" class="up"></a><br>
+        <a href="{{ rootdir }}train?topic={{topic}}&topic_id={{doc.topic_id}}&doc={{doc.doc_id}}&class=1"
+           ><img src="{{ rootdir }}static/up.png" alt="up" height="20" class="up"></a><br>
         {{ doc.strength }}<br>
-        <a href="{{ rootdir }}/train?topic={{topic}}&topic_id={{doc.topic_id}}&doc={{doc.doc_id}}&class=0"
-           ><img src="{{ rootdir }}/static/down.png" alt="down" height="20" class="down"></a><br>
+        <a href="{{ rootdir}}train?topic={{topic}}&topic_id={{doc.topic_id}}&doc={{doc.doc_id}}&class=0"
+           ><img src="{{ rootdir}}static/down.png" alt="down" height="20" class="down"></a><br>
         </div>
       {% endif %}
       <div class='iTitle'>
@@ -28,7 +28,7 @@
       {% if doc.topics %}
       <div class='iTopics'>
         {% for topic, strength in doc.topics %}
-           <a class='iTopic{{strength}}' href='{{ rootdir }}/t/{{ topic }}'>{{ topic }}</a>
+           <a class='iTopic{{strength}}' href='{{ rootdir}}t/{{ topic }}'>{{ topic }}</a>
         {% endfor %}
       </div>
       {% endif %}
