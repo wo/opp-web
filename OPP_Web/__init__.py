@@ -17,11 +17,7 @@ app.config.from_object('config')
 
 app.logger.setLevel(logging.DEBUG)
 logfile = join(abspath(dirname(__file__)), '../error.log')
-handler = logging.handlers.RotatingFileHandler(
-    logfile,
-    maxBytes=100000,
-    backupCount=1
-    )
+handler = logging.handlers.FileHandler(logfile)
 app.logger.addHandler(handler)
 
 mysql = MySQL()
@@ -39,7 +35,7 @@ def db_disconnect(exception=None):
 
 @app.before_request
 def log_request():
-    if 'text/html' in request.headers['Accept']:
+    if '/static/' not in request.path:
         app.logger.info("\n".join([
             "\n=====",
             str(datetime.now()),
