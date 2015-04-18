@@ -10,5 +10,3 @@ MAX_SPAM = 0.4
 DOCS_PER_PAGE = 20
 
 SECRET_KEY = 'whatever'
-
-ROOT_DIR = ''

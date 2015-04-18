@@ -45,7 +45,7 @@ def log_request():
 
 @app.context_processor
 def set_rootdir():
-    return dict(rootdir=app.config['ROOT_DIR'])
+    return dict(rootdir='opp/')
 
 @app.route("/")
 def index():
