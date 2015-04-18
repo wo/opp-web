@@ -1,0 +1,16 @@
+<!doctype html>
+
+<html>
+<head>
+<meta http-equiv="refresh" content="0; url={{target}}">
+<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<title>Philosophical Progress</title>
+</head>
+<body>
+
+{% for message in get_flashed_messages() %}
+  <p>{{ message }}</p>
+{% endfor %}
+
+</body>
+</html>
