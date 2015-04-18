@@ -17,7 +17,7 @@ app.config.from_object('config')
 
 app.logger.setLevel(logging.DEBUG)
 logfile = join(abspath(dirname(__file__)), '../error.log')
-handler = logging.handlers.FileHandler(logfile)
+handler = logging.FileHandler(logfile)
 app.logger.addHandler(handler)
 
 mysql = MySQL()
