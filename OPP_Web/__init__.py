@@ -241,7 +241,7 @@ def update_classifier():
         cursor.execute(query.format(topic_id))
         db.commit()
     else:
-        app.log.debug("not updating because not enough training samples")
+        app.logger.debug("not updating because not enough training samples")
 
     return redirect(request.args.get('next'))
 
