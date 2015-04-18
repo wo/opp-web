@@ -90,7 +90,7 @@ def index():
 
 @app.route("/t/<topic>")
 def list_topic(topic):
-    min_p = float(request.args.get('min') or 0.5);
+    min_p = float(request.args.get('min') or 0.4);
     # Get latest documents classified into <topic> or not yet
     # classified for <topic> at all, classify the unclassified ones,
     # and keep getting more documents until we have DOCS_PER_PAGE
