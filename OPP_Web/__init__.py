@@ -43,6 +43,10 @@ def log_request():
             request.method,
             request.remote_addr]))
 
+@app.context_processor
+def set_rootdir():
+    return dict(rootdir=app.config['ROOT_DIR'])
+
 @app.route("/")
 def index():
     docs = get_docs('''SELECT D.*,
