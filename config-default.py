@@ -8,3 +8,5 @@ MYSQL_DATABASE_HOST = 'localhost'
 MIN_CONFIDENCE = 0.6
 MAX_SPAM = 0.4
 DOCS_PER_PAGE = 20
+
+SECRET_KEY = 'whatever'
