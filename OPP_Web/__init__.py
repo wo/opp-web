@@ -17,7 +17,7 @@ app.logger.setLevel(logging.DEBUG)
 handler = logging.handlers.RotatingFileHandler(
     'error.log',
     maxBytes=100000,
-    backupCount=2
+    backupCount=1
     )
 app.logger.addHandler(handler)
 
@@ -44,27 +44,30 @@ def index():
     app.logger.debug("/")
     docs = get_docs('''SELECT D.*,
                        GROUP_CONCAT(T.label) AS topics,
+                       GROUP_CONCAT(T.topic_id) AS topic_ids,
                        GROUP_CONCAT(COALESCE(M.strength, -1)) AS strengths
-                       FROM docs D
-                       LEFT JOIN docs2topics M USING (doc_id) 
-                       LEFT JOIN topics T USING (topic_id)
-                       WHERE T.is_default = 1
-                       GROUP By D.doc_id
+                       FROM (docs D CROSS JOIN
+                             (SELECT * FROM topics WHERE is_default = 1) AS T)
+                       LEFT JOIN docs2topics M ON (D.doc_id = M.doc_id AND M.topic_id = T.topic_id) 
+                       GROUP BY D.doc_id
                        ORDER BY D.found_date DESC
                     ''')
-    
+
     for doc in docs:
         app.logger.debug("retrieved doc {}".format(doc['doc_id']))
         doc['topics'] = dict(zip(doc['topics'].split(','), 
-                                 [float(s) for s in doc['strengths'].split(',')]))
+                                 map(float, doc['strengths'].split(','))))
         # unclassified topics have value -1 now (see COALESCE above)
+        app.logger.debug("doc {} {}".format(doc['doc_id'], doc['title']))
         app.logger.debug(pprint.pformat(doc['topics']))
-    topics = get_default_topics()
-    for (topic_id, topic) in topics:
-        unclassified = [doc for doc in docs if doc['topics'][topic] == -1]
-        if unclassified:
-            print "unclassified documents for topic {}".format(topic_id)
-            classify(unclassified, topic_id)
+
+    if (docs):
+        topics = zip(docs[0]['topics'].keys(), docs[0]['topic_ids'].split(','))
+        for (topic, topic_id) in topics:
+            unclassified = [doc for doc in docs if doc['topics'][topic] == -1]
+            if unclassified:
+                app.logger.debug("unclassified documents for {}".format(topic))
+                classify(unclassified, topic, topic_id)
 
     # prepare for display:
     for doc in docs:
@@ -89,7 +92,7 @@ def list_topic(topic):
     docs = []
     offset = int(request.args.get('start') or 0)
     while True:
-        batch = get_docs('''SELECT D.*, M.strength, T.topic_id
+        batch = get_docs('''SELECT D.*, M.strength, T.label, T.topic_id
                             FROM topics T, docs D
                             LEFT JOIN docs2topics M USING (doc_id)
                             WHERE T.label = '{0}' AND M.topic_id = T.topic_id
@@ -102,7 +105,9 @@ def list_topic(topic):
         unclassified = [row for row in batch if row['strength'] is None]
         if unclassified:
             app.logger.debug("{} unclassified docs".format(len(uncleassified)))
-            classify(unclassified, batch[0]['topic_id'])
+            classify(unclassified, batch[0]['label'], batch[0]['topic_id'])
+            for doc in unclassified:
+                doc['strength'] = "{0:.2f}".format(doc['strength'])
             docs += [row for row in unclassified if row['strength'] > min_p]
         if len(docs) >= app.config['DOCS_PER_PAGE']:
             docs = docs[:app.config['DOCS_PER_PAGE']]
@@ -149,7 +154,7 @@ def get_default_topics():
         g.default_topics = cur.fetchall()
     return g.default_topics
 
-def classify(rows, topic_id):
+def classify(rows, topic, topic_id):
     docs = [Doc(row) for row in rows]
     clf = BinaryClassifier(topic_id)
     clf.load()
@@ -159,7 +164,7 @@ def classify(rows, topic_id):
     for i, (p_spam, p_ham) in enumerate(probs):
         app.logger.debug("{} classified for topic {}: {}".format(
             rows[i]['title'], topic_id, p_ham))
-        rows[i]['strength'] = "{0:.2f}".format(p_ham)
+        rows[i]['topics'][topic] = p_ham
         query = '''
             INSERT INTO docs2topics (doc_id, topic_id, strength)
             VALUES ({0},{1},{2})
