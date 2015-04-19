@@ -97,7 +97,6 @@ def list_topic(topic):
             break
         topic_id = batch[0]['topic_id']
         rows += [row for row in batch if row['strength'] > min_p]
-        app.logger.debug("rows(1) = {}".format([str(row['doc_id']) for row in rows]))
         unclassified = [row for row in batch if row['strength'] is None]
         if unclassified:
             app.logger.debug("{} unclassified docs".format(len(unclassified)))
@@ -106,7 +105,7 @@ def list_topic(topic):
             for i,p in enumerate(probs):
                 unclassified[i]['strength'] = p
             rows += [row for row in unclassified if row['strength'] > min_p]
-            app.logger.debug("rows(2) = {}".format([str(row['doc_id']) for row in rows]))
+            rows = sorted(rows, key=lambda r:r['doc_id'])
         if len(rows) >= app.config['DOCS_PER_PAGE']:
             rows = rows[:app.config['DOCS_PER_PAGE']]
             break
