@@ -14,7 +14,7 @@ class BinaryClassifier:
     def __init__(self, label):
         print "initializing {0} classifier".format(label)
         self.label = label
-        self.picklefile = '.{0}.pk'.format(label)
+        self.picklefile = 'data/{0}.pk'.format(label)
         self.vectorizer = None
         self.classifier = None
         self.ready = False
@@ -57,6 +57,7 @@ class BinaryClassifier:
         if self.classifier is None:
             self.load()
         if not self.ready:
+            print "classifier not ready, returning dummy values 0.5"
             return [(0.5,0.5) for doc in docs]
         texts = [doc.text for doc in docs]
         tfidfs = self.vectorizer.transform(texts)
