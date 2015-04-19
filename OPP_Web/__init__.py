@@ -70,7 +70,7 @@ def index():
 
 @app.route("/t/<topic>")
 def list_topic(topic):
-    min_p = float(request.args.get('min') or 0.4);
+    min_p = float(request.args.get('min') or (0.0 if is_admin() else 0.4))
     # Get latest documents classified into <topic> or not yet
     # classified for <topic> at all, classify the unclassified ones,
     # and keep getting more documents until we have DOCS_PER_PAGE
@@ -276,7 +276,7 @@ def train():
     flash('retraining classifier and updating document labels...')
     endtarget = request.args.get('next') or ''
     return render_template('redirect.html',
-                           auto=False,
+                           auto=True,
                            target='update_classifier?topic_id={}&next={}'.format(topic_id, endtarget))
 
 @app.route("/update_classifier")
@@ -320,7 +320,6 @@ def update_classifier():
 
     #return redirect(request.args.get('next'))
     rootdir = request.args.get('rootdir') or request.url_root
-    app.logging.debug("rootdir: {}".rootdir)
     target = request.args.get('next') or '/'
     target = rootdir + target[1:]
     return render_template('redirect.html',

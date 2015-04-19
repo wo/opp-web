@@ -20,7 +20,7 @@ class BinaryClassifier:
         self.ready = False
 
     def load(self):
-        if os.path.isfile(self.picklefile):
+        if isfile(self.picklefile):
             print "loading classifier model from disk"
             with open(self.picklefile, 'rb') as f:
                 (vect,clf) = pickle.load(f)
