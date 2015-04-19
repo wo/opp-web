@@ -51,6 +51,7 @@ def set_rootdir():
 
 @app.route("/")
 def index():
+    offset = int(request.args.get('start') or 0)
     docs = get_docs('''SELECT D.doc_id, D.authors, D.title, D.abstract, D.url, D.filetype,
                        D.found_date, D.numwords, D.source_url, D.meta_confidence,
                        GROUP_CONCAT(T.label) AS topic_labels,
@@ -61,7 +62,7 @@ def index():
                        LEFT JOIN docs2topics M ON (D.doc_id = M.doc_id AND M.topic_id = T.topic_id) 
                        GROUP BY D.doc_id
                        ORDER BY D.found_date DESC
-                    ''')
+                    ''', offset=offset)
     return render_template('list_docs.html', 
                            user=get_user(),
                            docs=docs,
@@ -154,11 +155,8 @@ def get_next_offset():
     limit = app.config['DOCS_PER_PAGE']
     return offset + limit
     
-def get_docs(select,
-             limit=app.config['DOCS_PER_PAGE'],
-             offset=None):
-    if offset is None:
-        offset = int(request.args.get('start') or 0)
+def get_docs(select, offset=0):
+    limit = app.config['DOCS_PER_PAGE']
     query = "{0} LIMIT {1} OFFSET {2}".format(select, limit, offset)
     app.logger.debug(query)
     db = get_db()
