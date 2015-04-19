@@ -8,10 +8,10 @@
     <li id='{{ doc.doc_id }}'>
       {% if admin %}
         <div class='iTrain'>
-        <a href="{{ rootdir }}train?topic={{topic}}&topic_id={{topic_id}}&doc={{doc.doc_id}}&class=1"
+        <a href="{{ rootdir }}train?topic={{topic}}&topic_id={{topic_id}}&doc={{doc.doc_id}}&class=1&next={{url}}"
            ><img src="{{ rootdir }}static/up.png" alt="up" height="20" class="up"></a><br>
         {{ doc.strength }}<br>
-        <a href="{{ rootdir}}train?topic={{topic}}&topic_id={{topic_id}}&doc={{doc.doc_id}}&class=0"
+        <a href="{{ rootdir}}train?topic={{topic}}&topic_id={{topic_id}}&doc={{doc.doc_id}}&class=0&next={{url}}"
            ><img src="{{ rootdir}}static/down.png" alt="down" height="20" class="down"></a><br>
         </div>
       {% endif %}

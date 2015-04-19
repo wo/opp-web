@@ -274,9 +274,10 @@ def train():
     cur.execute(query)
     db.commit()
     flash('retraining classifier and updating document labels...')
+    endtarget = request.args.get('next') or ''
     return render_template('redirect.html',
                            auto=True,
-                           target='update_classifier?topic_id={}&next={}'.format(topic_id, request.referrer))
+                           target='update_classifier?topic_id={}&next={}'.format(topic_id, endtarget))
 
 @app.route("/update_classifier")
 def update_classifier():
