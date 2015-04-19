@@ -1,4 +1,4 @@
-import os.path
+from os.path import isfile, abspath, dirname, join
 import re
 import pickle
 from numpy import array
@@ -14,7 +14,7 @@ class BinaryClassifier:
     def __init__(self, label):
         print "initializing {0} classifier".format(label)
         self.label = label
-        self.picklefile = 'data/{0}.pk'.format(label)
+        self.picklefile = join(abspath(dirname(__file__)), 'data/{0}.pk'.format(label))
         self.vectorizer = None
         self.classifier = None
         self.ready = False
