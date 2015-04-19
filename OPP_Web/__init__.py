@@ -276,7 +276,7 @@ def train():
     flash('retraining classifier and updating document labels...')
     endtarget = request.args.get('next') or ''
     return render_template('redirect.html',
-                           auto=True,
+                           auto=False,
                            target='update_classifier?topic_id={}&next={}'.format(topic_id, endtarget))
 
 @app.route("/update_classifier")
@@ -319,7 +319,9 @@ def update_classifier():
         msg = "classifier not yet ready because only positive or negative training samples"
 
     #return redirect(request.args.get('next'))
-    target = request.args.get('next') or ''
+    rootdir = request.args.get('rootdir') or request.url_root
+    target = request.args.get('next') or '/'
+    target = rootdir + target[1:]
     return render_template('redirect.html',
                            auto=False,
                            msg=msg,
