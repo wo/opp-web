@@ -320,6 +320,7 @@ def update_classifier():
 
     #return redirect(request.args.get('next'))
     rootdir = request.args.get('rootdir') or request.url_root
+    app.logging.debug("rootdir: {}".rootdir)
     target = request.args.get('next') or '/'
     target = rootdir + target[1:]
     return render_template('redirect.html',
