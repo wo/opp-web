@@ -105,7 +105,7 @@ def list_topic(topic):
             for i,p in enumerate(probs):
                 unclassified[i]['strength'] = p
             rows += [row for row in unclassified if row['strength'] > min_p]
-            rows = sorted(rows, key=lambda r:r['doc_id'])
+            rows = sorted(rows, key=lambda r:r['doc_id'], reverse=True)
         if len(rows) >= app.config['DOCS_PER_PAGE']:
             rows = rows[:app.config['DOCS_PER_PAGE']]
             break
