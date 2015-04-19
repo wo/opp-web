@@ -2,7 +2,9 @@
 
 <html>
 <head>
-<meta http-equiv="refresh" content="0; url={{target}}">
+{% if auto %}
+  <meta http-equiv="refresh" content="0; url={{target}}">
+{% endif %}
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 <title>Philosophical Progress</title>
 </head>
@@ -11,6 +13,15 @@
 {% for message in get_flashed_messages() %}
   <p>{{ message }}</p>
 {% endfor %}
+
+<a href="{{target}}">Continue</a>
+  
+{% if msg %}
+  <pre>{{ msg }}</pre>
+  <a href="{{target}}">Continue</a>
+{% endif %}
+
+
 
 </body>
 </html>
