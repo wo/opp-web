@@ -16,6 +16,10 @@
     mv config-default.py config.py
     vim config.py
 
+4. Create a folder 'data' and make it write-accessible to the webserver
+
+    mkdir data
+
 5. Set up the database tables:
 
     mysql -u dbuser -p dbname < setup.sql 
