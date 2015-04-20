@@ -62,14 +62,17 @@ ol.doclist {
 .iTrain .down:hover { 
   border:1px outset $c00;
 }
+.iAuthor a {
+  color: #016; text-decoration: none; font-size:120%;
+}
 .iTitle a {
-  color: #01b; text-decoration: none; font-size:120%;
+  color: #019; text-decoration: none; font-size:120%;  font-weight:bold;
 }
 .iTitle a:hover {
   text-decoration: underline;
 }
 .iUrl a {
-  color: #069; text-decoration: none; font-size: 90%;
+  color: #396; text-decoration: none; font-size: 90%;
 }
 .iAbstract {
   color: #444; line-height: 1.4; word-wrap: break-word; font-size: 90%;

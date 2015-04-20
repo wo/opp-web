@@ -15,12 +15,15 @@
            ><img src="{{ rootdir }}static/down.png" alt="down" height="20" class="down"></a><br>
         </div>
       {% endif %}
-      <div class='iTitle'>
-        <a href='{{ doc.url }}'>{{ doc.authors }}: {{ doc.title|safe }}</a>
-        {% if doc.error %}
-          <div class='error'>{{ doc.error }}<div>
-        {% endif %}
+      <div class='iAuthor'>
+        <a href='{{ doc.url }}'>{{ doc.authors }}</a>
       </div>
+      <div class='iTitle'>
+        <a href='{{ doc.url }}'>{{ doc.title|safe }}</a>
+      </div>
+      {% if doc.error %}
+        <div class='error'>{{ doc.error }}<div>
+      {% endif %}
       <div class='iUrl'>
         <a href='{{ doc.url }}'>{{ doc.short_url|safe }} ({{ doc.filetype }}, {{ doc.length }} Words)</a>
       </div>

@@ -57,7 +57,6 @@ INSERT INTO topics (label, is_default) VALUES ('Cognition', 1);
 INSERT INTO topics (label, is_default) VALUES ('Physics', 1);
 INSERT INTO topics (label, is_default) VALUES ('Logic', 1);
 INSERT INTO topics (label, is_default) VALUES ('Mathematics', 1);
-INSERT INTO topics (label, is_default) VALUES ('Ancient', 1);
-INSERT INTO topics (label, is_default) VALUES ('Modern', 1);
+INSERT INTO topics (label, is_default) VALUES ('History', 1);
 INSERT INTO topics (label, is_default) VALUES ('Continental', 1);
 INSERT INTO topics (label, is_default) VALUES ('Asian', 1);
