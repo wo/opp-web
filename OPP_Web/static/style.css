@@ -62,20 +62,23 @@ ol.doclist {
 .iTrain .down:hover { 
   border:1px outset $c00;
 }
+.iAuthor, .iTitle {
+  line-height:150%;
+}
 .iAuthor a {
-  color: #016; text-decoration: none; font-size:120%;
+  color: #933; text-decoration: none; font-size:120%;
 }
 .iTitle a {
-  color: #019; text-decoration: none; font-size:120%;  font-weight:bold;
+  color: #019; text-decoration: none; font-size:140%;  xfont-weight:bold;
 }
 .iTitle a:hover {
   text-decoration: underline;
 }
 .iUrl a {
-  color: #396; text-decoration: none; font-size: 90%;
+  color: #669; text-decoration: none; font-size: 90%;
 }
 .iAbstract {
-  color: #444; line-height: 1.4; word-wrap: break-word; font-size: 90%;
+  margin-top:3px; color: #444; line-height: 1.4; word-wrap: break-word; font-size: 90%;
 }
 .iTopics a {
   padding-right:1em; font-size:90%; text-decoration:none;
@@ -89,7 +92,7 @@ a.iTopic9 { color:#c50; }
 a.iTopic10 { color:#c50; }
 
 .iFooter {
-  color: #069; font-size:small; margin-top:2px; 
+  color: #669; font-size:small; margin-top:2px; 
 }
 
 #nav {
