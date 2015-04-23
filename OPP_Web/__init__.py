@@ -335,6 +335,47 @@ def prettify(doc):
     doc['reldate'] = relative_date(doc['found_date'])
     return doc
 
+def short_url(url):
+    url = re.sub(r'^https?://', '', url)
+    if len(url) > 80:
+        url = url[:38] + '...' + url[-39:]
+    #url = re.sub(r'(\.\w+)$', r'<b>\1</b>', url)
+    return url
+
+def relative_date(time):
+    now = datetime.now()
+    delta = now - time
+    if delta.days > 365:
+        return str(delta.days / 365) + "&nbsp;years ago"
+    if delta.days > 31:
+        return str(delta.days / 30) + "&nbsp;months ago"
+    if delta.days > 7:
+        return str(delta.days / 7) + "&nbsp;weeks ago"
+    if delta.days > 1:
+        return str(delta.days) + "&nbsp;days ago"
+    if delta.days == 1:
+        return "yesterday"
+    if delta.seconds > 7200:
+        return str(delta.seconds / 3600) + "&nbsp;hours ago"
+    if delta.seconds > 3600:
+        return "1&nbsp;hour ago"
+    if delta.seconds > 120:
+        return str(delta.seconds / 60) + "&nbsp;minutes ago"
+    return "1&nbsp;minute ago"
+
+class Capturing(list):
+    # capture stdout
+    def __enter__(self):
+        self._stdout = sys.stdout
+        sys.stdout = self._stringio = StringIO()
+        return self
+    def __exit__(self, *args):
+        self.extend(self._stringio.getvalue().splitlines())
+        sys.stdout = self._stdout
+
+
+################ For access to the opp-tools database #################
+
 @app.route("/opp")
 def list_opp_docs():
     user = request.args.get('user') or None;
@@ -375,10 +416,10 @@ def list_opp_docs():
     cur.execute(query)
     rows = cur.fetchall()
     for row in rows: 
-        row['src'] = row['srcs']
+        row['source_url'] = row['srcs']
         row['url'] = row['locs']
         row['short_url'] = short_url(row['url'])
-        row['short_src'] = short_url(row['src'])
+        row['short_src'] = short_url(row['srcs'])
         row['filetype'] = row['filetype'].upper()
         row['reldate'] = relative_date(row['found_date'])
  
@@ -386,34 +427,6 @@ def list_opp_docs():
                            user=user,
                            docs=rows,
                            next_offset=offset+limit)
-
-def short_url(url):
-    url = re.sub(r'^https?://', '', url)
-    if len(url) > 80:
-        url = url[:38] + '...' + url[-39:]
-    #url = re.sub(r'(\.\w+)$', r'<b>\1</b>', url)
-    return url
-
-def relative_date(time):
-    now = datetime.now()
-    delta = now - time
-    if delta.days > 365:
-        return str(delta.days / 365) + "&nbsp;years ago"
-    if delta.days > 31:
-        return str(delta.days / 30) + "&nbsp;months ago"
-    if delta.days > 7:
-        return str(delta.days / 7) + "&nbsp;weeks ago"
-    if delta.days > 1:
-        return str(delta.days) + "&nbsp;days ago"
-    if delta.days == 1:
-        return "Yesterday"
-    if delta.seconds > 7200:
-        return str(delta.seconds / 3600) + "&nbsp;hours ago"
-    if delta.seconds > 3600:
-        return "1&nbsp;hour ago"
-    if delta.seconds > 120:
-        return str(delta.seconds / 60) + "&nbsp;minutes ago"
-    return "1&nbsp;minute ago"
 
 @app.route("/opp-all")
 def list_opp_locs():
@@ -496,16 +509,6 @@ def list_sources():
     cur.execute(query)
     rows = cur.fetchall()
     return render_template('list_sources.html', srcs=rows)
-
-class Capturing(list):
-    # capture stdout
-    def __enter__(self):
-        self._stdout = sys.stdout
-        sys.stdout = self._stringio = StringIO()
-        return self
-    def __exit__(self, *args):
-        self.extend(self._stringio.getvalue().splitlines())
-        sys.stdout = self._stdout
 
 if __name__ == "__main__":
     app.run()
