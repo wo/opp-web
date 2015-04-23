@@ -25,7 +25,7 @@
         <div class='error'>{{ doc.error }}<div>
       {% endif %}
       <div class='iUrl'>
-        <a href='{{ doc.url }}'>{{ doc.short_url|safe }} ({{ doc.filetype }}, {{ doc.length }} Words)</a>
+        <a href='{{ doc.url }}'>{{ doc.short_url|safe }} ({{ doc.filetype }}, {{ doc.numwords }} words)</a>
       </div>
       <div class='iAbstract'>{{ doc.abstract|safe }}</div>
       {% if doc.topics %}
@@ -36,7 +36,7 @@
       </div>
       {% endif %}
       <div class='iFooter'>
-        <span>Found {{ doc.reldate|safe }} on <a href="{{ doc.src }}">{{ doc.short_src }}</a></span>
+        <span>Found {{ doc.reldate|safe }} on <a href="{{ doc.source_url }}">{{ doc.short_src }}</a></span>
         {% if admin %}
           <span>doc {{ doc.doc_id }}</span>
           <span>confidence: {{ doc.meta_confidence }}</span>
