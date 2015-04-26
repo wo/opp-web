@@ -376,7 +376,7 @@ class Capturing(list):
 
 ################ For access to the opp-tools database #################
 
-@app.route("/opp-queu")
+@app.route("/opp-queue")
 def list_uncertain_docs():
     user = request.args.get('user') or None;
     cur = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
