@@ -376,6 +376,55 @@ class Capturing(list):
 
 ################ For access to the opp-tools database #################
 
+@app.route("/opp-queu")
+def list_uncertain_docs():
+    user = request.args.get('user') or None;
+    cur = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
+    query = '''
+         SELECT
+            D.*,
+            GROUP_CONCAT(L.location_id SEPARATOR ' ') as location_id,
+            GROUP_CONCAT(L.url SEPARATOR ' ') as locs,
+            GROUP_CONCAT(S.url SEPARATOR ' ') as srcs,
+            MIN(L.filetype) as filetype,
+            MIN(L.filesize) as filesize
+         FROM
+            documents D,
+            locations L,
+            sources S,
+            links R
+         WHERE
+            D.document_id = L.document_id
+            AND L.location_id = R.location_id
+            AND S.source_id = R.source_id
+            AND L.status = 1
+            AND {0}
+         GROUP BY D.document_id
+         ORDER BY D.found_date DESC
+         LIMIT {1}
+         OFFSET {2}
+    '''
+    limit = app.config['DOCS_PER_PAGE']
+    offset = int(request.args.get('start') or 0);
+    max_spam = app.config['MAX_SPAM']
+    min_confidence = app.config['MIN_CONFIDENCE']
+    where = "spamminess <= {0} AND meta_confidence <= {1}".format(max_spam, min_confidence)
+    query = query.format(where, limit, offset)
+    cur.execute(query)
+    rows = cur.fetchall()
+    for row in rows: 
+        row['source_url'] = row['srcs']
+        row['short_src'] = short_url(row['srcs'])
+        row['url'] = row['locs']
+        row['short_url'] = short_url(row['url'])
+        row['filetype'] = row['filetype'].upper()
+        row['reldate'] = relative_date(row['found_date'])
+ 
+    return render_template('list_docs.html', 
+                           user=user,
+                           docs=rows,
+                           next_offset=offset+limit)
+
 @app.route("/opp")
 def list_opp_docs():
     user = request.args.get('user') or None;
@@ -417,9 +466,9 @@ def list_opp_docs():
     rows = cur.fetchall()
     for row in rows: 
         row['source_url'] = row['srcs']
+        row['short_src'] = short_url(row['srcs'])
         row['url'] = row['locs']
         row['short_url'] = short_url(row['url'])
-        row['short_src'] = short_url(row['srcs'])
         row['filetype'] = row['filetype'].upper()
         row['reldate'] = relative_date(row['found_date'])
  
