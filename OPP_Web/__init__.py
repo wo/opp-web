@@ -336,6 +336,8 @@ def prettify(doc):
     return doc
 
 def short_url(url):
+    if not url:
+        return 'about:blank';
     url = re.sub(r'^https?://', '', url)
     if len(url) > 80:
         url = url[:38] + '...' + url[-39:]
@@ -416,6 +418,7 @@ def list_uncertain_docs():
         row['source_url'] = row['srcs']
         row['short_src'] = short_url(row['srcs'])
         row['url'] = row['locs']
+        row['numwords'] = row['length']
         row['short_url'] = short_url(row['url'])
         row['filetype'] = row['filetype'].upper()
         row['reldate'] = relative_date(row['found_date'])
