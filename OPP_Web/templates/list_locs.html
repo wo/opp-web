@@ -1,8 +1,9 @@
 {% extends "skeleton.html" %}
 {% block body %}
   <form id='filterform' method='get' action='{{ rootdir }}opp-all'>
-    <label for='min_spam'>spamminess >= </label><input type='text' name='min_spam' value='{{min_spam}}'><br>
+    <label for='max_spam'>spamminess <= </label><input type='text' name='max_spam' value='{{max_spam}}'><br>
     <label for='min_confidence'>confidence >= </label><input type='text' name='min_confidence' value='{{min_confidence}}'><br>
+    <input type="submit" text="update">
   </form>
   <ol class='doclist'>
   {% for loc in locs %}
@@ -34,7 +35,7 @@
   </ol>
   <div id='nav'>
   {% if locs[0] %} 
-    <a href='?start={{ next_offset }}'>Next</a>
+    <a href='?start={{ next_offset }}&max_spam={{ max_spam }}&min_confidence={{ min_confidence }}'>Next</a>
   {% else %}
     No more documents.
   {% endif %}
