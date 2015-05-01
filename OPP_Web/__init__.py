@@ -486,8 +486,8 @@ def list_opp_locs():
     cur = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
     limit = app.config['DOCS_PER_PAGE']
     offset = int(request.args.get('start') or 0);
-    max_spam = int(request.args.get('max_spam') or 1);
-    min_confidence = int(request.args.get('min_confidence') or 0);
+    max_spam = float(request.args.get('max_spam') or 1.0);
+    min_confidence = float(request.args.get('min_confidence') or 0.0);
     query = '''
          SELECT
             L.*,
