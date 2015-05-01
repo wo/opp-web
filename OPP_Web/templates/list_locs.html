@@ -1,5 +1,9 @@
 {% extends "skeleton.html" %}
 {% block body %}
+  <form id='filterform' method='get' action='{{ rootdir }}opp-all'>
+    <label for='min_spam'>spamminess >= </label><input type='text' name='min_spam' value='{{min_spam}}'><br>
+    <label for='min_confidence'>confidence >= </label><input type='text' name='min_confidence' value='{{min_confidence}}'><br>
+  </form>
   <ol class='doclist'>
   {% for loc in locs %}
     <li id='{{ loc.location_id }}' class='{{ loc.type }}'>
