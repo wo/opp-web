@@ -486,7 +486,7 @@ def list_opp_locs():
     cur = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
     limit = app.config['DOCS_PER_PAGE']
     offset = int(request.args.get('start') or 0);
-    min_spam = int(request.args.get('min_spam') or 0);
+    max_spam = int(request.args.get('max_spam') or 1);
     min_confidence = int(request.args.get('min_confidence') or 0);
     query = '''
          SELECT
@@ -502,12 +502,12 @@ def list_opp_locs():
             links USING (location_id)
          INNER JOIN
             sources S USING (source_id)
-         WHERE L.status > 0 AND spamminess >= %s AND meta_confidence >= %s
+         WHERE L.status > 0 AND spamminess <= %s AND meta_confidence >= %s
          ORDER BY L.last_checked DESC
          LIMIT %s
          OFFSET %s
     '''
-    cur.execute(query, (min_spam, min_confidence, limit, offset))
+    cur.execute(query, (max_spam, min_confidence, limit, offset))
     rows = cur.fetchall()
     for row in rows: 
         row['short_url'] = short_url(row['url'])
@@ -525,7 +525,7 @@ def list_opp_locs():
 
     return render_template('list_locs.html',
                            user=user,
-                           min_spam=min_spam,
+                           max_spam=max_spam,
                            min_confidence=min_confidence,
                            locs=rows,
                            next_offset=offset+limit)
