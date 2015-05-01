@@ -3,7 +3,7 @@
   <form id='filterform' method='get' action='{{ rootdir }}opp-all'>
     <label for='max_spam'>spamminess <= </label><input type='text' name='max_spam' value='{{max_spam}}'><br>
     <label for='min_confidence'>confidence >= </label><input type='text' name='min_confidence' value='{{min_confidence}}'><br>
-    <input type="submit" text="update">
+    <input type="submit" value="update">
   </form>
   <ol class='doclist'>
   {% for loc in locs %}
