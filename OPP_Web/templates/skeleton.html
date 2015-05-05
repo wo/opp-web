@@ -9,10 +9,10 @@
 <!--script src="static/jquery.js"></script-->
 <script>
 function edit(doc_id) {
-   var authors = document.getElementById('authors'+doc_id).innerHTML;
-   var title = document.getElementById('title'+doc_id).innerHTML;
-   var url = document.getElementById('title'+doc_id).getAttribute('href');
-   var abstract = document.getElementById('abstract'+doc_id).innerHTML;
+   var authors = document.getElementById('authors'+doc_id).innerHTML.replace(/'/g,'&#39;');
+   var title = document.getElementById('title'+doc_id).innerHTML.replace(/'/g,'&#39;');
+   var url = document.getElementById('title'+doc_id).getAttribute('href').replace(/'/g,'&#39;');
+   var abstract = document.getElementById('abstract'+doc_id).innerHTML.replace(/'/g,'&#39;');
    self.dialog = document.createElement('div');
    dialog.setAttribute('id', 'editDialog');
    dialog.innerHTML = ["<h4>Edit entry ",
