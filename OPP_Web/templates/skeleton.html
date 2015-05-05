@@ -5,7 +5,58 @@
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 <title>Philosophical Progress</title>
 <link rel="stylesheet" href="{{ rootdir }}static/style.css">
-<!--script type="text/javascript" src="static/jquery.js"></script-->
+{% if admin %}
+<!--script src="static/jquery.js"></script-->
+<script>
+function edit(doc_id) {
+   var authors = document.getElementById('authors'+doc_id).innerHTML;
+   var title = document.getElementById('title'+doc_id).innerHTML;
+   var url = document.getElementById('title'+doc_id).getAttribute('href');
+   var abstract = document.getElementById('abstract'+doc_id).innerHTML;
+   self.dialog = document.createElement('div');
+   dialog.setAttribute('id', 'editDialog');
+   dialog.innerHTML = ["<h4>Edit entry</h4>",
+      "<form method='post' action='{{ rootdir }}_editdoc' id='editform' onsubmit='return submit_edit()'>",
+      "<input type='hidden' name='doc_id' value='"+doc_id+"'>",
+      "<input type='hidden' name='doc_url' value='"+url+"'>",
+      "<input type='hidden' name='oppdocs' value='{{oppdocs}}'>",
+      "<input type='hidden' name='next' value='"+self.location.href+"'>",
+      "<label for='authors'>Authors:</label><br>",
+      "<input type='text' name='authors' value='"+authors+"'><br>",
+      "<label for='title'>Title:</label><br>",
+      "<input type='text' name='title' value='"+title+"'><br>",
+      "<label for='abstract'>Abstract:</label><br>",
+      "<textarea name='abstract'>"+abstract+"</textarea><br>",
+      "<input type='submit' value='Submit'>",
+      "<input type='button' value='Discard' onclick='document.body.removeChild(self.dialog)'>",
+      "</form>"].join("");
+   document.body.appendChild(dialog);
+}
+function submit_edit() {
+   return true;
+   var f = document.forms['editform'];
+   var doc_id = f.elements['doc_id'].value;
+   var authors = encodeURIComponent(f.elements['authors'].value);
+   var title = encodeURIComponent(f.elements['title'].value);
+   var abstract = encodeURIComponent(f.elements['abstract'].value);
+   var req = new XMLHttpRequest();
+   var url = "{{ rootdir }}_editdoc";
+   var params = 'authors='+authors+'&title='+title+'&abstract='+abstract;
+   params += '&next='+self.location.href;
+   req.open("POST", url, true);
+   req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+   req.setRequestHeader("Content-length", params.length);
+   req.setRequestHeader("Connection", "close");
+   req.onreadystatechange = function() {
+      if (req.readyState == 4 && req.status == 200) {
+         alert(req.responseText);
+      }
+   }
+   req.send(params);
+   return false;
+}
+</script>
+{% endif %}
 </head>
 <body>
 

@@ -5,8 +5,8 @@
   {% endif %}
   <ol class='doclist'>
   {% for doc in docs %}
-    <li id='{{ doc.doc_id }}'>
-      {% if admin %}
+    <li>
+      {% if topic and admin %}
         <div class='iTrain'>
         <a href="{{ rootdir }}train?topic={{topic}}&topic_id={{topic_id}}&doc={{doc.doc_id}}&class=1&next={{request.path}}"
            ><img src="{{ rootdir }}static/up.png" alt="up" height="20" class="up"></a><br>
@@ -15,11 +15,14 @@
            ><img src="{{ rootdir }}static/down.png" alt="down" height="20" class="down"></a><br>
         </div>
       {% endif %}
+      {% if admin %}
+        <div class="iEdit" onclick="edit({{ doc.doc_id }})">Edit</div>
+      {% endif %}
       <div class='iAuthor'>
-        <a href='{{ doc.url }}'>{{ doc.authors }}</a>
+        <a href='{{ doc.url }}' id='authors{{doc.doc_id}}'>{{ doc.authors }}</a>
       </div>
       <div class='iTitle'>
-        <a href='{{ doc.url }}'>{{ doc.title|safe }}</a>
+        <a href='{{ doc.url }}' id='title{{doc.doc_id}}'>{{ doc.title|safe }}</a>
       </div>
       {% if doc.error %}
         <div class='error'>{{ doc.error }}<div>
@@ -27,7 +30,7 @@
       <div class='iUrl'>
         <a href='{{ doc.url }}'>{{ doc.short_url|safe }} ({{ doc.filetype }}, {{ doc.numwords }} words)</a>
       </div>
-      <div class='iAbstract'>{{ doc.abstract|safe }}</div>
+      <div class='iAbstract' id='abstract{{doc.doc_id}}'>{{ doc.abstract|safe }}</div>
       {% if doc.topics %}
       <div class='iTopics'>
         {% for topic, strength in doc.topics %}
