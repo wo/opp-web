@@ -72,7 +72,7 @@ def index():
 
 @app.route("/t/<topic>")
 def list_topic(topic):
-    min_p = float(request.args.get('min') or (0.0 if is_admin() else 0.4))
+    min_p = float(request.args.get('min') or (0.0 if is_admin() else 0.5))
     # Get latest documents classified into <topic> or not yet
     # classified for <topic> at all, classify the unclassified ones,
     # and keep getting more documents until we have DOCS_PER_PAGE
@@ -245,7 +245,7 @@ def get_docs(select, offset=0):
     docs = [prettify(doc) for doc in docs]
     for doc in docs:
         doc['topics'] = sorted(
-            [(t,int(s*10)) for (t,s) in doc['topics'].iteritems() if s > 0.4],
+            [(t,int(s*10)) for (t,s) in doc['topics'].iteritems() if s > 0.5],
             key=lambda x:x[1], reverse=True)
 
     return docs
