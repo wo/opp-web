@@ -38,7 +38,6 @@ function submit_edit(discard) {
    // submitting the form by AJAX to get around problems with the dual-server setup 
    if (window.processing) return false;
    window.processing = true;
-   document.body.removeChild(self.dialog);
    var f = document.forms['editform'];
    var doc_id = f.elements['doc_id'].value;
    var oppdocs = f.elements['oppdocs'].value;
@@ -63,6 +62,7 @@ function submit_edit(discard) {
       }
    }
    req.send(params);
+   document.body.removeChild(self.dialog);
    return false;
 }
 </script>
