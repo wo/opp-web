@@ -156,30 +156,34 @@ def editdoc():
     abstract = request.form['abstract']
     db = get_db()
     cur = db.cursor()
-    if opp_doc:
-        # Problem: the opp documents table does not store the full
-        # document text, so we need to reprocess the url with opp; to
-        # enforce that, we set status=0 -- process_links.pl will then
-        # add the record to the oppweb docs table (and it won't
-        # overwrite metadata set with confidence=1).
-        query = "UPDATE locations SET status=0 WHERE url=%s"
-        app.logger.debug(query+','+url)
-        cur.execute(query, (url,))
-        db.commit()
-        query = '''
-                UPDATE documents SET authors=%s, title=%s, abstract=%s,
-                meta_confidence=1
-                WHERE document_id=%s
-                '''
-        app.logger.debug(','.join((query,authors,title,abstract,doc_id)))
-        cur.execute(query, (authors, title, abstract, doc_id))
+    if request.form['submit'] == 'Discard Entry':
+        if opp_doc:
+            query = "UPDATE documents SET spamminess=1 WHERE document_id=%s"
+        else:
+            query = "DELETE FROM docs WHERE doc_id=%s"
+        app.logger.debug(','.join((query,doc_id)))
+        cur.execute(query, (doc_id,))
         db.commit()
     else:
-        query = '''
-                UPDATE docs SET authors=%s, title=%s, abstract=%s,
-                meta_confidence=1, found_date=NOW()
-                WHERE doc_id=%s
-                 '''
+        if opp_doc:
+            # Problem: the opp documents table does not store the full
+            # document text, so we need to reprocess the url with opp; to
+            # enforce that, we set status=0 -- process_links.pl will then
+            # add the record to the oppweb docs table (and it won't
+            # overwrite metadata set with confidence=1).
+            query = "UPDATE locations SET status=0 WHERE url=%s"
+            app.logger.debug(query+','+url)
+            cur.execute(query, (url,))
+            db.commit()
+            query = '''
+                    UPDATE documents SET authors=%s, title=%s, abstract=%s, meta_confidence=1
+                    WHERE document_id=%s
+                    '''
+        else:
+            query = '''
+                    UPDATE docs SET authors=%s, title=%s, abstract=%s, meta_confidence=1
+                    WHERE doc_id=%s
+                    '''
         app.logger.debug(','.join((query,authors,title,abstract,doc_id)))
         cur.execute(query, (authors, title, abstract, doc_id))
         db.commit()

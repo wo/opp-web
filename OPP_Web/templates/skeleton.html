@@ -15,8 +15,9 @@ function edit(doc_id) {
    var abstract = document.getElementById('abstract'+doc_id).innerHTML;
    self.dialog = document.createElement('div');
    dialog.setAttribute('id', 'editDialog');
-   dialog.innerHTML = ["<h4>Edit entry</h4>",
-      "<form method='post' action='{{ rootdir }}_editdoc' id='editform' onsubmit='return submit_edit()'>",
+   dialog.innerHTML = ["<h4>Edit entry ",
+      "<span id='closeBtn' onclick='document.body.removeChild(self.dialog)'>X</div></h4>",
+      "<form method='post' action='{{ rootdir }}_editdoc' id='editform'>",
       "<input type='hidden' name='doc_id' value='"+doc_id+"'>",
       "<input type='hidden' name='doc_url' value='"+url+"'>",
       "<input type='hidden' name='oppdocs' value='{{oppdocs}}'>",
@@ -27,8 +28,8 @@ function edit(doc_id) {
       "<input type='text' name='title' value='"+title+"'><br>",
       "<label for='abstract'>Abstract:</label><br>",
       "<textarea name='abstract'>"+abstract+"</textarea><br>",
-      "<input type='submit' value='Submit'>",
-      "<input type='button' value='Discard' onclick='document.body.removeChild(self.dialog)'>",
+      "<input type='submit' name='submit' value='Submit Changes'>",
+      "<input type='submit' name='submit' value='Discard Entry'>",
       "</form>"].join("");
    document.body.appendChild(dialog);
 }
