@@ -187,7 +187,7 @@ def editdoc():
         app.logger.debug(','.join((query,authors,title,abstract,doc_id)))
         cur.execute(query, (authors, title, abstract, doc_id))
         db.commit()
-    return redirect(request.form['next'])
+    return 'OK'
 
 def get_user():
     if app.debug:
