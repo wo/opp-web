@@ -49,7 +49,9 @@ ol.doclist {
 .iClear { 
   clear: both; 
 }
-
+.iEdit {
+  float:right; color:#099; background:#e0e0e0; padding:2px 5px; cursor:pointer;
+}
 .iTrain { 
   float: left; width: 40px; margin:0 0 0 -40px; text-align:center; color:#666;
 }
@@ -98,6 +100,13 @@ a.iTopic10 { color:#c50; }
 #nav {
   margin:30px 0 30px; text-align: center;
 }
+
+#editDialog {
+  position: fixed; top: 80px; left: 300px; width: 500px; height: 300px; padding: 20px; background: #eee; border: 2px solid #ccc; z-index: 9;
+}
+#editDialog h4 { margin:-20px -20px 10px -20px; padding:10px 22px; background:#999; color:#fff; font-size:120%; }
+#editDialog input[type="text"] { width:100%;}
+#editDialog textarea { height:120px; }
 
 
 .error {

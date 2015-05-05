@@ -65,6 +65,7 @@ def index():
                     ''', offset=offset)
     return render_template('list_docs.html', 
                            user=get_user(),
+                           admin=is_admin(),
                            docs=docs,
                            next_offset=get_next_offset())
 
@@ -143,6 +144,47 @@ def list_topic(topic):
                            admin=is_admin(),
                            next_offset=get_next_offset())
 
+@app.route('/_editdoc', methods=['POST'])
+def editdoc():
+    if not is_admin():
+        abort(401)
+    doc_id = request.form['doc_id']
+    url = request.form['doc_url']
+    opp_doc = True if request.form['oppdocs'] else False
+    authors = request.form['authors']
+    title = request.form['title']
+    abstract = request.form['abstract']
+    db = get_db()
+    cur = db.cursor()
+    if opp_doc:
+        # Problem: the opp documents table does not store the full
+        # document text, so we need to reprocess the url with opp; to
+        # enforce that, we set status=0 -- process_links.pl will then
+        # add the record to the oppweb docs table (and it won't
+        # overwrite metadata set with confidence=1).
+        query = "UPDATE locations SET status=0 WHERE url=%s"
+        app.logger.debug(query+','+url)
+        cur.execute(query, (url,))
+        db.commit()
+        query = '''
+                UPDATE documents SET authors=%s, title=%s, abstract=%s,
+                meta_confidence=1
+                WHERE document_id=%s
+                '''
+        app.logger.debug(','.join((query,authors,title,abstract,doc_id)))
+        cur.execute(query, (authors, title, abstract, doc_id))
+        db.commit()
+    else:
+        query = '''
+                UPDATE docs SET authors=%s, title=%s, abstract=%s,
+                meta_confidence=1, found_date=NOW()
+                WHERE doc_id=%s
+                 '''
+        app.logger.debug(','.join((query,authors,title,abstract,doc_id)))
+        cur.execute(query, (authors, title, abstract, doc_id))
+        db.commit()
+    return redirect(request.form['next'])
+
 def get_user():
     if app.debug:
         return 'wo'
@@ -174,7 +216,7 @@ def get_docs(select, offset=0):
                                  map(float, doc['strengths'].split(','))))
         # unclassified topics have value -1 now (see COALESCE in query)
     
-    app.logger.debug(pprint.pformat(docs))
+    #app.logger.debug(pprint.pformat(docs))
 
     # find unclassified docs:
     unclassified = {} # topic_id => [docs]
@@ -384,7 +426,7 @@ def list_uncertain_docs():
     cur = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
     query = '''
          SELECT
-            D.*,
+            D.*, D.document_id as doc_id,
             GROUP_CONCAT(L.location_id SEPARATOR ' ') as location_id,
             GROUP_CONCAT(L.url SEPARATOR ' ') as locs,
             GROUP_CONCAT(S.url SEPARATOR ' ') as srcs,
@@ -423,9 +465,11 @@ def list_uncertain_docs():
         row['filetype'] = row['filetype'].upper()
         row['reldate'] = relative_date(row['found_date'])
  
-    return render_template('list_docs.html', 
+    return render_template('list_docs.html',
                            user=user,
+                           admin=is_admin(),
                            docs=rows,
+                           oppdocs=True,
                            next_offset=offset+limit)
 
 @app.route("/opp")
