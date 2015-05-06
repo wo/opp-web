@@ -423,6 +423,11 @@ class Capturing(list):
         self.extend(self._stringio.getvalue().splitlines())
         sys.stdout = self._stdout
 
+################ Static pages #########################################
+
+@app.route("/about")
+def about_page():
+    return render_template('about.html', user=get_user())
 
 ################ For access to the opp-tools database #################
 
