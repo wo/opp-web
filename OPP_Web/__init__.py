@@ -158,11 +158,13 @@ def editdoc():
     cur = db.cursor()
     if request.form['submit'] == 'Discard Entry':
         if opp_doc:
-            query = "UPDATE documents SET spamminess=1 WHERE document_id=%s"
+            query = "UPDATE locations SET spamminess=1 WHERE url=%s"
+            app.logger.debug(','.join((query,url)))
+            cur.execute(query, (url,))
         else:
             query = "DELETE FROM docs WHERE doc_id=%s"
-        app.logger.debug(','.join((query,doc_id)))
-        cur.execute(query, (doc_id,))
+            app.logger.debug(','.join((query,doc_id)))
+            cur.execute(query, (doc_id,))
         db.commit()
     else:
         if opp_doc:
