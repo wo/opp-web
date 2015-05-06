@@ -463,9 +463,9 @@ def list_uncertain_docs():
     cur.execute(query)
     rows = cur.fetchall()
     for row in rows: 
-        row['source_url'] = row['srcs']
-        row['short_src'] = short_url(row['srcs'])
-        row['url'] = row['locs']
+        row['source_url'] = row['srcs'].split(' ')[0]
+        row['short_src'] = short_url(row['srcs'].split(' ')[0])
+        row['url'] = row['locs'].split(' ')[0]
         row['numwords'] = row['length']
         row['short_url'] = short_url(row['url'])
         row['filetype'] = row['filetype'].upper()
@@ -518,9 +518,9 @@ def list_opp_docs():
     cur.execute(query)
     rows = cur.fetchall()
     for row in rows: 
-        row['source_url'] = row['srcs']
-        row['short_src'] = short_url(row['srcs'])
-        row['url'] = row['locs']
+        row['source_url'] = row['srcs'].split(' ')[0]
+        row['short_src'] = short_url(row['srcs'].split(' ')[0])
+        row['url'] = row['locs'].split(' ')[0]
         row['short_url'] = short_url(row['url'])
         row['filetype'] = row['filetype'].upper()
         row['reldate'] = relative_date(row['found_date'])
