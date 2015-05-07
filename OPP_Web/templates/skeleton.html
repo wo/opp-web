@@ -7,13 +7,46 @@
 <link rel="stylesheet" href="{{ rootdir }}static/style.css">
 <!--script src="static/jquery.js"></script-->
 <script>
+
+self.onload = function() {
+   addDaySeparators();
+}
+
+function addDaySeparators() {
+   var now = (new Date()).getTime();
+   var curDay = '';
+   var seps = document.getElementsByClassName('daysep');
+   for (var i=0; i<seps.length; i++) {
+      var msdiff = seps[i].innerHTML * 1000;
+      var day = new Date(now - msdiff).prettify();
+      if (day != curDay) {
+         seps[i].innerHTML = day;
+         seps[i].setAttribute('class', 'daysepActive');
+         curDay = day;
+      }
+   }
+}
+
+Date.prototype.prettify = function(abs) {
+   var day = this.getDate();
+   var mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][this.getMonth()];
+   var year = this.getFullYear();
+   var absDate = (day > 9 ? day : '0'+day)+' '+mon+' '+year;
+   if (abs) return absDate;
+   var date = new Date();
+   var today = date.prettify(true);
+   if (absDate == today) return 'Today';
+   var thisYear = date.getFullYear();
+   date.setDate(date.getDate() - 1);
+   var yesterday = date.prettify(true);
+   if (absDate == yesterday) return 'Yesterday';
+   if (this.getFullYear() == thisYear) return absDate.substr(0,absDate.length-4);
+   return absDate;
+}
+
 function selectArea(t) {
-   if (t == 'all') {
-      self.location.href='{{ rootdir }}';
-   }
-   else {
-      self.location.href='{{ rootdir }}t/'+t;
-   }
+   if (t == 'all') self.location.href='{{ rootdir }}';
+   else self.location.href='{{ rootdir }}t/'+t;
 }
 
 {% if admin %}

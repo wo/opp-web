@@ -381,6 +381,7 @@ def prettify(doc):
     doc['short_src'] = short_url(doc['source_url'])
     doc['filetype'] = doc['filetype'].upper()
     doc['reldate'] = relative_date(doc['found_date'])
+    doc['deltadate'] = relative_date(doc['found_date'], 1)
     return doc
 
 def short_url(url):
@@ -391,15 +392,17 @@ def short_url(url):
         url = url[:38] + '...' + url[-39:]
     #url = re.sub(r'(\.\w+)$', r'<b>\1</b>', url)
     return url
-
-def relative_date(time):
+    
+def relative_date(time, diff=False):
     now = datetime.now()
     delta = now - time
-    if delta.days > 365:
+    if diff:
+        return delta.total_seconds()
+    if delta.days > 730:
         return str(delta.days / 365) + "&nbsp;years ago"
-    if delta.days > 31:
+    if delta.days > 60:
         return str(delta.days / 30) + "&nbsp;months ago"
-    if delta.days > 7:
+    if delta.days > 14:
         return str(delta.days / 7) + "&nbsp;weeks ago"
     if delta.days > 1:
         return str(delta.days) + "&nbsp;days ago"
@@ -409,7 +412,7 @@ def relative_date(time):
         return str(delta.seconds / 3600) + "&nbsp;hours ago"
     if delta.seconds > 3600:
         return "1&nbsp;hour ago"
-    if delta.seconds > 120:
+    if delta.seconds > 119:
         return str(delta.seconds / 60) + "&nbsp;minutes ago"
     return "1&nbsp;minute ago"
 
@@ -469,12 +472,10 @@ def list_uncertain_docs():
     rows = cur.fetchall()
     for row in rows: 
         row['source_url'] = row['srcs'].split(' ')[0]
-        row['short_src'] = short_url(row['srcs'].split(' ')[0])
+        row['short_src'] = row['srcs'].split(' ')[0]
         row['url'] = row['locs'].split(' ')[0]
         row['numwords'] = row['length']
-        row['short_url'] = short_url(row['url'])
-        row['filetype'] = row['filetype'].upper()
-        row['reldate'] = relative_date(row['found_date'])
+        row = prettify(row)
  
     return render_template('list_docs.html',
                            user=user,
@@ -526,9 +527,7 @@ def list_opp_docs():
         row['source_url'] = row['srcs'].split(' ')[0]
         row['short_src'] = short_url(row['srcs'].split(' ')[0])
         row['url'] = row['locs'].split(' ')[0]
-        row['short_url'] = short_url(row['url'])
-        row['filetype'] = row['filetype'].upper()
-        row['reldate'] = relative_date(row['found_date'])
+        row = prettify(row)
  
     return render_template('list_docs.html', 
                            user=user,

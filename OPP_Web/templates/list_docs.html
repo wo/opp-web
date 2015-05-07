@@ -3,6 +3,7 @@
   <ol class='doclist'>
   {% for doc in docs %}
     <li>
+      <div class='daysep'>{{ doc.deltadate }}</div>
       {% if topic and admin %}
         <div class='iTrain'>
         <a href="{{ rootdir }}train?topic={{topic}}&topic_id={{topic_id}}&doc={{doc.doc_id}}&class=1&next={{request.path}}"
