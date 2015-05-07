@@ -22,7 +22,8 @@ function addDaySeparators() {
    var now = (new Date()).getTime();
    var curDay = '';
    var seps = document.getElementsByClassName('daysep');
-   for (var i=seps.length-1; i >= 0; i--) {
+   seps = Array.prototype.slice.call(seps, 0);
+   for (var i=0; i<seps.length; i++) {
       var msdiff = seps[i].innerHTML * 1000;
       var day = new Date(now - msdiff).prettify();
       if (day != curDay) {
