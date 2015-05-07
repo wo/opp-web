@@ -13,7 +13,7 @@ self.onload = function() {
 }
 
 function addDaySeparators() {
-   # for IE8+:
+   // for IE8+:
    if (!document.getElementsByClassName) {
       document.getElementsByClassName = function(c) {
         return this.querySelectorAll("."+c);
