@@ -31,6 +31,11 @@ a {
 #title a {
   text-decoration: none; color: #39c;
 }
+#filterform {
+ margin:0 auto 0 auto; padding:0 0 20px 0; max-width:800px; font-size: 130%; color:#666; font-weight:normal;
+}
+#filterform select { font-size:80%; color:#036; }
+
 
 #content {
   margin:50px auto 20px auto; max-width:800px;

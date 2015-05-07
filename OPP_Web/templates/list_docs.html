@@ -1,8 +1,5 @@
 {% extends "skeleton.html" %}
 {% block body %}
-  {% if topic %}
-    <h3>{{ topic }}</h3>
-  {% endif %}
   <ol class='doclist'>
   {% for doc in docs %}
     <li>

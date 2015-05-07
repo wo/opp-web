@@ -5,9 +5,18 @@
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 <title>Philosophical Progress</title>
 <link rel="stylesheet" href="{{ rootdir }}static/style.css">
-{% if admin %}
 <!--script src="static/jquery.js"></script-->
 <script>
+function selectArea(t) {
+   if (t == 'all') {
+      self.location.href='{{ rootdir }}';
+   }
+   else {
+      self.location.href='{{ rootdir }}t/'+t;
+   }
+}
+
+{% if admin %}
 function edit(doc_id) {
    window.processing = false;
    var authors = document.getElementById('authors'+doc_id).innerHTML.replace(/'/g,'&#39;');
@@ -65,8 +74,8 @@ function submit_edit(discard) {
    document.body.removeChild(self.dialog);
    return false;
 }
-</script>
 {% endif %}
+</script>
 </head>
 <body>
 
@@ -75,7 +84,7 @@ function submit_edit(discard) {
   <div id="navig">
 
     <span>
-      <!--a href="about">What is this?</a-->
+      <a href="about">What is this?</a>
     </span>
     
     <span>
@@ -91,7 +100,26 @@ function submit_edit(discard) {
 
   <div id="title">
     <h1><a href="{{ rootdir }}">Philosophical Progress</a></h1>
-    <h2>Under construction - April 2015</h2>
+    <form name="filterform" id="filterform" action="{{ rootdir }}" method="GET" onsubmit="return false">
+      New articles 
+      in <select size="1" name="area" onchange="selectArea(this.options[this.selectedIndex].value)">
+         <option value="all">All Areas of Philosophy</option>
+      {% for t in (
+                   ('Ethics', 'ethics'),
+                   ('Political Philosophy', 'political'),
+                   ('History of Philosophy', 'history'),
+                   ('Metaphysics', 'metaphysics'), 
+                   ('Epistemology', 'epistemology'),
+                   ('Philosophy of Language', 'language'),
+                   ('Philosophy of Mind', 'mind'),
+                   ('Philosophy of Science', 'science'),
+                   ('Philosophy of Mathematics', 'mathematics'),
+                   ('Logic', 'logic')
+                   ) %}
+         <option value="{{ t[1] }}"{% if topic==t[1] %} selected="1"{% endif %}>{{ t[0] }}</option>
+      {% endfor %}
+         </select>
+    </form>
   </div>
 
   <div id="content">
