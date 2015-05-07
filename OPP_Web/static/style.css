@@ -67,7 +67,7 @@ ol.doclist {
   border:1px outset #0c0;
 }
 .iTrain .down:hover { 
-  border:1px outset $c00;
+  border:1px outset #c00;
 }
 .iAuthor, .iTitle {
   line-height:150%;
@@ -76,7 +76,7 @@ ol.doclist {
   color: #933; text-decoration: none; font-size:120%;
 }
 .iTitle a {
-  color: #019; text-decoration: none; font-size:140%;  xfont-weight:bold;
+  color: #019; text-decoration: none; font-size:140%; 
 }
 .iTitle a:hover {
   text-decoration: underline;
@@ -101,6 +101,14 @@ a.iTopic10 { color:#c50; }
 .iFooter {
   color: #669; font-size:small; margin-top:2px; 
 }
+
+.daysep { 
+  display:none;
+}
+.daysepActive { 
+  display:block; margin:-15px 0 15px 0; padding:6px 0px; border-top:1px solid #ddd; background:#f9f9f9; color:#666; font-size:120%;
+}
+
 
 #nav {
   margin:30px 0 30px; text-align: center;
