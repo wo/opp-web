@@ -397,7 +397,7 @@ def relative_date(time, diff=False):
     now = datetime.now()
     delta = now - time
     if diff:
-        return delta.total_seconds()
+        return int(delta.total_seconds())
     if delta.days > 730:
         return str(delta.days / 365) + "&nbsp;years ago"
     if delta.days > 60:
