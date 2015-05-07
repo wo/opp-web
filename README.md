@@ -6,19 +6,19 @@
 
 2. Then add a line to opp-tools/config.pl saying
 
-    OPP_WEB => 1,
+        OPP_WEB => 1,
 
 3. Install [scikit-learn](http://scikit-learn.org/stable/install.html).
 
 4. Set up and edit the config file:
 
-    cd opp-web
-    mv config-default.py config.py
-    vim config.py
+        cd opp-web
+        mv config-default.py config.py
+        vim config.py
 
 4. Create a folder 'data' and make it write-accessible to the webserver
 
-    mkdir data
+        mkdir data
 
 5. Set up the database tables:
 
