@@ -13,10 +13,16 @@ self.onload = function() {
 }
 
 function addDaySeparators() {
+   # for IE8+:
+   if (!document.getElementsByClassName) {
+      document.getElementsByClassName = function(c) {
+        return this.querySelectorAll("."+c);
+      };
+   }
    var now = (new Date()).getTime();
    var curDay = '';
    var seps = document.getElementsByClassName('daysep');
-   for (var i=0; i<seps.length; i++) {
+   for (var i=seps.length-1; i >= 0; i--) {
       var msdiff = seps[i].innerHTML * 1000;
       var day = new Date(now - msdiff).prettify();
       if (day != curDay) {
@@ -146,6 +152,7 @@ function submit_edit(discard) {
                    ('Philosophy of Language', 'language'),
                    ('Philosophy of Mind', 'mind'),
                    ('Philosophy of Science', 'science'),
+                   ('Philosophy of Religion', 'religion'),
                    ('Philosophy of Mathematics', 'mathematics'),
                    ('Logic', 'logic')
                    ) %}
