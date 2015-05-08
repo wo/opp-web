@@ -147,7 +147,6 @@ function submit_edit(discard) {
       {% for t in (
                    ('Ethics', 'ethics'),
                    ('Political Philosophy', 'political'),
-                   ('History of Philosophy', 'history'),
                    ('Metaphysics', 'metaphysics'), 
                    ('Epistemology', 'epistemology'),
                    ('Philosophy of Language', 'language'),
@@ -155,7 +154,9 @@ function submit_edit(discard) {
                    ('Philosophy of Science', 'science'),
                    ('Philosophy of Religion', 'religion'),
                    ('Philosophy of Mathematics', 'mathematics'),
-                   ('Logic', 'logic')
+                   ('Logic', 'logic'),
+                   ('History of Philosophy', 'history'),
+                   ('Continental Philosophy, 'continental')
                    ) %}
          <option value="{{ t[1] }}"{% if topic==t[1] %} selected="1"{% endif %}>{{ t[0] }}</option>
       {% endfor %}
