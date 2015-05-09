@@ -443,6 +443,7 @@ def list_uncertain_docs():
             D.*, D.document_id as doc_id,
             GROUP_CONCAT(L.location_id SEPARATOR ' ') as location_id,
             GROUP_CONCAT(L.url SEPARATOR ' ') as locs,
+            GROUP_CONCAT(L.location_id SEPARATOR ' ') as loc_ids,
             GROUP_CONCAT(S.url SEPARATOR ' ') as srcs,
             MIN(L.filetype) as filetype,
             MIN(L.filesize) as filesize
@@ -474,6 +475,7 @@ def list_uncertain_docs():
         row['source_url'] = row['srcs'].split(' ')[0]
         row['short_src'] = row['srcs'].split(' ')[0]
         row['url'] = row['locs'].split(' ')[0]
+        row['loc_id'] = row['loc_ids'].split(' ')[0]
         row['numwords'] = row['length']
         row = prettify(row)
  
