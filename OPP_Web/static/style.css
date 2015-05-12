@@ -45,9 +45,8 @@ ol.doclist {
   float:right; color:#099; background:#e0e0e0; padding:2px 5px; cursor:pointer;
 }
 .iTrain { 
-  float: left; width: 40px; margin:0 0 0 -40px; text-align:center; color:#666;
+  float: left; width: 50px; margin:4px 0 0 -50px; text-align:center; color:#888;
 }
-.iTrain img { }
 .iAuthor, .iTitle {
   line-height:150%;
 }
