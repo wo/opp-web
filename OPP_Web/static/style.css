@@ -11,19 +11,25 @@ a {
 }
 
 #navig {
-  margin:0 0; padding:5px 30px; text-align:right; background:#f9f9f9; border-bottom:1px solid #39c;
+  margin:0 0; padding:10px; overflow:auto; background:#0866a0; color:#fff;
 }
+#navig #filterform select { margin:0 50px; font-size:100%; color:#036; }
+
+#navig h1 {
+  float:left; margin:0; font-size: 140%; color:#fff;
+}
+#navig span {
+  float: right; padding:3px 0;
+}
+#navig a {
+  text-decoration: none; color:#fff;
+}
+
 #navig span {
   padding-left:20px; 
 }
-#navig a {
-  text-decoration: none;
-}
 #title {
   margin:0; border-top: 1px solid #fff; border-bottom:1px solid #39c; background:#fff;
-}
-#title h1 {
-  margin:0 auto 0 auto; padding:20px 0 10px 0; max-width:800px; font-size: 250%;
 }
 #title h2 {
  margin:0 auto 0 auto; padding:0 0 20px 0; max-width:800px; font-size: 130%; color:#666; font-weight:normal;
@@ -31,10 +37,6 @@ a {
 #title a {
   text-decoration: none; color: #39c;
 }
-#filterform {
- margin:0 auto 0 auto; padding:0 0 20px 0; max-width:800px; font-size: 130%; color:#666; font-weight:normal;
-}
-#filterform select { font-size:80%; color:#036; }
 
 
 #content {

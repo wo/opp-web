@@ -3,7 +3,7 @@
 <html>
 <head>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
-<title>Philosophical Progress</title>
+<title>{% if topic %}{{ topic }} | {% endif %}Philosophical Progress</title>
 <link rel="stylesheet" href="{{ rootdir }}static/style.css">
 <!--script src="static/jquery.js"></script-->
 <script>
@@ -122,27 +122,11 @@ function submit_edit(discard) {
 <div id="wrap">
 
   <div id="navig">
-
-    <span>
-      <a href="about">What is this?</a>
-    </span>
-    
-    <span>
-      <!--a href="add">Add your papers</a-->
-    </span>
-
-    <span id="user">
-    {% if user %}
-      Hello {{ user }}
-    {% endif %}
-    </span>
-  </div>
-
-  <div id="title">
-    <h1><a href="{{ rootdir }}">Philosophical Progress</a></h1>
     <form name="filterform" id="filterform" action="{{ rootdir }}" method="GET" onsubmit="return false">
-      New articles 
-      in <select size="1" name="area" onchange="selectArea(this.options[this.selectedIndex].value)">
+
+    <h1><a href="{{ rootdir }}">Philosophical Progress</a></h1>
+
+      <select size="1" name="area" onchange="selectArea(this.options[this.selectedIndex].value)">
          <option value="all">All Areas of Philosophy</option>
       {% for t in (
                    ('Ethics', 'ethics'),
@@ -161,8 +145,24 @@ function submit_edit(discard) {
          <option value="{{ t[1] }}"{% if topic==t[1] %} selected="1"{% endif %}>{{ t[0] }}</option>
       {% endfor %}
          </select>
+    
+    <span>
+      <a href="{{ rootdir }}about">What is this?</a>
+    </span>
+    
+    <span>
+      <!--a href="add">Add your papers</a-->
+    </span>
+
+    <span id="user">
+    {% if user %}
+      Hello {{ user }}
+    {% endif %}
+    </span>
+
     </form>
   </div>
+
 
   <div id="content">
 
