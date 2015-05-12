@@ -3,9 +3,9 @@
 body { 
   padding:0; margin:0; background:#fff; color:#000; font-family:Arial,sans-serif;
 }
-a {
-  color:#049; 
-}
+a { color: #03b; }
+a:visited { color:#50a; }
+
 .msg {
   margin:20px 30px; color:#900;
 }
@@ -13,31 +13,16 @@ a {
 #navig {
   margin:0 0; padding:10px; overflow:auto; background:#0866a0; color:#fff;
 }
-#navig #filterform select { margin:0 50px; font-size:100%; color:#036; }
-
+#navig select { margin:0 50px; font-size:100%; color:#036; }
 #navig h1 {
   float:left; margin:0; font-size: 140%; color:#fff;
 }
 #navig span {
-  float: right; padding:3px 0;
+  float: right; padding:3px 5px 3px 12px;
 }
 #navig a {
   text-decoration: none; color:#fff;
 }
-
-#navig span {
-  padding-left:20px; 
-}
-#title {
-  margin:0; border-top: 1px solid #fff; border-bottom:1px solid #39c; background:#fff;
-}
-#title h2 {
- margin:0 auto 0 auto; padding:0 0 20px 0; max-width:800px; font-size: 130%; color:#666; font-weight:normal;
-}
-#title a {
-  text-decoration: none; color: #39c;
-}
-
 
 #content {
   margin:50px auto 20px auto; max-width:800px;
@@ -62,15 +47,7 @@ ol.doclist {
 .iTrain { 
   float: left; width: 40px; margin:0 0 0 -40px; text-align:center; color:#666;
 }
-.iTrain img { 
-  border:1px outset #999;
-}
-.iTrain .up:hover { 
-  border:1px outset #0c0;
-}
-.iTrain .down:hover { 
-  border:1px outset #c00;
-}
+.iTrain img { }
 .iAuthor, .iTitle {
   line-height:150%;
 }
@@ -78,13 +55,13 @@ ol.doclist {
   color: #933; text-decoration: none; font-size:120%;
 }
 .iTitle a {
-  color: #019; text-decoration: none; font-size:140%; 
+  text-decoration: none; font-size:140%; 
 }
 .iTitle a:hover {
   text-decoration: underline;
 }
 .iUrl a {
-  color: #669; text-decoration: none; font-size: 90%;
+  color: #777; text-decoration: none; font-size: 90%;
 }
 .iAbstract {
   margin-top:3px; color: #444; line-height: 1.4; word-wrap: break-word; font-size: 90%;
@@ -92,14 +69,13 @@ ol.doclist {
 .iTopics a {
   padding-right:1em; font-size:90%; text-decoration:none;
 }
-a.iTopic3 { color:#ecb; }
-a.iTopic4 { color:#dba; }
-a.iTopic5 { color:#d98; }
-a.iTopic6 { color:#d86; }
-a.iTopic7 { color:#c73; }
-a.iTopic8 { color:#c50; }
-a.iTopic9 { color:#c50; }
-a.iTopic10 { color:#c50; }
+a.iTopic4 { color:#daa; }
+a.iTopic5 { color:#c99; }
+a.iTopic6 { color:#b77; }
+a.iTopic7 { color:#a55; }
+a.iTopic8 { color:#933; }
+a.iTopic9 { color:#933; }
+a.iTopic10 { color:#933; }
 
 .iFooter {
   color: #669; font-size:small; margin-top:2px; 
@@ -190,22 +166,4 @@ a.iTopic10 { color:#c50; }
 #pageslist li ul li { margin:0; }
 #pageslist input { border:1px solid #eee; background:transparent; width:20em;}
 #pageslist span { font-size:0.9em; color:#666; font-family:Arial,sans-serif; }
-
-/* edit page */
-
-#editpage { background:#fff; }
-#editpage h1 { margin:0px; padding:8px 20px; border-bottom:1px solid #000; font-size:1.6em; background:#f0f0f9; }
-#editpage #user { position:absolute; top:10px; right:20px; }
-#editpage form { margin:1%; width:98%; }
-#editpage form table { width:100%; border-collapse:collapse; }
-#editpage form table tr { border:2px solid #fff; background-color:#eee; }
-#editpage form table td { padding:0 2px; }
-#editpage form table td.abstract { width:49%; }
-#editpage form table td.label { width:6em; text-align:right; }
-#editpage form table td.hint { width:10em; font-size:0.9em; color:#900; }
-#editpage form input[type="text"], textarea { width:99%; }
-#editpage #procmenu { margin:20px 0 0; padding:5px 20px 7px; border:1px solid black; border-width:1px 0; background:#f0f0f9; }
-#editpage #procmenu a { padding-right:10px; }
-#editpage #proc { padding:0 20px; overflow-y:auto; height:300px; font-family:monospace; font-size:12px; white-space:pre; }
-#editpage #proc td { border-bottom:1px solid #eee; padding:2px 10px; }
 
