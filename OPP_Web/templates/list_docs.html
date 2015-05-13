@@ -32,7 +32,7 @@
       {% if doc.topics %}
       <div class='iTopics'>
         {% for topic, strength in doc.topics %}
-           <a class='iTopic{{strength}}' href='{{ rootdir}}t/{{ topic }}'>{{ topic }}</a>
+           <a class='iTopic{{strength}}' href='{{ rootdir}}t/{{ topic|lower }}'>{{ topic }}</a>
         {% endfor %}
       </div>
       {% endif %}
