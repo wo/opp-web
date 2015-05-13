@@ -377,6 +377,8 @@ def update_classifier():
 def prettify(doc):
     # Adds and modifies some values of document objects retrieved from
     # DB for pretty display
+    doc['url'] = doc['url'].replace('&','&amp;')
+    doc['source_url'] = doc['source_url'].replace('&','&amp;')
     doc['short_url'] = short_url(doc['url'])
     doc['short_src'] = short_url(doc['source_url'])
     doc['filetype'] = doc['filetype'].upper()
@@ -473,7 +475,6 @@ def list_uncertain_docs():
     rows = cur.fetchall()
     for row in rows: 
         row['source_url'] = row['srcs'].split(' ')[0]
-        row['short_src'] = row['srcs'].split(' ')[0]
         row['url'] = row['locs'].split(' ')[0]
         row['loc_id'] = row['loc_ids'].split(' ')[0]
         row['numwords'] = row['length']
@@ -527,7 +528,6 @@ def list_opp_docs():
     rows = cur.fetchall()
     for row in rows: 
         row['source_url'] = row['srcs'].split(' ')[0]
-        row['short_src'] = short_url(row['srcs'].split(' ')[0])
         row['url'] = row['locs'].split(' ')[0]
         row = prettify(row)
  

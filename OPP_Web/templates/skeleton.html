@@ -142,7 +142,7 @@ function submit_edit(discard) {
                    ('History of Philosophy', 'history'),
                    ('Continental Philosophy', 'continental')
                    ) %}
-         <option value="{{ t[1] }}"{% if topic==t[1] %} selected="1"{% endif %}>{{ t[0] }}</option>
+         <option value="{{ t[1] }}"{% if topic==t[1] %} selected="selected"{% endif %}>{{ t[0] }}</option>
       {% endfor %}
          </select>
     
