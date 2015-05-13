@@ -127,7 +127,7 @@ function submit_edit(discard) {
     <h1><a href="{{ rootdir }}">Philosophical Progress</a></h1>
 
       <select size="1" name="area" onchange="selectArea(this.options[this.selectedIndex].value)">
-         <option value="all">All Areas of Philosophy</option>
+         <option value="all"{% if not topic %} selected="selected"{% endif %}>All Areas of Philosophy</option>
       {% for t in (
                    ('Ethics', 'ethics'),
                    ('Political Philosophy', 'political'),
