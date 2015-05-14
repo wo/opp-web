@@ -41,7 +41,8 @@
         {% if admin %}
           <span>doc {{ doc.doc_id }}</span>
           {% if doc.loc_id %}<span>loc {{ doc.loc_id }}</span>{% endif %}
-          <span>confidence: {{ doc.meta_confidence }}</span>
+          <span>conf: {{ doc.meta_confidence }}</span>
+          <span>spam: {{ doc.spamminess }}</span>
         {% endif %}
       </div>
     </li>
