@@ -11,7 +11,7 @@ a:visited { color:#50a; }
 }
 
 #navig {
-  margin:0 0; padding:10px; overflow:auto; background:#0866a0; color:#fff;
+  margin:0 0; padding:15px; overflow:auto; background:#1c6699; color:#fff;
 }
 #navig select { margin:0 50px; font-size:100%; color:#036; }
 #navig h1 {

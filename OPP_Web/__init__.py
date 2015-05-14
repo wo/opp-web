@@ -92,7 +92,7 @@ def list_topic(topic):
                 '''.format(topic, min_p, limit, offset)
         app.logger.debug(query)
         cur = get_db().cursor(MySQLdb.cursors.DictCursor)
-        cur.execute(query);
+        cur.execute(query)
         batch = cur.fetchall()
         if not batch:
             break
@@ -210,7 +210,7 @@ def get_docs(select, offset=0):
     app.logger.debug(query)
     db = get_db()
     cur = db.cursor(MySQLdb.cursors.DictCursor)
-    cur.execute(query);
+    cur.execute(query)
     docs = cur.fetchall()
     if not docs:
         return docs
@@ -259,7 +259,7 @@ def add_content(docs):
     doc_ids = [str(doc['doc_id']) for doc in docs]
     query = "SELECT * FROM docs WHERE doc_id IN ('{0}')".format("','".join(doc_ids))
     app.logger.debug(query)
-    cur.execute(query);
+    cur.execute(query)
     rows = cur.fetchall()
     # keep previous dict keys in docs:
     docs_dict = dict((doc['doc_id'], doc) for doc in docs)
@@ -273,7 +273,7 @@ def get_default_topics():
     if not hasattr(g, 'default_topics'):
         query = "SELECT topic_id, label FROM topics WHERE is_default=1"
         cur = get_db().cursor()
-        cur.execute(query);
+        cur.execute(query)
         g.default_topics = cur.fetchall()
     return g.default_topics
 
@@ -295,7 +295,7 @@ def classify(rows, topic, topic_id):
             VALUES ({0},{1},{2})
             ON DUPLICATE KEY UPDATE strength={2}
         '''
-        query = query.format(rows[i]['doc_id'], topic_id, p_ham);
+        query = query.format(rows[i]['doc_id'], topic_id, p_ham)
         app.logger.debug(query)
         cur.execute(query)
         db.commit()
@@ -317,7 +317,7 @@ def train():
         VALUES ({0},{1},{2},1)
         ON DUPLICATE KEY UPDATE strength={2}, is_training=1
     '''
-    query = query.format(doc_id, topic_id, hamspam);
+    query = query.format(doc_id, topic_id, hamspam)
     cur.execute(query)
     db.commit()
     flash('retraining classifier and updating document labels...')
@@ -388,7 +388,7 @@ def prettify(doc):
 
 def short_url(url):
     if not url:
-        return 'about:blank';
+        return 'about:blank'
     url = re.sub(r'^https?://', '', url)
     if len(url) > 80:
         url = url[:38] + '...' + url[-39:]
@@ -438,7 +438,7 @@ def about_page():
 
 @app.route("/opp-queue")
 def list_uncertain_docs():
-    user = request.args.get('user') or None;
+    user = request.args.get('user') or None
     cur = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
     query = '''
          SELECT
@@ -466,8 +466,8 @@ def list_uncertain_docs():
          OFFSET {2}
     '''
     limit = app.config['DOCS_PER_PAGE']
-    offset = int(request.args.get('start') or 0);
-    max_spam = app.config['MAX_SPAM']
+    offset = int(request.args.get('start') or 0)
+    max_spam = 0.3
     min_confidence = app.config['MIN_CONFIDENCE']
     where = "spamminess <= {0} AND meta_confidence <= {1}".format(max_spam, min_confidence)
     query = query.format(where, limit, offset)
@@ -489,7 +489,7 @@ def list_uncertain_docs():
 
 @app.route("/opp")
 def list_opp_docs():
-    user = request.args.get('user') or None;
+    user = request.args.get('user') or None
     cur = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
     query = '''
          SELECT
@@ -516,7 +516,7 @@ def list_opp_docs():
          OFFSET {2}
     '''
     limit = app.config['DOCS_PER_PAGE']
-    offset = int(request.args.get('start') or 0);
+    offset = int(request.args.get('start') or 0)
     max_spam = app.config['MAX_SPAM']
     min_confidence = app.config['MIN_CONFIDENCE']
     where = "spamminess <= {0} AND meta_confidence >= {1}".format(max_spam, min_confidence)
@@ -538,12 +538,12 @@ def list_opp_docs():
 
 @app.route("/opp-all")
 def list_opp_locs():
-    user = request.args.get('user') or None;
+    user = request.args.get('user') or None
     cur = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
     limit = app.config['DOCS_PER_PAGE']
-    offset = int(request.args.get('start') or 0);
-    max_spam = float(request.args.get('max_spam') or 1.0);
-    min_confidence = float(request.args.get('min_confidence') or 0.0);
+    offset = int(request.args.get('start') or 0)
+    max_spam = float(request.args.get('max_spam') or 1.0)
+    min_confidence = float(request.args.get('min_confidence') or 0.0)
     query = '''
          SELECT
             L.*,
