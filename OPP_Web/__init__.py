@@ -377,7 +377,6 @@ def update_classifier():
 def prettify(doc):
     # Adds and modifies some values of document objects retrieved from
     # DB for pretty display
-    doc['url'] = doc['url'].replace('&','&amp;')
     doc['source_url'] = doc['source_url'].replace('&','&amp;')
     doc['short_url'] = short_url(doc['url'])
     doc['short_src'] = short_url(doc['source_url'])
