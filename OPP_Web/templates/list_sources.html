@@ -4,9 +4,9 @@
   <div id='sources'>
   {% for src in srcs %}
     {% if src.default_author %}
-      <a href='{{ src.url }}' class='src{{ src.status }}'>[{{ src.default_author }}]</a>
+      <a href='{{ src.url }}' class='src{{ src.status }}'>{{src.source_id}}. {{src.status}} [{{ src.default_author }}]</a><br>
     {% else %}
-      <a href='{{ src.url }}' class='src{{ src.status }}'>[{{ src.url }}]</a>
+      <a href='{{ src.url }}' class='src{{ src.status }}'>[{{ src.name }}]</a>
     {% endif %}
   {% endfor %}
   </div>
