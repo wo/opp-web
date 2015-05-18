@@ -5,7 +5,7 @@
   {% for src in srcs %}
     {% if src.default_author %}
       <a href='{{ src.url }}' class='src{{ src.status }}'>{{src.source_id}}. 
-          {% if src.status > 1 %} {{ Error src.status }} {% endif %}
+          {% if src.status > 1 %} Error {{ src.status }} {% endif %}
           [{{ src.default_author }}]</a> ({{src.num_papers}})<br>
     {% else %}
       <a href='{{ src.url }}' class='src{{ src.status }}'>[{{ src.name }}]</a>
