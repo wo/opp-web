@@ -4,7 +4,7 @@
   <div id='sources'>
   {% for src in srcs %}
     {% if src.default_author %}
-      <a href='{{ src.url }}' class='src{{ src.status }}'>{{src.source_id}}. {{src.status}} [{{ src.default_author }}]</a><br>
+      <a href='{{ src.url }}' class='src{{ src.status }}'>{{src.source_id}}. {{src.status}} [{{ src.default_author }}]</a> ({{src.num_papers}})<br>
     {% else %}
       <a href='{{ src.url }}' class='src{{ src.status }}'>[{{ src.name }}]</a>
     {% endif %}
