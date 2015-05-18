@@ -629,7 +629,7 @@ def list_sources():
     '''
     cur.execute(query)
     rows = cur.fetchall()
-    return render_template('list_sources.html', srcs=rows)
+    return render_template('list_sources.html', srcs=rows, admin=is_admin())
 
 if __name__ == "__main__":
     app.run()
