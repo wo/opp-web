@@ -4,9 +4,9 @@
   <div id='sources'>
   {% for src in srcs %}
     {% if src.default_author %}
+      {% if admin %} {{ src.source_id }}. [{{ src.num_papers }}] {% endif %}
       <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.default_author }}</a>
       {% if src.status > 1 %} (Error {{ src.status }}) {% endif %}
-      {% if admin %} (id {{ src.source_id }}, {{src.num_papers}} papers) {% endif %}
       <br>
     {% else %}
       <a href='{{ src.url }}' class='src{{ src.status }}'>[{{ src.name }}]</a>
