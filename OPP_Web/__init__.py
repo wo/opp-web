@@ -619,7 +619,7 @@ error = {
 def list_sources():
     cur = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
     #query = 'SELECT * FROM sources WHERE parent_id IS NULL ORDER BY default_author'
-    query = '''SELECT S.*, count(document_id) AS num_papers
+    query = '''SELECT S.*, COUNT(document_id) AS num_papers
         FROM sources S
         LEFT JOIN links USING (source_id)
         LEFT JOIN locations L USING (location_id)
