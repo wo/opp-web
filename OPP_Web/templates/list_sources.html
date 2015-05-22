@@ -5,6 +5,7 @@
   {% for src in srcs %}
     {% if src.default_author %}
       {% if admin %} {{ src.source_id }}. [{{ src.num_papers }}] {% endif %}
+      {% if admin and src.parent_id %} [sub of {{ src.parent_id }}] {% endif %}
       <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.default_author }}</a>
       {% if src.status > 1 %} (Error {{ src.status }}) {% endif %}
       <br>
