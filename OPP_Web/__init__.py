@@ -408,7 +408,7 @@ def relative_date(time, diff=False):
     if delta.days > 1:
         return str(delta.days) + "&nbsp;days ago"
     if delta.days == 1:
-        return "yesterday"
+        return "1&nbsp;day ago"
     if delta.seconds > 7200:
         return str(delta.seconds / 3600) + "&nbsp;hours ago"
     if delta.seconds > 3600:

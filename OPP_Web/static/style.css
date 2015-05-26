@@ -79,6 +79,9 @@ a.iTopic10 { color:#933; }
 .iFooter {
   color: #669; font-size:small; margin-top:2px; 
 }
+.iFooter a {
+  text-decoration:none;
+}
 
 .daysep { 
   display:none;
