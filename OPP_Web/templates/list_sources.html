@@ -2,8 +2,8 @@
 {% block body %}
   <h2>Tracked source pages</h2>
   
-  <div class='sources'>
   <h3>Personal pages</h3>
+  <div class='sources'>
   {% for src in srcs1 %}
     {% if admin %} 
       {{ src.source_id }}. [{{ src.num_papers }}]
@@ -14,8 +14,10 @@
     {% if admin and src.status > 1 %} (Error {{ src.status }}) {% endif %}
       <br>
   {% endfor %}
+  </div>
 
   <h3>Repositories and Open Access Journals</h3>
+  <div class='sources'>
   {% for src in srcs2 %}
     {% if admin %} 
       {{ src.source_id }}. [{{ src.num_papers }}]
@@ -26,7 +28,6 @@
     {% if admin and src.status > 1 %} (Error {{ src.status }}) {% endif %}
       <br>
   {% endfor %}
-      
   </div>
   
   <p>* Sources marked with a star are currently

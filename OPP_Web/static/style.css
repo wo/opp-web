@@ -118,7 +118,9 @@ a.iTopic10 { color:#933; }
 }
 
 .sources {
-   columns: 20em;
+   columns:3 10em;
+   -moz-columns:3 10em;
+   -webkit-columns:3 10em;
 }
 .sources a.src404 {
    color:#c00;
