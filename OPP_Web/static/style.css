@@ -117,6 +117,9 @@ a.iTopic10 { color:#933; }
   background:#ccf;
 }
 
+.sources {
+   columns: 20em;
+}
 .sources a.src404 {
    color:#c00;
 }
