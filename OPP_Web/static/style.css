@@ -117,16 +117,16 @@ a.iTopic10 { color:#933; }
   background:#ccf;
 }
 
-#sources a {
+.sources a {
    padding:2px 5px; color:#c09;
 }
-#sources a.src404 {
+.sources a.src404 {
    color:#c00;
 }
-#sources a.src0 {
+.sources a.src0 {
    color:#096;
 }
-#sources a.src1 {
+.sources a.src1 {
    color:#069;
 }
 
