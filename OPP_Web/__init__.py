@@ -442,7 +442,7 @@ def atom_feed_create():
     feed = AtomFeed('Philosophical Progress',
                     feed_url=base_url+'feed.xml', url=base_url)
     num_days = 7
-    start_date = (datetime.today() - timedelta(days=num_days+1)).strftime('%Y-%m-%d')
+    start_date = (datetime.today() - timedelta(days=num_days)).strftime('%Y-%m-%d')
     docs = get_docs('''SELECT doc_id, authors, title, abstract, url, filetype,
                        numwords, source_url, found_date,
                        DATE_FORMAT(found_date, '%d %M %Y') AS found_day
@@ -457,7 +457,7 @@ def atom_feed_create():
         if doc['found_day'] != day:
             if day:
                 feed.add('Articles found on {}'.format(day), 
-                         unicode(text),
+                         unicode(day_text),
                          content_type='html',
                          author='Philosophical Progress',
                          url=base_url,
@@ -467,6 +467,13 @@ def atom_feed_create():
         day_text += u'<b>{}: <a href="{}">{}</a></b>'.format(doc['authors'], doc['url'], doc['title'])
         day_text += u' ({}, {} words)<br />'.format(doc['filetype'], doc['numwords'])
         day_text += u' <div>{}</div><br />\n'.format(doc['abstract'])
+    if day_text:
+        feed.add('Articles found on {}'.format(day), 
+                 unicode(day_text),
+                 content_type='html',
+                 author='Philosophical Progress',
+                 url=base_url,
+                 updated=datetime.now())
     return feed.get_response()
     
 ################ Static pages #########################################
