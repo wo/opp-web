@@ -453,7 +453,7 @@ def atom_feed():
         if doc['found_day'] != day:
             if day:
                 feed.add('Articles found on {}'.format(day), 
-                         unicode(day_text),
+                         escape_illegal_chars(day_text),
                          content_type='html',
                          author='Philosophical Progress',
                          url=base_url+'?'+str(updated)[:10],
@@ -466,13 +466,18 @@ def atom_feed():
         day_text += u' <div>{}</div><br />\n'.format(doc['abstract'])
     if day_text:
         feed.add('Articles found on {}'.format(day), 
-                 unicode(day_text),
+                 escape_illegal_chars(day_text),
                  content_type='html',
                  author='Philosophical Progress',
                  url=base_url+'?'+str(updated)[:10],
                  updated=updated)
     return feed.get_response()
     
+_illegal_xml_chars_RE = re.compile(u'[\x00-\x08\x0b\x0c\x0e-\x1F\uD800-\uDFFF\uFFFE\uFFFF]')
+def escape_illegal_chars(val, replacement='?'):
+    return _illegal_xml_chars_RE.sub(replacement, val)    
+
+
 ################ Static pages #########################################
 
 @app.route("/about")
