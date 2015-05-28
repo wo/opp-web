@@ -9,12 +9,11 @@
       {{ src.source_id }}. [{{ src.num_papers }}]
       {% if src.parent_id %} [sub of {{ src.parent_id }}] {% endif %}
     {% endif %}
-      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.default_author }}</a>
-    {% if admin %} 
+      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.default_author }}</a>{% 
+      if not admin and src.status > 1 or src.num_papers == 0 %}*{% endif %}
+    {% if admin %}
       {% if src.status > 1 %} (Error {{ src.status }}) {% endif %}
       <br>
-    {% else %}
-      {% if src.status > 1 or src.num_papers == 0 %}<a href='#broken'>*</a> {% endif %}
     {% endif %}
   {% endfor %}
   </div>
@@ -26,17 +25,16 @@
       {{ src.source_id }}. [{{ src.num_papers }}]
       {% if src.parent_id %} [sub of {{ src.parent_id }}] {% endif %}
     {% endif %}
-      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.name }}</a>
-    {% if admin %} 
+      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.name }}</a>{% 
+      if not admin and src.status > 1 or src.num_papers == 0 %}*{% endif %}
+    {% if admin %}
       {% if src.status > 1 %} (Error {{ src.status }}) {% endif %}
       <br>
-    {% else %}
-      {% if src.status > 1 or src.num_papers == 0 %}<a href='#broken'>*</a> {% endif %}
     {% endif %}
   {% endfor %}
   </div>
   
-  <p><a name='broken'>* Sources marked with a star are currently
+  <p>* Sources marked with a star are currently
   inaccessible or don't seem to contain any links to papers.</p>
 
 {% endblock %}
