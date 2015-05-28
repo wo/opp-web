@@ -1,18 +1,39 @@
 {% extends "skeleton.html" %}
 {% block body %}
   <h2>Tracked source pages</h2>
-  <div id='sources'>
-  {% for src in srcs %}
-    {% if src.default_author %}
-      {% if admin %} {{ src.source_id }}. [{{ src.num_papers }}] {% endif %}
-      {% if admin and src.parent_id %} [sub of {{ src.parent_id }}] {% endif %}
+  
+  <h3>Personal pages</h3>
+  <div class='sources'>
+  {% for src in srcs1 %}
+    {% if admin %} 
+      {{ src.source_id }}. [{{ src.num_papers }}]
+      {% if src.parent_id %} [sub of {{ src.parent_id }}] {% endif %}
+    {% endif %}
       <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.default_author }}</a>
+    {% if admin %} 
       {% if src.status > 1 %} (Error {{ src.status }}) {% endif %}
       <br>
     {% else %}
-      <a href='{{ src.url }}' class='src{{ src.status }}'>[{{ src.name }}]</a>
-      <br>
+      {% if src.status > 1 or src.num_papers == 0 %} (broken?) {% endif %}
     {% endif %}
   {% endfor %}
   </div>
+
+  <h3>Repositories and Open Access Journals</h3>
+  <div class='sources'>
+  {% for src in srcs2 %}
+    {% if admin %} 
+      {{ src.source_id }}. [{{ src.num_papers }}]
+      {% if src.parent_id %} [sub of {{ src.parent_id }}] {% endif %}
+    {% endif %}
+      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.name }}</a>
+    {% if admin %} 
+      {% if src.status > 1 %} (Error {{ src.status }}) {% endif %}
+      <br>
+    {% else %}
+      {% if src.status > 1 or src.num_papers == 0 %} (broken?) {% endif %}
+    {% endif %}
+  {% endfor %}
+  </div>
+
 {% endblock %}

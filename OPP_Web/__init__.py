@@ -666,7 +666,7 @@ error = {
    '1000': 'subpage with more links'
 }
 
-@app.route("/opp-sources")
+@app.route("/sources")
 def list_sources():
     cur = mysql.connect().cursor(MySQLdb.cursors.DictCursor)
     #query = 'SELECT * FROM sources WHERE parent_id IS NULL ORDER BY default_author'
@@ -677,10 +677,13 @@ def list_sources():
         LEFT JOIN documents D USING (document_id)
         WHERE D.document_id IS NULL OR (L.spamminess < 0.5 AND D.meta_confidence > 0.5)
         GROUP BY S.source_id
+        ORDER BY S.default_author, S.name
     '''
     cur.execute(query)
     rows = cur.fetchall()
-    return render_template('list_sources.html', srcs=rows, admin=is_admin())
+    srcs1 = [row for row in rows if row['type'] == 1]
+    srcs2 = [row for row in rows if row['type'] == 2]
+    return render_template('list_sources.html', srcs1=srcs1, srcs2=srcs2, admin=is_admin())
 
 if __name__ == "__main__":
     app.run()
