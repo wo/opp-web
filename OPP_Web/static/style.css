@@ -117,7 +117,7 @@ a.iTopic10 { color:#933; }
   background:#ccf;
 }
 
-.sources {
+.multicol {
    columns:3 10em;
    -moz-columns:3 10em;
    -webkit-columns:3 10em;
