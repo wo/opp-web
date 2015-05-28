@@ -433,11 +433,6 @@ class Capturing(list):
 
 @app.route('/feed.xml')
 def atom_feed():
-    return render_template('feed.xml')
-
-# create daily feed, called from cron each midnight:
-@app.route('/feed-create')
-def atom_feed_create():
     base_url = 'http://umsu.de/opp/'
     feed = AtomFeed('Philosophical Progress',
                     feed_url=base_url+'feed.xml', url=base_url)
@@ -447,7 +442,7 @@ def atom_feed_create():
                        numwords, source_url, found_date,
                        DATE_FORMAT(found_date, '%d %M %Y') AS found_day
                        FROM docs
-                       WHERE found_date >= '{0}'
+                       WHERE found_date < CURDATE() AND found_date >= '{0}'
                        ORDER BY found_date DESC
                     '''.format(start_date), limit=200)
     
