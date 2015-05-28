@@ -1,7 +1,8 @@
 import pprint
 import logging.handlers
-from datetime import datetime
+from datetime import datetime, timedelta
 import itertools
+from collections import defaultdict
 import re
 import sys
 from cStringIO import StringIO
@@ -9,6 +10,8 @@ from os.path import abspath, dirname, join
 import MySQLdb.cursors
 from flask import Flask, request, g, url_for, render_template, flash, redirect, abort
 from flask.ext.mysql import MySQL
+from werkzeug.contrib.atom import AtomFeed
+
 sys.path.insert(0, '../')
 import config
 
@@ -204,8 +207,7 @@ def get_next_offset():
     limit = app.config['DOCS_PER_PAGE']
     return offset + limit
     
-def get_docs(select, offset=0):
-    limit = app.config['DOCS_PER_PAGE']
+def get_docs(select, offset=0, limit=app.config['DOCS_PER_PAGE']):
     query = "{0} LIMIT {1} OFFSET {2}".format(select, limit, offset)
     app.logger.debug(query)
     db = get_db()
@@ -214,41 +216,41 @@ def get_docs(select, offset=0):
     docs = cur.fetchall()
     if not docs:
         return docs
-    
-    # set up dictionary for default topic values:
-    for doc in docs:
-        app.logger.debug("retrieved doc {}".format(doc['doc_id']))
-        doc['topics'] = dict(zip(doc['topic_labels'].split(','), 
-                                 map(float, doc['strengths'].split(','))))
-        # unclassified topics have value -1 now (see COALESCE in query)
-    
-    #app.logger.debug(pprint.pformat(docs))
 
-    # find unclassified docs:
-    unclassified = {} # topic_id => [docs]
-    topics = dict(zip(docs[0]['topic_ids'].split(','), docs[0]['topic_labels'].split(',')))
-    for topic_id, topic in topics.iteritems():
-        uncl = [doc for doc in docs if doc['topics'][topic] == -1]
-        if uncl:
-            unclassified[topic_id] = uncl
+    if 'topic_labels' in docs[0]:
+        # set up dictionary for default topic values:
+        for doc in docs:
+            app.logger.debug("retrieved doc {}".format(doc['doc_id']))
+            doc['topics'] = dict(zip(doc['topic_labels'].split(','), 
+                                     map(float, doc['strengths'].split(','))))
+            # unclassified topics have value -1 now (see COALESCE in query)
+    
+        # find unclassified docs:
+        unclassified = {} # topic_id => [docs]
+        topics = dict(zip(docs[0]['topic_ids'].split(','), docs[0]['topic_labels'].split(',')))
+        for topic_id, topic in topics.iteritems():
+            uncl = [doc for doc in docs if doc['topics'][topic] == -1]
+            if uncl:
+                unclassified[topic_id] = uncl
 
-    # classify unclassified docs:
-    if unclassified:
-        app.logger.debug("unclassified documents in get_docs")
-        uncl_docs = itertools.chain.from_iterable(unclassified.values())
-        uncl_docs = dict((doc['doc_id'], doc) for doc in uncl_docs).values() # unique
-        add_content(uncl_docs)
-        for topic_id, doclist in unclassified.iteritems():
-            probs = classify(doclist, topics[topic_id], topic_id)
-            for i,p in enumerate(probs):
-                doclist[i]['topics'][topics[topic_id]] = p
+        # classify unclassified docs:
+        if unclassified:
+            app.logger.debug("unclassified documents in get_docs")
+            uncl_docs = itertools.chain.from_iterable(unclassified.values())
+            uncl_docs = dict((doc['doc_id'], doc) for doc in uncl_docs).values() # unique
+            add_content(uncl_docs)
+            for topic_id, doclist in unclassified.iteritems():
+                probs = classify(doclist, topics[topic_id], topic_id)
+                for i,p in enumerate(probs):
+                    doclist[i]['topics'][topics[topic_id]] = p
 
     # prepare for display:
     docs = [prettify(doc) for doc in docs]
-    for doc in docs:
-        doc['topics'] = sorted(
-            [(t,int(s*10)) for (t,s) in doc['topics'].iteritems() if s > 0.5],
-            key=lambda x:x[1], reverse=True)
+    if 'topic_labels' in docs[0]:
+        for doc in docs:
+            doc['topics'] = sorted(
+                [(t,int(s*10)) for (t,s) in doc['topics'].iteritems() if s > 0.5],
+                key=lambda x:x[1], reverse=True)
 
     return docs
 
@@ -427,6 +429,45 @@ class Capturing(list):
         self.extend(self._stringio.getvalue().splitlines())
         sys.stdout = self._stdout
 
+################ Atom feed #########################################
+
+@app.route('/feed.xml')
+def atom_feed():
+    return render_template('feed.xml')
+
+# create daily feed, called from cron each midnight:
+@app.route('/feed-create')
+def atom_feed_create():
+    feed = AtomFeed('Philosophical Progress',
+                    feed_url=request.url_root+'feed.xml', url=request.url_root)
+    num_days = 7
+    start_date = (datetime.today() - timedelta(days=num_days)).strftime('%Y-%m-%d')
+    docs = get_docs('''SELECT doc_id, authors, title, abstract, url, filetype,
+                       numwords, source_url, found_date,
+                       DATE_FORMAT(found_date, '%d %M %Y') AS found_day
+                       FROM docs
+                       WHERE found_date >= '{0}'
+                       ORDER BY found_date DESC
+                    '''.format(start_date), limit=200)
+    
+    docs_per_day = defaultdict(list)
+    for doc in docs:
+        docs_per_day[doc['found_day']].append(doc)
+    
+    for day in docs_per_day:
+        text = u''
+        for doc in docs_per_day[day]:
+            text += u'<b>{}: <a href="{}">{}</a></b>'.format(doc['authors'], doc['url'], doc['title'])
+            text += u' ({}, {} words)<br />'.format(doc['filetype'], doc['numwords'])
+            text += u' <div>{}</div><br />\n'.format(doc['abstract'])
+        feed.add('Articles found on {}'.format(day), 
+                 unicode(text),
+                 content_type='html',
+                 author='Philosophical Progress',
+                 url=request.url_root,
+                 updated=datetime.now())
+    return feed.get_response()
+    
 ################ Static pages #########################################
 
 @app.route("/about")
