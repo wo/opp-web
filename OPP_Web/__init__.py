@@ -446,14 +446,13 @@ def atom_feed_create():
     docs = get_docs('''SELECT doc_id, authors, title, abstract, url, filetype,
                        numwords, source_url, found_date,
                        DATE_FORMAT(found_date, '%d %M %Y') AS found_day
-                       DATE_FORMAT(found_date, '%Y-%M-%d') AS found_day_ymd
                        FROM docs
                        WHERE found_date >= '{0}'
                        ORDER BY found_date DESC
                     '''.format(start_date), limit=200)
     
     day = ''
-    day_ymd = ''
+    updated = None 
     day_text = u''
     for doc in docs:
         if doc['found_day'] != day:
@@ -462,10 +461,10 @@ def atom_feed_create():
                          unicode(day_text),
                          content_type='html',
                          author='Philosophical Progress',
-                         url=base_url+'?'+day_ymd,
-                         updated=day_ymd)
+                         url=base_url+'?{}'.format(updated),
+                         updated=updated)
             day = doc['found_day']
-            day_ymd = doc['found_day_ymd']
+            updated = doc['found_date']
             day_text = u''
         day_text += u'<b>{}: <a href="{}">{}</a></b>'.format(doc['authors'], doc['url'], doc['title'])
         day_text += u' ({}, {} words)<br />'.format(doc['filetype'], doc['numwords'])
@@ -475,8 +474,8 @@ def atom_feed_create():
                  unicode(day_text),
                  content_type='html',
                  author='Philosophical Progress',
-                 url=base_url+'?'+day_ymd,
-                 updated=day_ymd)
+                 url=base_url+'?'+str(updated)[:10],
+                 updated=updated)
     return feed.get_response()
     
 ################ Static pages #########################################
