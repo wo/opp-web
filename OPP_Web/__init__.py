@@ -438,8 +438,9 @@ def atom_feed():
 # create daily feed, called from cron each midnight:
 @app.route('/feed-create')
 def atom_feed_create():
+    base_url = 'http://umsu.de/opp/'
     feed = AtomFeed('Philosophical Progress',
-                    feed_url=request.url_root+'feed.xml', url=request.url_root)
+                    feed_url=base_url+'feed.xml', url=base_url)
     num_days = 7
     start_date = (datetime.today() - timedelta(days=num_days)).strftime('%Y-%m-%d')
     docs = get_docs('''SELECT doc_id, authors, title, abstract, url, filetype,
@@ -464,7 +465,7 @@ def atom_feed_create():
                  unicode(text),
                  content_type='html',
                  author='Philosophical Progress',
-                 url=request.url_root,
+                 url=base_url,
                  updated=datetime.now())
     return feed.get_response()
     
