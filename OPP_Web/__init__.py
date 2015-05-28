@@ -461,7 +461,7 @@ def atom_feed_create():
                          unicode(day_text),
                          content_type='html',
                          author='Philosophical Progress',
-                         url=base_url+'?{}'.format(updated),
+                         url=base_url+'?'+str(updated)[:10],
                          updated=updated)
             day = doc['found_day']
             updated = doc['found_date']
