@@ -18,6 +18,7 @@ CREATE TABLE docs (
   spamminess FLOAT(4,3) UNSIGNED DEFAULT NULL,
   content MEDIUMTEXT DEFAULT NULL,
   PRIMARY KEY (doc_id),
+  UNIQUE KEY url (url),
   KEY (found_date)
 ) ENGINE=InnoDB CHARACTER SET utf8;
 
