@@ -56,7 +56,7 @@ def set_rootdir():
 def index():
     offset = int(request.args.get('start') or 0)
     docs = get_docs('''SELECT D.doc_id, D.authors, D.title, D.abstract, D.url, D.filetype,
-                       D.found_date, D.numwords, D.source_url, D.meta_confidence,
+                       D.found_date, D.numwords, D.source_url, D.source_name, D.meta_confidence,
                        GROUP_CONCAT(T.label) AS topic_labels,
                        GROUP_CONCAT(T.topic_id) AS topic_ids,
                        GROUP_CONCAT(COALESCE(M.strength, -1)) AS strengths
@@ -124,7 +124,7 @@ def list_topic(topic):
     if rows:
         doc_ids = [str(row['doc_id']) for row in rows]
         docs = get_docs('''SELECT D.doc_id, D.authors, D.title, D.abstract, D.url, D.filetype,
-                           D.found_date, D.numwords, D.source_url, D.meta_confidence,
+                           D.found_date, D.numwords, D.source_url, D.source_name, D.meta_confidence,
                            GROUP_CONCAT(T.label) AS topic_labels,
                            GROUP_CONCAT(T.topic_id) AS topic_ids,
                            GROUP_CONCAT(COALESCE(M.strength, -1)) AS strengths
@@ -381,7 +381,7 @@ def prettify(doc):
     # DB for pretty display
     doc['source_url'] = doc['source_url'].replace('&','&amp;')
     doc['short_url'] = short_url(doc['url'])
-    doc['short_src'] = short_url(doc['source_url'])
+    doc['source_name'] = doc['source_name'].replace('&','&amp;')
     doc['filetype'] = doc['filetype'].upper()
     doc['reldate'] = relative_date(doc['found_date'])
     doc['deltadate'] = relative_date(doc['found_date'], 1)
@@ -439,7 +439,7 @@ def atom_feed():
     num_days = 7
     start_date = (datetime.today() - timedelta(days=num_days)).strftime('%Y-%m-%d')
     docs = get_docs('''SELECT doc_id, authors, title, abstract, url, filetype,
-                       numwords, source_url, found_date,
+                       numwords, source_url, source_name, found_date,
                        DATE_FORMAT(found_date, '%d %M %Y') AS found_day
                        FROM docs
                        WHERE found_date < CURDATE() AND found_date >= '{0}'

@@ -37,7 +37,7 @@
       </div>
       {% endif %}
       <div class='iFooter'>
-        <span>Found {{ doc.reldate|safe }} on <a href="{{ doc.source_url }}">{{ doc.short_src }}</a></span>
+        <span>Found {{ doc.reldate|safe }} on <a href="{{ doc.source_url }}">{{ doc.source_name }}</a></span>
         {% if admin %}
           <span>doc {{ doc.doc_id }}</span>
           {% if doc.loc_id %}<span>loc {{ doc.loc_id }}</span>{% endif %}
