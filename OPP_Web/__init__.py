@@ -498,6 +498,7 @@ def list_uncertain_docs():
             GROUP_CONCAT(L.location_id SEPARATOR ' ') as loc_ids,
             GROUP_CONCAT(L.spamminess SEPARATOR ' ') as spamminesses,
             GROUP_CONCAT(S.url SEPARATOR ' ') as srcs,
+            GROUP_CONCAT(S.name SEPARATOR ' ') as src_names,
             MIN(L.filetype) as filetype,
             MIN(L.filesize) as filesize
          FROM
@@ -526,6 +527,7 @@ def list_uncertain_docs():
     rows = cur.fetchall()
     for row in rows: 
         row['source_url'] = row['srcs'].split(' ')[0]
+        row['source_name'] = row['src_names'].split(' ')[0]
         row['url'] = row['locs'].split(' ')[0]
         row['loc_id'] = row['loc_ids'].split(' ')[0]
         row['spamminess'] = row['spamminesses'].split(' ')[0]
