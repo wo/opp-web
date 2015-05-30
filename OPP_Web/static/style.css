@@ -122,8 +122,14 @@ a.iTopic10 { color:#933; }
    -moz-columns:3 10em;
    -webkit-columns:3 10em;
 }
+.sources a.src403 {
+   color:#c90;
+}
 .sources a.src404 {
    color:#c00;
+}
+.sources a.src500 {
+   color:#c09;
 }
 .sources a.src0 {
    color:#096;

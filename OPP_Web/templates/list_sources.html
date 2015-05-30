@@ -11,7 +11,9 @@
     {% endif %}
       <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.default_author }}</a>{% 
       if not admin and src.status > 1 or src.num_papers == 0 %}*{% endif %}
-    {% if admin and src.status > 1 %} (Error {{ src.status }}) {% endif %}
+    {% if admin %}
+      {% if src.status > 1 %} (Error {{ src.status }}) {% endif %}
+    {% endif %}
       <br>
   {% endfor %}
   </div>
