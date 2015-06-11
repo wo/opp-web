@@ -47,6 +47,15 @@ function selectArea(t) {
     else self.location.href=rootdir+t;
 }
 
+function vote(doc_id, topic_id, class_id) {
+    var req = new XMLHttpRequest();
+    var url = rootdir+"train";
+    var params = 'doc='+doc_id+'&topic_id='+topic_id+'&class='+class_id;
+    req.open('GET', url+'?'+params, true);
+    req.send();
+    return false;
+}
+
 function edit(doc_id) {
     window.processing = false;
     var authors = document.getElementById('authors'+doc_id).innerHTML.replace(/'/g,'&#39;');

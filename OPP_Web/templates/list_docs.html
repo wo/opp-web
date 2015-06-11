@@ -6,10 +6,12 @@
       <div class='daysep'>{{ doc.deltadate }}</div>
       {% if topic and admin %}
         <div class='iTrain'>
-        <a href="{{ rootdir }}train?topic={{topic}}&topic_id={{topic_id}}&doc={{doc.doc_id}}&class=1"
+        <a href="{{ rootdir }}train?topic_id={{topic_id}}&doc={{doc.doc_id}}&class=1"
+           onclick="return vote({{doc.doc_id}},{{topic_id}},1)"
            ><img src="{{ rootdir }}static/up.png" alt="up" height="20" class="up"></a><br>
         {{ doc.strength }}<br>
-        <a href="{{ rootdir}}train?topic={{topic}}&topic_id={{topic_id}}&doc={{doc.doc_id}}&class=0"
+        <a href="{{ rootdir }}train?topic_id={{topic_id}}&doc={{doc.doc_id}}&class=0"
+           onclick="return vote({{doc.doc_id}},{{topic_id}},0)"
            ><img src="{{ rootdir }}static/down.png" alt="down" height="20" class="down"></a><br>
         </div>
       {% endif %}
