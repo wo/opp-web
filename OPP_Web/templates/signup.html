@@ -1,0 +1,33 @@
+{% extends "skeleton.html" %}
+ 
+{% block body %}
+  <h2>Sign up</h2>
+ 
+   
+  <form action="{{ url_for('signup') }}" method=post>
+    {{ form.hidden_tag() }}
+     
+    {{ form.username.label }}
+    {% for message in form.username.errors %}
+    <div class="flash">{{ message }}</div>
+    {% endfor %}
+   
+    {{ form.username }}
+     
+    {{ form.email.label }}
+    {% for message in form.email.errors %}
+    <div class="flash">{{ message }}</div>
+    {% endfor %}
+    {{ form.email }}
+     
+    {{ form.password.label }}
+    {% for message in form.password.errors %}
+    <div class="flash">{{ message }}</div>
+    {% endfor %}
+   
+    {{ form.password }}
+     
+    {{ form.submit }}
+  </form>
+     
+{% endblock %}
