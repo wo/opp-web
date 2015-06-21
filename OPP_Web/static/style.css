@@ -9,6 +9,9 @@ a:visited { color:#50a; }
 .msg {
   margin:20px 30px; color:#900;
 }
+.flash {
+  color:#c00;
+}
 
 #navig {
   margin:0 0; padding:15px; overflow:auto; background:#1c6699; color:#fff;
@@ -159,11 +162,27 @@ a.iTopic10 { color:#933; }
 #lbOverlay { display:none; position:absolute; top:0; left:0; width:100%; height:100%; z-index:9; background-color:#ccc; -moz-opacity: 0.9; opacity:.90; filter:alpha(opacity=90); }
 #lbOverlay[id]{ position:fixed; }
 
+/* Signup and login forms */
+form label {
+  font-weight: bold; display: block; padding: 5px 0;
+}
+form input#username, form input#email, form input#password {
+  width: 300px; background-color: #fafafa; border-radius: 3px; border: 1px solid #cccccc; padding: 5px;
+}
+form input#password {
+  margin-bottom: 20px;
+}
+form input#submit {
+  display: block; border-radius: 3px; border:1px solid #d8d8d8; padding: 10px; font-weight:bold; 
+}
+ 
 
 /* login */
 
 #loginform { margin:30px; width:300px; }
 #loginform label { width:80px; display:inline-block; }
+
+
 
 
 /* pages tracked page */

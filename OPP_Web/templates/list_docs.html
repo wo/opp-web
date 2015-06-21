@@ -4,7 +4,7 @@
   {% for doc in docs %}
     <li>
       <div class='daysep'>{{ doc.deltadate }}</div>
-      {% if topic and admin %}
+      {% if topic and (admin or user==topic) %}
         <div class='iTrain'>
         <a href="{{ rootdir }}train?topic_id={{topic_id}}&doc={{doc.doc_id}}&class=1"
            onclick="return vote({{doc.doc_id}},{{topic_id}},1)"

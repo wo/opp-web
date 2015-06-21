@@ -24,8 +24,11 @@ oppdocs = '{{ oppdocs }}';
     <h1><a href="{{ rootdir }}">Philosophical Progress</a></h1>
 
       <select size="1" name="area" onchange="selectArea(this.options[this.selectedIndex].value)">
-         <option value="all"{% if not topic %} selected="selected"{% endif %}>All Areas of Philosophy</option>
-      {% for t in (
+       {% if user %}
+        <option value="{{ user }}"{% if topic==user %} selected="selected"{% endif %}>{{ user }}'s channel</option>
+       {% endif %}
+       <option value="all"{% if not topic %} selected="selected"{% endif %}>All Areas of Philosophy</option>
+       {% for t in (
                    ('Ethics', 'ethics'),
                    ('Political Philosophy', 'political'),
                    ('Metaphysics', 'metaphysics'), 
@@ -51,11 +54,15 @@ oppdocs = '{{ oppdocs }}';
       <!--a href="add">Add your papers</a-->
     </span>
 
-    <span id="user">
     {% if user %}
-      Hello {{ user }}
+      <span id="user">
+        <a href="{{ rootdir }}logout">Log out {{ user }}</a>
+      </span>
+    {% else %}
+      <span id="user">
+        <a href="{{ rootdir }}login">Log in</a>
+      </span>
     {% endif %}
-    </span>
 
     </form>
   </div>

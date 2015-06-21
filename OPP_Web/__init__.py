@@ -8,7 +8,12 @@ import sys
 import requests
 from cStringIO import StringIO
 from os.path import abspath, dirname, join
-from flask import Flask, request, g, url_for, render_template, flash, redirect, abort
+from flask import Flask, request, g, url_for, render_template, flash, redirect, abort, session
+from flask.ext.sqlalchemy import SQLAlchemy
+from flask.ext.wtf import Form
+from wtforms import TextField, PasswordField, SubmitField
+from wtforms.validators import Required, Email, Regexp, Length
+from werkzeug import generate_password_hash, check_password_hash
 from werkzeug.contrib.atom import AtomFeed
 
 sys.path.insert(0, '../')
@@ -22,6 +27,124 @@ logfile = join(abspath(dirname(__file__)), '../log/opp-web.log')
 handler = logging.FileHandler(logfile)
 app.logger.addHandler(handler)
 
+db = SQLAlchemy()
+db.init_app(app)
+
+class User(db.Model):
+    __tablename__ = 'users'
+
+    user_id = db.Column(db.Integer, primary_key = True)
+    username = db.Column(db.String)
+    email = db.Column(db.String)
+    pwhash = db.Column(db.String)
+    last_login = db.Column(db.DateTime)
+
+    def __init__(self, username, email, password):
+        self.username = username
+        self.email = email.lower()
+        self.set_password(password)
+        self.last_login = datetime.now()
+    
+    def set_password(self, password):
+        self.pwhash = generate_password_hash(password)
+   
+    def check_password(self, password):
+        return check_password_hash(self.pwhash, password)
+
+class SignupForm(Form):
+    username = TextField("Username", [
+        Required(),
+        Length(min=3, max=100),
+        Regexp(r'[A-Za-z0-9_\-]', message="only letters and numbers please")
+    ])
+    email = TextField("Email", [
+        Required(),
+        Email()
+    ])
+    password = PasswordField('Password', [Required()])
+    submit = SubmitField("Create account")
+    
+    def __init__(self, *args, **kwargs):
+        Form.__init__(self, *args, **kwargs)
+        
+    def validate(self):
+        if not Form.validate(self):
+            return False
+        user = User.query.filter_by(username=self.username.data).first()
+        if user:
+            self.username.errors.append('That username is already taken')
+            return False
+        else:
+            # add topic on backend server; at the moment, every user
+            # has exactly one topic, whose label equals the username
+            url = app.config['JSONSERVER_URL']+'init_topic?label={}'.format(self.username.data)
+            try:
+                r = requests.get(url)
+                r.raise_for_status()
+                json = r.json()
+                if not json['msg'] == 'OK':
+                    raise
+            except:
+                self.username.errors.append('Could not initialize topic on backend server, sorry!')
+                return False
+            return True
+
+class LoginForm(Form):
+    username = TextField('Username', [Required()])
+    password = PasswordField('Password', [Required()])
+    submit = SubmitField("Log in")
+
+    def __init__(self, *args, **kwargs):
+        Form.__init__(self, *args, **kwargs)
+        
+    def validate(self):
+        if not Form.validate(self):
+            return False
+        user = User.query.filter_by(username=self.username.data).first()
+        if user is None:
+            self.username.errors.append('Unknown username')
+            return False
+        if not user.check_password(self.password.data):
+            self.password.errors.append('Invalid password')
+            return False
+        user.last_login = datetime.now()
+        db.session.commit()
+        return True
+        
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+    form = SignupForm()
+    if request.method == 'POST':
+        if form.validate() == False:
+            return render_template('signup.html', form=form)
+        else: 
+            newuser = User(form.username.data, form.email.data, form.password.data)
+            db.session.add(newuser)
+            db.session.commit()
+            session.permanent = True
+            session['username'] = newuser.username
+            return redirect(url_for('index'))
+    else: 
+        return render_template('signup.html', form=form)
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    form = LoginForm()
+    if request.method == 'POST':
+        if form.validate() == False:
+            return render_template('login.html', form=form)
+        else:
+            session.permanent = True
+            session['username'] = form.username.data
+            return redirect(url_for('index'))
+    else:
+        return render_template('login.html', form=form)
+
+@app.route('/logout')
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('index'))
+    
 @app.before_request
 def log_request():
     if '/static/' not in request.path:
@@ -40,8 +163,17 @@ def set_rootdir():
 
 @app.route("/")
 def index():
+    username = get_user()
+    if username:
+        return list_topic(username)
+    else:
+        return list_all()
+
+@app.route("/all")
+def list_all():
     offset = int(request.args.get('start') or 0)
     url = app.config['JSONSERVER_URL']+'doclist?offset={}'.format(offset)
+    r = None
     try:
         r = requests.get(url)
         r.raise_for_status()
@@ -59,6 +191,7 @@ def list_topic(topic):
     min_p = float(request.args.get('min') or (0.0 if is_admin() else 0.5))
     offset = int(request.args.get('start') or 0)
     url = app.config['JSONSERVER_URL']+'topiclist/{}?offset={}'.format(topic,offset)
+    r = None
     try:
         r = requests.get(url)
         r.raise_for_status()
@@ -79,6 +212,7 @@ def editdoc():
         abort(401)
     url = app.config['JSONSERVER_URL']+'editdoc'
     data = request.form
+    r = None
     try:
         r = requests.post(url, data)
         r.raise_for_status()
@@ -89,9 +223,9 @@ def editdoc():
 
 @app.route("/train")
 def train():
-    if not is_admin():
-        abort(401)
-    url = app.config['JSONSERVER_URL']+'train?'+request.query_string
+    query = request.query_string + '&user=' + get_user()
+    url = app.config['JSONSERVER_URL']+'train?'+query
+    r = None
     try:
         r = requests.get(url)
         r.raise_for_status()
@@ -104,6 +238,7 @@ def train():
 def atom_feed():
     url = app.config['JSONSERVER_URL']+'feedlist'
     docs = []
+    r = None
     try:
         r = requests.get(url)
         r.raise_for_status()
@@ -151,6 +286,7 @@ def escape_illegal_chars(val, replacement='?'):
 @app.route("/sources")
 def list_sources():
     url = app.config['JSONSERVER_URL']+'sources'
+    r = None
     try:
         r = requests.get(url)
         r.raise_for_status()
@@ -169,6 +305,7 @@ def list_sources():
 def list_uncertain_docs():
     offset = int(request.args.get('start') or 0)
     url = app.config['JSONSERVER_URL']+'opp-queue?offset={}'.format(offset)
+    r = None
     try:
         r = requests.get(url)
         r.raise_for_status()
@@ -188,9 +325,9 @@ def about_page():
 
         
 def get_user():
-    if app.debug:
-        return 'wo'
-    return request.args.get('user')
+    if 'username' in session:
+        return session['username']
+    return None
 
 def is_admin():
     return get_user() == 'wo'
@@ -244,11 +381,12 @@ def relative_date(time, diff=False):
     return "1&nbsp;minute ago"
     
 def error(r):
-    debug_info = ['access to backend server failed',
-                  'response status: {}'.format(r.status_code),
-                  r.text]
-    if is_admin():
-        debug_info.append('url: {}'.format(r.url))
+    debug_info = ['access to backend server failed']
+    if r:
+        debug_info.append('response status: {}'.format(r.status_code))
+        debug_info.append(r.text)
+        if is_admin():
+            debug_info.append('url: {}'.format(r.url))
     return render_template('error.html',
                            info=debug_info)
 
