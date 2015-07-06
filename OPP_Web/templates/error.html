@@ -1,0 +1,19 @@
+{% extends "skeleton.html" %}
+{% block body %}
+
+   <h3>Something went wrong.</h3>
+
+   {% for line in info %}
+     <pre>{{ line }}</pre>
+   {% endfor %}
+
+   <p>Contact:
+<script type="text/javascript">
+//<![CDATA[//><!--
+document.write(('<'+'a href="mailto:woyumsu.de">woyumsu.de<'+'/a>').replace(/y/g, '@'));
+//--><!]]>
+</script>
+<noscript>wo at umsu dot de</noscript>
+  </p>
+
+ {% endblock %}
