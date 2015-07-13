@@ -38,6 +38,8 @@ class User(db.Model):
     email = db.Column(db.String)
     pwhash = db.Column(db.String)
     last_login = db.Column(db.DateTime)
+    upvotes = db.Column(db.Integer)
+    downvotes = db.Column(db.Integer)
 
     def __init__(self, username, email, password):
         self.username = username
@@ -54,7 +56,7 @@ class User(db.Model):
 class SignupForm(Form):
     username = TextField("Username", [
         Required(),
-        Length(min=3, max=100),
+        Length(min=2, max=80),
         Regexp(r'[A-Za-z0-9_\-]', message="only letters and numbers please")
     ])
     email = TextField("Email", [
@@ -163,9 +165,9 @@ def set_rootdir():
 
 @app.route("/")
 def index():
-    username = get_user()
-    if username:
-        return list_topic(username)
+    user = get_user()
+    if user:
+        return list_topic(user.username)
     else:
         return list_all()
 
@@ -175,16 +177,19 @@ def list_all():
     url = app.config['JSONSERVER_URL']+'doclist?offset={}'.format(offset)
     r = None
     try:
+        app.logger.debug("fetching {}".format(url))
         r = requests.get(url)
         r.raise_for_status()
         json = r.json()
-        return render_template('list_docs.html', 
-                               user=get_user(),
-                               admin=is_admin(),
-                               docs=json['docs'],
-                               next_offset=get_next_offset())
     except:
         return error(r)
+    else:
+        return render_template('list_docs.html', 
+                               user=get_username(),
+                               admin=is_admin(),
+                               intro=get_intro(),
+                               docs=json['docs'],
+                               next_offset=get_next_offset())
 
 @app.route("/t/<topic>")
 def list_topic(topic):
@@ -196,15 +201,16 @@ def list_topic(topic):
         r = requests.get(url)
         r.raise_for_status()
         json = r.json()
+    except:
+        return error(r)
+    else:
         return render_template('list_docs.html', 
-                               user=get_user(),
+                               user=get_username(),
                                admin=is_admin(),
                                topic=topic,
                                topic_id=json['topic_id'],
                                docs=json['docs'],
                                next_offset=get_next_offset())
-    except:
-        return error(r)
 
 @app.route('/_editdoc', methods=['POST'])
 def editdoc():
@@ -223,7 +229,7 @@ def editdoc():
 
 @app.route("/train")
 def train():
-    query = request.query_string + '&user=' + get_user()
+    query = request.query_string + '&user=' + get_username()
     url = app.config['JSONSERVER_URL']+'train?'+query
     r = None
     try:
@@ -291,6 +297,9 @@ def list_sources():
         r = requests.get(url)
         r.raise_for_status()
         json = r.json()
+    except:
+        return error(r)
+    else:
         srcs = json['sources']
         srcs1 = [src for src in srcs if src['type'] == 1]
         srcs2 = [src for src in srcs if src['type'] == 2]
@@ -298,8 +307,6 @@ def list_sources():
                                srcs1=srcs1,
                                srcs2=srcs2,
                                admin=is_admin())
-    except:
-        return error(r)
 
 @app.route("/opp-queue")
 def list_uncertain_docs():
@@ -310,27 +317,43 @@ def list_uncertain_docs():
         r = requests.get(url)
         r.raise_for_status()
         json = r.json()
+    except:
+        return error(r)
+    else:
         return render_template('list_docs.html', 
-                               user=get_user(),
+                               user=get_username(),
                                admin=is_admin(),
                                docs=json['docs'],
                                oppdocs=True,
                                next_offset=get_next_offset())
-    except:
-        return error(r)
-
-@app.route("/about")
-def about_page():
-    return render_template('about.html', user=get_user())
 
         
 def get_user():
+    if 'username' in session:
+        user = User.query.filter_by(username=username).first()
+        if user:
+            return user
+    return None
+
+def get_username():
     if 'username' in session:
         return session['username']
     return None
 
 def is_admin():
-    return get_user() == 'wo'
+    return get_username() == 'wo'
+    
+def get_intro():
+    user = get_user()
+    if user:
+        if user.upvotes == 0 and user.downvotes == 10:
+            return 'user_new'
+        if user.upvotes < 10 or user.downvotes < 10:
+            return 'user_training'
+        return 'user_trained'
+    else:
+        if request.path in ('/', '/all'):
+    return 'general'
 
 def get_next_offset():
     offset = int(request.args.get('start') or 0)

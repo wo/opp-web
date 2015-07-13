@@ -22,46 +22,13 @@ oppdocs = '{{ oppdocs }}';
     <form name="filterform" id="filterform" action="{{ rootdir }}" method="GET" onsubmit="return false">
 
     <h1><a href="{{ rootdir }}">Philosophical Progress</a></h1>
-
-      <select size="1" name="area" onchange="selectArea(this.options[this.selectedIndex].value)">
-       {% if user %}
-        <option value="{{ user }}"{% if topic==user %} selected="selected"{% endif %}>{{ user }}'s channel</option>
-       {% endif %}
-       <option value="all"{% if not topic %} selected="selected"{% endif %}>All Areas of Philosophy</option>
-       {% for t in (
-                   ('Ethics', 'ethics'),
-                   ('Political Philosophy', 'political'),
-                   ('Metaphysics', 'metaphysics'), 
-                   ('Epistemology', 'epistemology'),
-                   ('Philosophy of Language', 'language'),
-                   ('Philosophy of Mind', 'mind'),
-                   ('Philosophy of Science', 'science'),
-                   ('Philosophy of Religion', 'religion'),
-                   ('Philosophy of Mathematics', 'mathematics'),
-                   ('Logic', 'logic'),
-                   ('History of Philosophy', 'history'),
-                   ('Continental Philosophy', 'continental')
-                   ) %}
-         <option value="{{ t[1] }}"{% if topic==t[1] %} selected="selected"{% endif %}>{{ t[0] }}</option>
-      {% endfor %}
-         </select>
-    
-    <span>
-      <a href="{{ rootdir }}about">What is this?</a>
-    </span>
-    
-    <span>
-      <!--a href="add">Add your papers</a-->
-    </span>
-
+    {% block selectmenu %}{% endblock %}
     {% if user %}
-      <span id="user">
-        <a href="{{ rootdir }}logout">Log out {{ user }}</a>
-      </span>
+      <span<a href="{{ rootdir }}backstage">Backstage</a></span>
+      <span id="user"><a href="{{ rootdir }}logout">Log out {{ user }}</a></span>
     {% else %}
-      <span id="user">
-        <a href="{{ rootdir }}login">Log in</a>
-      </span>
+      <span><a href="{{ rootdir }}signup">Sign up</a></span>
+      <span id="user"><a href="{{ rootdir }}login">Log in</a></span>
     {% endif %}
 
     </form>
@@ -69,6 +36,10 @@ oppdocs = '{{ oppdocs }}';
 
 
   <div id="content">
+
+  {% if intro %}
+    <div class="intro">{% include 'intro_'~intro~'.html' %}</div>
+  {% endif %}
 
   {% for message in get_flashed_messages() %}
     <div class="msg">{{ message }}</div>
