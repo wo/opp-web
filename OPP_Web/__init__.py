@@ -353,6 +353,7 @@ def get_intro():
         return 'user_trained'
     else:
         if request.path in ('/', '/all'):
+            return 'general'
     return 'general'
 
 def get_next_offset():
