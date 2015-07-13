@@ -44,7 +44,7 @@ Date.prototype.prettify = function(abs) {
 
 function selectArea(t) {
     if (t == 'all') self.location.href=rootdir;
-    else self.location.href=rootdir+t;
+    else self.location.href=rootdir+'t/'+t;
 }
 
 function vote(doc_id, topic_id, class_id) {

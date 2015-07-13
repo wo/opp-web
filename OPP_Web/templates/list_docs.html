@@ -8,11 +8,11 @@
         <div class='iTrain'>
         <a href="{{ rootdir }}train?topic_id={{topic_id}}&doc={{doc.doc_id}}&class=1"
            onclick="return vote({{doc.doc_id}},{{topic_id}},1)"
-           ><img src="{{ rootdir }}static/up.png" alt="up" height="20" class="up"></a><br>
-        {{ doc.strength }}<br>
+           ><img src="{{ rootdir }}static/up.png" alt="up" width="20" class="up"></a>
+        <span>{{ doc.strength }}</span>
         <a href="{{ rootdir }}train?topic_id={{topic_id}}&doc={{doc.doc_id}}&class=0"
            onclick="return vote({{doc.doc_id}},{{topic_id}},0)"
-           ><img src="{{ rootdir }}static/down.png" alt="down" height="20" class="down"></a><br>
+           ><img src="{{ rootdir }}static/down.png" alt="down" width="20" class="down"></a>
         </div>
       {% endif %}
       {% if admin %}
