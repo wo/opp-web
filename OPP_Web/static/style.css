@@ -6,6 +6,9 @@ body {
 a { color: #03b; }
 a:visited { color:#50a; }
 
+.intro {
+  margin:-10px 0px 50px 0px; padding:5px 20px; background:#f9f9f9; border:1px solid #eee; color:#333; line-height:1.5em; font-size:1em;
+}
 .msg {
   margin:-10px 0px 50px 0px; padding:5px 20px; background:#f9f9f9; border:1px solid #eee; color:#333; line-height:1.5em; font-size:1em;
 }
