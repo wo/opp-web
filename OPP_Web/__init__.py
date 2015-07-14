@@ -46,6 +46,8 @@ class User(db.Model):
         self.email = email.lower()
         self.set_password(password)
         self.last_login = datetime.now()
+        self.upvotes = 0
+        self.downvotes = 0
     
     def set_password(self, password):
         self.pwhash = generate_password_hash(password)
@@ -176,8 +178,8 @@ def list_all():
     offset = int(request.args.get('start') or 0)
     url = app.config['JSONSERVER_URL']+'doclist?offset={}'.format(offset)
     r = None
+    app.logger.debug("fetching {}".format(url))
     try:
-        app.logger.debug("fetching {}".format(url))
         r = requests.get(url)
         r.raise_for_status()
         json = r.json()
@@ -185,7 +187,7 @@ def list_all():
         return error(r)
     else:
         return render_template('list_docs.html', 
-                               user=get_username(),
+                               user=get_user(),
                                admin=is_admin(),
                                intro=get_intro(),
                                docs=json['docs'],
@@ -197,16 +199,19 @@ def list_topic(topic):
     offset = int(request.args.get('start') or 0)
     url = app.config['JSONSERVER_URL']+'topiclist/{}?offset={}'.format(topic,offset)
     r = None
+    app.logger.debug("fetching {}".format(url))
     try:
         r = requests.get(url)
         r.raise_for_status()
         json = r.json()
+        app.logger.debug(json)
     except:
         return error(r)
     else:
         return render_template('list_docs.html', 
-                               user=get_username(),
+                               user=get_user(),
                                admin=is_admin(),
+                               intro=get_intro(),
                                topic=topic,
                                topic_id=json['topic_id'],
                                docs=json['docs'],
@@ -236,9 +241,15 @@ def train():
         r = requests.get(url)
         r.raise_for_status()
         json = r.json()
-        return 'OK'
     except:
         return error(r)
+    user = get_user()
+    if request.args.get('class') == '0':
+        user.downvotes += 1
+    else:
+        user.upvotes += 1
+    db.session.commit()
+    return 'OK'
 
 @app.route('/feed.xml')
 def atom_feed():
@@ -321,7 +332,7 @@ def list_uncertain_docs():
         return error(r)
     else:
         return render_template('list_docs.html', 
-                               user=get_username(),
+                               user=get_user(),
                                admin=is_admin(),
                                docs=json['docs'],
                                oppdocs=True,
@@ -329,7 +340,8 @@ def list_uncertain_docs():
 
         
 def get_user():
-    if 'username' in session:
+    username = get_username()
+    if username:
         user = User.query.filter_by(username=username).first()
         if user:
             return user
@@ -346,14 +358,11 @@ def is_admin():
 def get_intro():
     user = get_user()
     if user:
-        if user.upvotes == 0 and user.downvotes == 10:
+        if user.upvotes == 0 and user.downvotes == 0:
             return 'user_new'
         if user.upvotes < 10 or user.downvotes < 10:
             return 'user_training'
         return 'user_trained'
-    else:
-        if request.path in ('/', '/all'):
-            return 'general'
     return 'general'
 
 def get_next_offset():

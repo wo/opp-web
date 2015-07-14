@@ -6,7 +6,7 @@
     <option value="{{ pathname }}"{% if topic==pathname %} selected="selected"{% endif %}>{{ fullname }}</option>
   {%- endmacro %}
   {% if user %}
-    {{ option(user~"'s channel", user) }}
+    {{ option(user.username~"'s channel", user.username) }}
   {% endif %}
   {{ option('All Areas of Philosophy', 'all') }}
   {{ option('Ethics', 'ethics') }}
@@ -29,7 +29,7 @@
   {% for doc in docs %}
     <li>
       <div class='daysep'>{{ doc.deltadate }}</div>
-      {% if topic and (admin or user==topic) %}
+      {% if topic and (admin or user.username==topic) %}
         <div class='iTrain'>
         <a href="{{ rootdir }}train?topic_id={{topic_id}}&doc={{doc.doc_id}}&class=1"
            onclick="return vote({{doc.doc_id}},{{topic_id}},1)"

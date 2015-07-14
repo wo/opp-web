@@ -48,11 +48,17 @@ ol.doclist {
   clear: both; 
 }
 .iEdit {
-  float:right; color:#099; background:#e0e0e0; padding:2px 5px; cursor:pointer;
+  float:right; color:#fff; background:#bbb; padding:2px 5px; margin:3px; cursor:pointer;
 }
 .iTrain { 
-  float: left; width: 50px; margin:4px 0 0 -50px; text-align:center; color:#888;
+  float: right; width: 30px; margin:0; text-align:center; color:#888; line-height:1em;
 }
+.iTrain span { display:none; }
+img.up { background:#999; }
+img.down { background:#999; }
+.iTrain img:hover { background:#1c6699; }
+
+
 .iAuthor, .iTitle {
   line-height:150%;
 }
