@@ -169,7 +169,7 @@ def set_rootdir():
 def index():
     user = get_user()
     if user:
-        return list_topic(user.username)
+        return redirect(url_for('list_topic', topic=user.username))
     else:
         return list_all()
 
