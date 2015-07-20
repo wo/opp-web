@@ -232,6 +232,26 @@ def editdoc():
     except:
         return error(r)
 
+@app.route('/edit-source', methods=['POST', 'GET'])
+def editsource():
+    if not is_admin():
+        abort(401)
+    if request.method == 'GET':
+        return render_template('edit-source.html',
+                               url=(request.args.get('url') or ''),
+                               default_author=(request.args.get('author') or ''))
+    else:
+        url = app.config['JSONSERVER_URL']+'edit-source'
+        data = request.form
+        r = None
+        try:
+            r = requests.post(url, data)
+            r.raise_for_status()
+            json = r.json()
+            return json['msg']
+        except:
+            return error(r)
+
 @app.route("/train")
 def train():
     query = request.query_string + '&user=' + get_username()
@@ -415,11 +435,11 @@ def relative_date(time, diff=False):
     
 def error(r):
     debug_info = ['access to backend server failed']
-    if r:
+    if r is not None:
         debug_info.append('response status: {}'.format(r.status_code))
-        debug_info.append(r.text)
         if is_admin():
             debug_info.append('url: {}'.format(r.url))
+            debug_info.append(r.text)
     return render_template('error.html',
                            info=debug_info)
 
