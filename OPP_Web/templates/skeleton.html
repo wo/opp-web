@@ -16,40 +16,31 @@ oppdocs = '{{ oppdocs }}';
 </head>
 <body>
 
-<div id="wrap">
-
-  <div id="navig">
-    <form name="filterform" id="filterform" action="{{ rootdir }}" method="GET" onsubmit="return false">
-
-    <h1><a href="{{ rootdir }}">Philosophical Progress</a></h1>
-    {% block selectmenu %}{% endblock %}
-    {% if user %}
-      <span<a href="{{ rootdir }}backstage">Backstage</a></span>
-      <span id="user"><a href="{{ rootdir }}logout">Log out {{ user }}</a></span>
-    {% else %}
-      <span><a href="{{ rootdir }}signup">Sign up</a></span>
-      <span id="user"><a href="{{ rootdir }}login">Log in</a></span>
-    {% endif %}
-
-    </form>
-  </div>
-
-
-  <div id="content">
-
-  {% if intro %}
-    <div class="intro">{% include 'intro_'~intro~'.html' %}</div>
+<div id="header">
+<div id="navig">
+  <h1><a href="{{ rootdir }}">Philosophical Progress</a></h1>
+  {% if user %}
+    <!--span><a href="{{ rootdir }}backstage">Backstage</a></span-->
+    <span id="user"><a href="{{ rootdir }}logout">Log out {{ user.username }}</a></span>
+  {% else %}
+    <span><a href="{{ rootdir }}signup">Sign up</a></span>
+    <span id="user"><a href="{{ rootdir }}login">Log in</a></span>
   {% endif %}
+</div>
+</div>
 
-  {% for message in get_flashed_messages() %}
-    <div class="msg">{{ message }}</div>
-  {% endfor %}
+<div id="content">
+{% if intro %}
+  <div class="intro">{% include 'intro_'~intro~'.html' %}</div>
+{% endif %}
+{% for message in get_flashed_messages() %}
+  <div class="msg">{{ message }}</div>
+{% endfor %}
 
-  {% block body %}
-  {% endblock %}
-  
-  </div>
-
+{% block filtermenu %}
+{% endblock %}
+{% block body %}
+{% endblock %}
 </div>
 
 </body>
