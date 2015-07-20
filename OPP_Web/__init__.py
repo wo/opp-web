@@ -329,7 +329,8 @@ def list_uncertain_docs():
 
         
 def get_user():
-    if 'username' in session:
+    username = get_username()
+    if username:
         user = User.query.filter_by(username=username).first()
         if user:
             return user
