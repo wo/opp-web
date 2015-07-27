@@ -197,7 +197,7 @@ def list_all():
 def list_topic(topic):
     min_p = float(request.args.get('min') or (0.0 if is_admin() else 0.5))
     offset = int(request.args.get('start') or 0)
-    url = app.config['JSONSERVER_URL']+'topiclist/{}?offset={}'.format(topic,offset)
+    url = app.config['JSONSERVER_URL']+'topiclist/{}?offset={}&min={}'.format(topic,offset,min_p)
     r = None
     app.logger.debug("fetching {}".format(url))
     try:
@@ -337,6 +337,7 @@ def list_sources():
         return render_template('list_sources.html', 
                                srcs1=srcs1,
                                srcs2=srcs2,
+                               user=get_user(),
                                admin=is_admin())
 
 @app.route("/opp-queue")
