@@ -1,13 +1,13 @@
 /* general */
 
 body { 
-  padding:0; margin:0; background:#fff url("/static/bg.jpg") no-repeat; background-attachment:fixed; color:#000; font-family:Arial,sans-serif;
+  padding:0; margin:0; background:#fafafa; color:#000; font-family:Arial,sans-serif;
 }
 a { color: #03b; }
 a:visited { color:#50a; }
 
 #header {
-  background:#fff; border-bottom: 1px solid #000;
+  background:#1c6699; border-bottom: 1px solid #000;
 }
 #navig {
   margin:0 auto 0 auto; max-width:800px; padding:15px; overflow:auto; 
@@ -16,13 +16,13 @@ a:visited { color:#50a; }
   margin:50px auto 20px auto; max-width:800px;
 }
 #navig h1 {
-  float:left; margin:0; font-size: 140%;
+  float:left; margin:0; font-size:200%; font-weight:normal;
 }
 #navig span {
-  float: right; padding:3px 5px 3px 12px;
+  float: right; padding:9px 5px 3px 12px;
 }
 #navig a {
-  text-decoration: none; color:#1c6699;
+  text-decoration: none; color:#fff;
 }
 
 .intro, .msg {
