@@ -52,7 +52,7 @@ ol.doclist {
 .iTrain { 
   float: right; width: 30px; margin:0; text-align:center; color:#888; line-height:1em;
 }
-.iTrain span { display:none; }
+.iTrain span { font-size:90%; }
 img.up { background:#999; }
 img.down { background:#999; }
 .iTrain img:hover { background:#1c6699; }
