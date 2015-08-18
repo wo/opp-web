@@ -69,7 +69,7 @@ function edit(doc_id) {
                         "<form method='post' action="+rootdir+"_editdoc' id='editform' onsubmit='return submit_edit()'>",
                         "<input type='hidden' name='doc_id' value='"+doc_id+"'>",
                         "<input type='hidden' name='doc_url' value='"+url+"'>",
-                        "<input type='hidden' name='oppdocs' value='"+oppdocs+"'>",
+                        "<input type='hidden' name='quarantied' value='"+quarantined+"'>",
                         "<input type='hidden' name='next' value='"+self.location.href+"'>",
                         "<label for='authors'>Authors:</label><br>",
                         "<input type='text' name='authors' value='"+authors+"'><br>",
@@ -89,7 +89,7 @@ function submit_edit(discard) {
     window.processing = true;
     var f = document.forms['editform'];
     var doc_id = f.elements['doc_id'].value;
-    var oppdocs = f.elements['oppdocs'].value;
+    var quarantined = f.elements['quarantied'].value;
     var doc_url = encodeURIComponent(f.elements['doc_url'].value);
     var authors = encodeURIComponent(f.elements['authors'].value);
     var title = encodeURIComponent(f.elements['title'].value);
@@ -97,7 +97,7 @@ function submit_edit(discard) {
     var submit = discard ? 'Discard Entry' : 'Submit Changes';
     var req = new XMLHttpRequest();
     var url = rootdir+"_editdoc";
-    var params = 'doc_id='+doc_id+'&doc_url='+doc_url+'&oppdocs='+oppdocs;
+    var params = 'doc_id='+doc_id+'&doc_url='+doc_url+'&quarantined='+quarantined;
     params += '&authors='+authors+'&title='+title+'&abstract='+abstract;
     params += '&submit='+submit+'&next='+self.location.href;
     req.open('POST', url, true);

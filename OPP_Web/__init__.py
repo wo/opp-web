@@ -167,16 +167,17 @@ def set_rootdir():
 
 @app.route("/")
 def index():
-    user = get_user()
-    if user:
-        return redirect(url_for('list_topic', topic=user.username))
-    else:
-        return list_all()
+    #user = get_user()
+    #if user:
+    #    return redirect(url_for('list_topic', topic=user.username))
+    #else:
+    return list_all()
 
 @app.route("/all")
 def list_all():
-    offset = int(request.args.get('start') or 0)
-    url = app.config['JSONSERVER_URL']+'doclist?offset={}'.format(offset)
+    offset = int(request.args.get('start', 0))
+    quarantined = is_admin() and request.args.get('quarantined')
+    url = app.config['JSONSERVER_URL']+'doclist?offset={}&quarantined={}'.format(offset,quarantined)
     r = None
     app.logger.debug("fetching {}".format(url))
     try:
@@ -189,6 +190,7 @@ def list_all():
         return render_template('list_docs.html', 
                                user=get_user(),
                                admin=is_admin(),
+                               quarantined=quarantined,
                                intro=get_intro(),
                                docs=json['docs'],
                                next_offset=get_next_offset())
