@@ -66,7 +66,7 @@ function edit(doc_id) {
     dialog.setAttribute('id', 'editDialog');
     dialog.innerHTML = ["<h4>Edit entry ",
                         "<span id='closeBtn' onclick='document.body.removeChild(self.dialog)'>X</div></h4>",
-                        "<form method='post' action="+rootdir+"_editdoc' id='editform' onsubmit='return submit_edit()'>",
+                        "<form method='post' action="+rootdir+"edit-doc' id='editform' onsubmit='return submit_edit()'>",
                         "<input type='hidden' name='doc_id' value='"+doc_id+"'>",
                         "<input type='hidden' name='doc_url' value='"+url+"'>",
                         "<input type='hidden' name='quarantied' value='"+quarantined+"'>",
@@ -96,7 +96,7 @@ function submit_edit(discard) {
     var abstract = encodeURIComponent(f.elements['abstract'].value);
     var submit = discard ? 'Discard Entry' : 'Submit Changes';
     var req = new XMLHttpRequest();
-    var url = rootdir+"_editdoc";
+    var url = rootdir+"edit-doc";
     var params = 'doc_id='+doc_id+'&doc_url='+doc_url+'&quarantined='+quarantined;
     params += '&authors='+authors+'&title='+title+'&abstract='+abstract;
     params += '&submit='+submit+'&next='+self.location.href;

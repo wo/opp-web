@@ -177,7 +177,9 @@ def index():
 def list_all():
     offset = int(request.args.get('start', 0))
     quarantined = is_admin() and request.args.get('quarantined')
-    url = app.config['JSONSERVER_URL']+'doclist?offset={}&quarantined={}'.format(offset,quarantined)
+    url = app.config['JSONSERVER_URL']+'doclist?offset={}'.format(offset)
+    if quarantined:
+        url += '&quarantined=1'
     r = None
     app.logger.debug("fetching {}".format(url))
     try:
@@ -199,7 +201,10 @@ def list_all():
 def list_topic(topic):
     min_p = float(request.args.get('min') or (0.0 if is_admin() else 0.5))
     offset = int(request.args.get('start') or 0)
+    quarantined = is_admin() and request.args.get('quarantined')
     url = app.config['JSONSERVER_URL']+'topiclist/{}?offset={}&min={}'.format(topic,offset,min_p)
+    if quarantined:
+        url += '&quarantined=1'
     r = None
     app.logger.debug("fetching {}".format(url))
     try:
@@ -219,20 +224,35 @@ def list_topic(topic):
                                docs=json['docs'],
                                next_offset=get_next_offset())
 
-@app.route('/_editdoc', methods=['POST'])
+@app.route('/edit-doc', methods=['POST', 'GET'])
 def editdoc():
     if not is_admin():
         abort(401)
-    url = app.config['JSONSERVER_URL']+'editdoc'
-    data = request.form
-    r = None
-    try:
-        r = requests.post(url, data)
-        r.raise_for_status()
-        json = r.json()
-        return 'OK'
-    except:
-        return error(r)
+    doc_id = int(request.args.get('doc_id', 0))
+    if request.method == 'GET':
+        url = app.config['JSONSERVER_URL']+'doc?doc_id={}'.format(doc_id)
+        doc = None
+        r = None
+        try:
+            r = requests.get(url)
+            r.raise_for_status()
+            json = r.json()
+            doc = json['doc']
+        except:
+            return error(r)
+        return render_template('edit-doc.html',
+                               doc=doc)
+    else:
+        url = app.config['JSONSERVER_URL']+'editdoc'
+        data = request.form
+        r = None
+        try:
+            r = requests.post(url, data)
+            r.raise_for_status()
+            json = r.json()
+            return 'OK'
+        except:
+            return error(r)
 
 @app.route('/edit-source', methods=['POST', 'GET'])
 def editsource():
@@ -336,9 +356,11 @@ def list_sources():
         srcs = json['sources']
         srcs1 = [src for src in srcs if src['type'] == 1]
         srcs2 = [src for src in srcs if src['type'] == 2]
+        srcs3 = [src for src in srcs if src['type'] == 3]
         return render_template('list_sources.html', 
                                srcs1=srcs1,
                                srcs2=srcs2,
+                               srcs3=srcs3,
                                user=get_user(),
                                admin=is_admin())
 
