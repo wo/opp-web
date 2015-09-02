@@ -42,9 +42,16 @@ Date.prototype.prettify = function(abs) {
     return absDate;
 }
 
-function selectArea(t) {
-    if (t == 'all') self.location.href=rootdir;
-    else self.location.href=rootdir+'t/'+t;
+
+function updateDocList() {
+    var typeSelect = document.forms['filterform'].elements['type'];
+    var type = typeSelect.options[typeSelect.selectedIndex].value;
+    var areaSelect = document.forms['filterform'].elements['area'];
+    var area = areaSelect.options[areaSelect.selectedIndex].value;
+    var url = rootdir;
+    if (area != 'all') url += 't/'+area;
+    if (type != 'all') url += '?type='+type;
+    self.location.href = url;
 }
 
 function vote(doc_id, topic_id, class_id) {

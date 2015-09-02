@@ -6,13 +6,13 @@
 <div id="filtermenu">
 <form name="filterform" id="filterform" action="{{ rootdir }}" method="GET" onsubmit="return false">
   Showing
-  <select size="1" name="type" onchange="selectArea(this.options[this.selectedIndex].value)">
+  <select size="1" name="type" onchange="updateDocList()">
     <option value="all">new papers and blog posts</option>
-    <option value="papers">new papers</option>
-    <option value="blog">new blog posts</option>
+    <option value="papers"{% if doctype=='papers' %} selected="selected"{% endif %}>new papers</option>
+    <option value="blogposts"{% if doctype=='blogposts' %} selected="selected"{% endif %}>new blog posts</option>
   </select>
   in
-  <select size="1" name="area" onchange="selectArea(this.options[this.selectedIndex].value)">
+  <select size="1" name="area" onchange="updateDocList()">
   {% macro option(fullname, pathname) -%}
     <option value="{{ pathname }}"{% if topic==pathname %} selected="selected"{% endif %}>{{ fullname }}</option>
   {%- endmacro %}
