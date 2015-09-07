@@ -17,6 +17,20 @@
       <br>
   {% endfor %}
   </div>
+  
+  <h3>Weblogs</h3>
+  <div class='sources multicol'>
+  {% for src in srcs3 %}
+    {% if admin %} 
+      {{ src.source_id }}.
+    {% endif %}
+      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.name }}</a>{% 
+      if src.status > 1 %}*{% endif %}
+    {% if admin and src.status > 1 %} (Error {{ src.status }}) {% endif %}
+      <br>
+  {% endfor %}
+  </div>
+
 
   <h3>Repositories and Open Access Journals</h3>
   <div class='sources'>
@@ -32,20 +46,6 @@
   {% endfor %}
   </div>
   
-  <h3>Weblogs</h3>
-  <div class='sources'>
-  {% for src in srcs3 %}
-    {% if admin %} 
-      {{ src.source_id }}. [{{ src.num_papers }}]
-      {% if src.parent_id %} [sub of {{ src.parent_id }}] {% endif %}
-    {% endif %}
-      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.name }}</a>{% 
-      if not admin and src.status > 1 or src.num_papers == 0 %}*{% endif %}
-    {% if admin and src.status > 1 %} (Error {{ src.status }}) {% endif %}
-      <br>
-  {% endfor %}
-  </div>
-    
   <p>* Sources marked with a star are currently
   inaccessible or don't seem to contain any links to papers.</p>
 
