@@ -167,37 +167,32 @@ def set_rootdir():
 
 @app.route("/")
 def index():
-    user = get_user()
-    if user:
-        return redirect(url_for('list_topic', topic=user.username))
-    else:
-        return list_all()
-
-@app.route("/all")
-def list_all():
-    offset = int(request.args.get('start') or 0)
-    url = app.config['JSONSERVER_URL']+'doclist?offset={}'.format(offset)
-    r = None
-    app.logger.debug("fetching {}".format(url))
-    try:
-        r = requests.get(url)
-        r.raise_for_status()
-        json = r.json()
-    except:
-        return error(r)
-    else:
-        return render_template('list_docs.html', 
-                               user=get_user(),
-                               admin=is_admin(),
-                               intro=get_intro(),
-                               docs=json['docs'],
-                               next_offset=get_next_offset())
+    #user = get_user()
+    #if user:
+    #    return redirect(url_for('list_topic', topic=user.username))
+    #else:
+    topic = request.args.get('area') # filterform submitted without JS
+    if topic:
+        return list_docs(topic)
+    return list_docs()
 
 @app.route("/t/<topic>")
-def list_topic(topic):
-    min_p = float(request.args.get('min') or (0.0 if is_admin() else 0.5))
+def list_docs(topic=None):
+    url = app.config['JSONSERVER_URL'];
+    url += 'topiclist/{}'.format(topic) if topic else 'doclist'
+    params = []
+    if topic:
+        min_p = float(request.args.get('min') or (0.0 if is_admin() else 0.5))
+        params.append('min={}'.format(min_p))
+    doctype = request.args.get('type')
+    if doctype:
+        params.append('type={}'.format(doctype))
+    if is_admin() and request.args.get('quarantined'):
+        params.append('quarantined=1')
     offset = int(request.args.get('start') or 0)
-    url = app.config['JSONSERVER_URL']+'topiclist/{}?offset={}&min={}'.format(topic,offset,min_p)
+    if offset:
+        params.append('offset={}'.format(offset))
+    url += '?' + '&'.join(params)
     r = None
     app.logger.debug("fetching {}".format(url))
     try:
@@ -213,24 +208,40 @@ def list_topic(topic):
                                admin=is_admin(),
                                intro=get_intro(),
                                topic=topic,
-                               topic_id=json['topic_id'],
+                               topic_id=json.get('topic_id'),
+                               doctype=doctype,
                                docs=json['docs'],
                                next_offset=get_next_offset())
-
-@app.route('/_editdoc', methods=['POST'])
+        
+@app.route('/edit-doc', methods=['POST', 'GET'])
 def editdoc():
     if not is_admin():
         abort(401)
-    url = app.config['JSONSERVER_URL']+'editdoc'
-    data = request.form
-    r = None
-    try:
-        r = requests.post(url, data)
-        r.raise_for_status()
-        json = r.json()
-        return 'OK'
-    except:
-        return error(r)
+    doc_id = int(request.args.get('doc_id', 0))
+    if request.method == 'GET':
+        url = app.config['JSONSERVER_URL']+'doc?doc_id={}'.format(doc_id)
+        doc = None
+        r = None
+        try:
+            r = requests.get(url)
+            r.raise_for_status()
+            json = r.json()
+            doc = json['doc']
+        except:
+            return error(r)
+        return render_template('edit-doc.html',
+                               doc=doc)
+    else:
+        url = app.config['JSONSERVER_URL']+'editdoc'
+        data = request.form
+        r = None
+        try:
+            r = requests.post(url, data)
+            r.raise_for_status()
+            json = r.json()
+            return 'OK'
+        except:
+            return error(r)
 
 @app.route('/edit-source', methods=['POST', 'GET'])
 def editsource():
@@ -334,9 +345,11 @@ def list_sources():
         srcs = json['sources']
         srcs1 = [src for src in srcs if src['type'] == 1]
         srcs2 = [src for src in srcs if src['type'] == 2]
+        srcs3 = [src for src in srcs if src['type'] == 3]
         return render_template('list_sources.html', 
                                srcs1=srcs1,
                                srcs2=srcs2,
+                               srcs3=srcs3,
                                user=get_user(),
                                admin=is_admin())
 

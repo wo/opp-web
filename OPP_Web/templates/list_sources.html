@@ -17,6 +17,20 @@
       <br>
   {% endfor %}
   </div>
+  
+  <h3>Weblogs</h3>
+  <div class='sources multicol'>
+  {% for src in srcs3 %}
+    {% if admin %} 
+      {{ src.source_id }}.
+    {% endif %}
+      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.name }}</a>{% 
+      if src.status > 1 %}*{% endif %}
+    {% if admin and src.status > 1 %} (Error {{ src.status }}) {% endif %}
+      <br>
+  {% endfor %}
+  </div>
+
 
   <h3>Repositories and Open Access Journals</h3>
   <div class='sources'>

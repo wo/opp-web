@@ -42,9 +42,16 @@ Date.prototype.prettify = function(abs) {
     return absDate;
 }
 
-function selectArea(t) {
-    if (t == 'all') self.location.href=rootdir;
-    else self.location.href=rootdir+'t/'+t;
+
+function updateDocList() {
+    var typeSelect = document.forms['filterform'].elements['type'];
+    var type = typeSelect.options[typeSelect.selectedIndex].value;
+    var areaSelect = document.forms['filterform'].elements['area'];
+    var area = areaSelect.options[areaSelect.selectedIndex].value;
+    var url = rootdir;
+    if (area != 'all') url += 't/'+area;
+    if (type != 'all') url += '?type='+type;
+    self.location.href = url;
 }
 
 function vote(doc_id, topic_id, class_id) {
@@ -66,10 +73,10 @@ function edit(doc_id) {
     dialog.setAttribute('id', 'editDialog');
     dialog.innerHTML = ["<h4>Edit entry ",
                         "<span id='closeBtn' onclick='document.body.removeChild(self.dialog)'>X</div></h4>",
-                        "<form method='post' action="+rootdir+"_editdoc' id='editform' onsubmit='return submit_edit()'>",
+                        "<form method='post' action="+rootdir+"edit-doc' id='editform' onsubmit='return submit_edit()'>",
                         "<input type='hidden' name='doc_id' value='"+doc_id+"'>",
                         "<input type='hidden' name='doc_url' value='"+url+"'>",
-                        "<input type='hidden' name='oppdocs' value='"+oppdocs+"'>",
+                        "<input type='hidden' name='quarantied' value='"+quarantined+"'>",
                         "<input type='hidden' name='next' value='"+self.location.href+"'>",
                         "<label for='authors'>Authors:</label><br>",
                         "<input type='text' name='authors' value='"+authors+"'><br>",
@@ -89,15 +96,15 @@ function submit_edit(discard) {
     window.processing = true;
     var f = document.forms['editform'];
     var doc_id = f.elements['doc_id'].value;
-    var oppdocs = f.elements['oppdocs'].value;
+    var quarantined = f.elements['quarantied'].value;
     var doc_url = encodeURIComponent(f.elements['doc_url'].value);
     var authors = encodeURIComponent(f.elements['authors'].value);
     var title = encodeURIComponent(f.elements['title'].value);
     var abstract = encodeURIComponent(f.elements['abstract'].value);
     var submit = discard ? 'Discard Entry' : 'Submit Changes';
     var req = new XMLHttpRequest();
-    var url = rootdir+"_editdoc";
-    var params = 'doc_id='+doc_id+'&doc_url='+doc_url+'&oppdocs='+oppdocs;
+    var url = rootdir+"edit-doc";
+    var params = 'doc_id='+doc_id+'&doc_url='+doc_url+'&quarantined='+quarantined;
     params += '&authors='+authors+'&title='+title+'&abstract='+abstract;
     params += '&submit='+submit+'&next='+self.location.href;
     req.open('POST', url, true);
