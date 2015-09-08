@@ -5,11 +5,10 @@
 
 <div id="filtermenu">
 <form name="filterform" id="filterform" action="{{ rootdir }}" method="GET" onsubmit="return false">
-  Showing
   <select size="1" name="type" onchange="selectArea(this.options[this.selectedIndex].value)">
-    <option value="all">new papers and blog posts</option>
-    <option value="papers">new papers</option>
-    <option value="blog">new blog posts</option>
+    <option value="all">New papers and blog posts</option>
+    <option value="papers">New papers</option>
+    <option value="blog">New blog posts</option>
   </select>
   in
   <select size="1" name="area" onchange="selectArea(this.options[this.selectedIndex].value)">
@@ -33,7 +32,7 @@
   {{ option('History of Philosophy', 'history') }}
   {{ option('Continental Philosophy', 'continental') }}
   </select>
-  <input type="submit" value="update">
+  <noscript><input type="submit" value="update"></noscript>
 </form>
 </div>
 
