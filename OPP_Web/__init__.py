@@ -245,12 +245,39 @@ def editdoc():
 
 @app.route('/edit-source', methods=['POST', 'GET'])
 def editsource():
+    # firefox bookmarklet for adding/editing current page as source:
+    # javascript:function%20opppp(){window.open('http://umsu.de/opp/edit-source?url='+escape(self.location.href)+'&type='+(document.body.innerHTML.match(/feedHeaderContainer/)?'3':'1')+'&author='+escape(window.getSelection()),'opp','width=400,height=400')};opppp()
     if not is_admin():
         abort(401)
     if request.method == 'GET':
+        source_url = request.args.get('url')
+        source = None
+        if source_url:
+            url = app.config['JSONSERVER_URL']+'source?url={}'.format(source_url)
+            r = None
+            try:
+                r = requests.get(url)
+                r.raise_for_status()
+                json = r.json()
+                source = json.get('source')
+            except:
+                return error(r)
+        if not source:
+            default_author = request.args.get('author', '')
+            default_type = int(request.args.get('type', 1))
+            if default_author:
+                default_name = "{}'s {}".format(default_author, 'site' if default_type == 1 else 'blog') 
+            else:
+                default_name = ''            
+            source = {
+                'url': source_url,
+                'source_id': 0,
+                'type': default_type,
+                'default_author': default_author,
+                'name': default_name
+            }
         return render_template('edit-source.html',
-                               url=(request.args.get('url') or ''),
-                               default_author=(request.args.get('author') or ''))
+                               source=source)
     else:
         url = app.config['JSONSERVER_URL']+'edit-source'
         data = request.form

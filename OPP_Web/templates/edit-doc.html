@@ -17,8 +17,8 @@ textarea { height:18em; }
 <textarea name='abstract'>{{doc['abstract']}}</textarea><br>
 
 <select name='status' size='1'>
-<option value='0'{% if doc['status'] == 0 %} selected='selected'{% endif %}>hidden</option>
-<option value='1'{% if doc['status'] == 1 %} selected='selected'{% endif %}>live</option>
+<option value='1' selected='selected'>live</option>
+<option value='0'>hidden</option>
 </select>
 {% if doc['status'] == 0 %}
   <input type='checkbox' name='found_now' value='1' checked='checked'> found now
