@@ -55,7 +55,7 @@
         </div>
       {% endif %}
       {% if admin %}
-        <div class="iEdit" onclick="edit({{ doc.doc_id }})">Edit</div>
+        <a class="iEdit" href="{{ rootdir }}edit-doc?doc_id={{ doc.doc_id }}" onclick="return popup(this.href)">Edit</a>
       {% endif %}
       <div class='iAuthor'>
         <a href='{{ doc.url }}' id='authors{{doc.doc_id}}'>{{ doc.authors }}</a>

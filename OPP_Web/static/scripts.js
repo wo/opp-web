@@ -63,7 +63,16 @@ function vote(doc_id, topic_id, class_id) {
     return false;
 }
 
+function popup(url, width, height) {
+    width = width || 800;
+    height = height || 600;
+    window.open(url, 'opp', 'width='+width+',height='+height);
+    return false;
+}
+
+
 function edit(doc_id) {
+    // defunct
     window.processing = false;
     var authors = document.getElementById('authors'+doc_id).innerHTML.replace(/'/g,'&#39;');
     var title = document.getElementById('title'+doc_id).innerHTML.replace(/'/g,'&#39;');

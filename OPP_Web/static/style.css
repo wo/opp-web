@@ -47,7 +47,10 @@ ol.doclist {
   clear: both; 
 }
 .iEdit {
-  float:right; color:#fff; background:#bbb; padding:2px 5px; margin:3px; cursor:pointer;
+  display:block; float:right; color:#fff; background:#bbb; padding:2px 5px; margin:3px; text-decoration:none;
+}
+.iEdit:visited { 
+  color: #fff; 
 }
 .iTrain { 
   float: right; width: 30px; margin:0; text-align:center; color:#888; line-height:1em;
@@ -56,7 +59,6 @@ ol.doclist {
 img.up { background:#999; }
 img.down { background:#999; }
 .iTrain img:hover { background:#1c6699; }
-
 
 .iAuthor, .iTitle {
   line-height:150%;
