@@ -3,7 +3,7 @@
 {% block body %}
   <h2>Sign up</h2>
  
-  <form class="loginform" action="{{ url_for('signup) }}" method='post'>
+  <form class="loginform" action="{{ url_for('signup') }}" method="post">
     {{ form.hidden_tag() }}
      
     {{ form.username.label }}

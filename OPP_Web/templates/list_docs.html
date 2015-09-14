@@ -15,9 +15,6 @@
   {% macro option(fullname, pathname) -%}
     <option value="{{ pathname }}"{% if topic==pathname %} selected="selected"{% endif %}>{{ fullname }}</option>
   {%- endmacro %}
-  {% if user %}
-    {{ option(user.username~"'s channel", user.username) }}
-  {% endif %}
   {{ option('All Areas of Philosophy', 'all') }}
   {{ option('Ethics', 'ethics') }}
   {{ option('Political Philosophy', 'political') }}
@@ -31,6 +28,9 @@
   {{ option('Logic', 'logic') }}
   {{ option('History of Philosophy', 'history') }}
   {{ option('Continental Philosophy', 'continental') }}
+  {% if user %}
+    {{ option(user.username~"'s channel", user.username) }}
+  {% endif %}
   </select>
   <noscript><input type="submit" value="update"></noscript>
 </form>

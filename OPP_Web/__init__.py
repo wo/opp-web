@@ -127,7 +127,7 @@ def signup():
             db.session.commit()
             session.permanent = True
             session['username'] = newuser.username
-            return redirect(url_for('index'))
+            return redirect(url_for('index', topic=session['username']))
     else: 
         return render_template('signup.html', form=form)
 
@@ -140,7 +140,7 @@ def login():
         else:
             session.permanent = True
             session['username'] = form.username.data
-            return redirect(url_for('index'))
+            return redirect(url_for('index', topic=session['username']))
     else:
         return render_template('login.html', form=form)
 
@@ -206,7 +206,7 @@ def list_docs(topic=None):
         return render_template('list_docs.html', 
                                user=get_user(),
                                admin=is_admin(),
-                               intro=get_intro(),
+                               intro=get_intro(topic),
                                topic=topic,
                                topic_id=json.get('topic_id'),
                                doctype=doctype,
@@ -416,9 +416,9 @@ def get_username():
 def is_admin():
     return get_username() == 'wo'
     
-def get_intro():
+def get_intro(topic):
     user = get_user()
-    if user:
+    if user and topic == user.username:
         if user.upvotes == 0 and user.downvotes == 0:
             return 'user_new'
         if user.upvotes < 10 or user.downvotes < 10:
