@@ -243,6 +243,21 @@ def editdoc():
         except:
             return error(r)
 
+@app.route('/delete-authorname')
+def deleteauthorname():
+    if not is_admin():
+        abort(401)
+    name_id = int(request.args.get('name_id', 0))
+    url = app.config['JSONSERVER_URL']+'delete-authorname?name_id={}'.format(name_id)
+    r = None
+    try:
+        r = requests.post(url, data)
+        r.raise_for_status()
+        json = r.json()
+        return 'OK'
+    except:
+        return error(r)
+
 @app.route('/edit-source', methods=['POST', 'GET'])
 def editsource():
     # firefox bookmarklet for adding/editing current page as source:
