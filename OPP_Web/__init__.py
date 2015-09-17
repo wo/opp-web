@@ -190,7 +190,7 @@ def list_docs(topic=None):
     if is_admin() and request.args.get('quarantined'):
         params.append('quarantined=1')
     offset = int(request.args.get('start') or 0)
-    if offset:
+    if offset and offset < 200:
         params.append('offset={}'.format(offset))
     url += '?' + '&'.join(params)
     r = None
