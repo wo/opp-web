@@ -1,8 +1,13 @@
 {% extends "skeleton.html" %}
 {% block body %}
-  <h2>Tracked source pages</h2>
-  
-  <h3>Personal pages</h3>
+  <h2>Tracked sources</h2>
+
+  <p>Jump to: <a href="#personal">personal pages</a> &mdash; 
+    <a href="#weblogs">weblogs</a> &mdash; 
+    <a href="#other">journals, repositories, etc.</a></p>
+
+
+  <h3 id="personal">Personal Pages</h3>
   <div class='sources multicol'>
   {% for src in srcs1 %}
     {% if admin %} 
@@ -18,7 +23,7 @@
   {% endfor %}
   </div>
   
-  <h3>Weblogs</h3>
+  <h3 id="weblogs">Weblogs</h3>
   <div class='sources multicol'>
   {% for src in srcs3 %}
     {% if admin %} 
@@ -32,7 +37,7 @@
   </div>
 
 
-  <h3>Repositories and Open Access Journals</h3>
+  <h3 id="other">Repositories, Open Access Journals, etc.</h3>
   <div class='sources'>
   {% for src in srcs2 %}
     {% if admin %} 
