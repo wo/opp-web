@@ -22,6 +22,11 @@ input, select { margin-bottom:10px; }
        onchange="if (this.form.elements['name'].value=='') this.form.elements['name'].value=this.value+'\'s site'"><br>
 <label for="name">Name:</label>
 <input type="text" size="50" name="name" value="{{ source['name'] }}"><br>
+<label for="status">Status:</label>
+<select size="1" name="status">
+<option value='0'{% if source['status'] == 0 %} selected='selected'{% endif %}>0 - inactive</option>
+<option value='1'{% if source['status'] == 1 %} selected='selected'{% endif %}>1 - active</option>
+</select><br>
 
 <input type="submit" name="submit" value="Submit">
 {% if source['source_id'] %}

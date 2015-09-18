@@ -251,7 +251,7 @@ def deleteauthorname():
     url = app.config['JSONSERVER_URL']+'delete-authorname?name_id={}'.format(name_id)
     r = None
     try:
-        r = requests.post(url, data)
+        r = requests.get(url)
         r.raise_for_status()
         json = r.json()
         return 'OK'
@@ -289,7 +289,8 @@ def editsource():
                 'source_id': 0,
                 'type': default_type,
                 'default_author': default_author,
-                'name': default_name
+                'name': default_name,
+                'status': 1
             }
         return render_template('edit-source.html',
                                source=source)
