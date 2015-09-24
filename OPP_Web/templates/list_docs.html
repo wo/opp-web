@@ -90,7 +90,7 @@
   {% endfor %}
   </ol>
   <div id='nav'>
-  {% if docs[0] %} 
+  {% if docs[0] and next_offset %} 
     <a href='?start={{ next_offset }}'>Next</a>
   {% else %}
     No more documents.

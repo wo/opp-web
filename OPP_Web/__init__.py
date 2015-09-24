@@ -190,7 +190,7 @@ def list_docs(topic=None):
     if is_admin() and request.args.get('quarantined'):
         params.append('quarantined=1')
     offset = int(request.args.get('start') or 0)
-    if offset and offset < 200:
+    if offset:
         params.append('offset={}'.format(offset))
     url += '?' + '&'.join(params)
     r = None
@@ -444,6 +444,8 @@ def get_intro(topic):
 
 def get_next_offset():
     offset = int(request.args.get('start') or 0)
+    if offset > 200:
+        return None
     limit = app.config['DOCS_PER_PAGE']
     return offset + limit
 
