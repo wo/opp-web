@@ -146,7 +146,7 @@ def login():
 
 @app.route('/logout')
 def logout():
-    session.pop('username', None)
+    session.clear()
     return redirect(url_for('index'))
     
 @app.before_request
@@ -158,6 +158,10 @@ def log_request():
             request.url,
             request.method,
             request.remote_addr]))
+
+@app.before_request
+def init_user():
+    session.permanent = True
 
 @app.context_processor
 def set_rootdir():
