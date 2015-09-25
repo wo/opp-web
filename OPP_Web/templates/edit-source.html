@@ -8,7 +8,8 @@ input, select { margin-bottom:10px; }
 <h2>Add/Edit source</h2>
 
 <form action="{{ rootdir }}edit-source" method="post">
-<input type="hidden" name="source_id" value="{{ source['source_id'] }}"><br>
+<label for="source_id">ID:</label>
+<input type="text" name="source_id" value="{{ source['source_id'] }}"><br>
 <label for="type">Type:</label>
 <select size="1" name="type">
 <option value='1'{% if source['type'] == 1 %} selected='selected'{% endif %}>1 - personal site</option>
@@ -18,14 +19,14 @@ input, select { margin-bottom:10px; }
 <label for="url">URL:</label>
 <input type="text" size="50" name="url" value="{{ source['url'] }}"><br>
 <label for="default_author">Default author:</label>
-<input type="text" size="50" name="default_author" value="{{ source['default_author'] }}" 
-       onchange="if (this.form.elements['name'].value=='') this.form.elements['name'].value=this.value+'\'s site'"><br>
-<label for="name">Name:</label>
+<input type="text" size="50" name="default_author" value="{{ source['default_author'] }}"><br>
+<label for="name">Name: 
+<a href="javascript:(function(){var f=document.forms[0].elements; f['name'].value=f['default_author'].value+(f['type'].selectedIndex==0 ? '\'s site' : '\'s blog')})()">set</a></label>
 <input type="text" size="50" name="name" value="{{ source['name'] }}"><br>
 <label for="status">Status:</label>
 <select size="1" name="status">
-<option value='0'{% if source['status'] == 0 %} selected='selected'{% endif %}>0 - inactive</option>
-<option value='1'{% if source['status'] == 1 %} selected='selected'{% endif %}>1 - active</option>
+<option value='0'>0 - inactive</option>
+<option value='1' selected='selected'>1 - active</option>
 </select><br>
 
 <input type="submit" name="submit" value="Submit">
