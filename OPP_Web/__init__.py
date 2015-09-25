@@ -148,6 +148,10 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for('index'))
+
+@app.route('/qa')
+def qa():
+    return render_template('qa.html')
     
 @app.before_request
 def log_request():
