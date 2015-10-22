@@ -21,7 +21,7 @@ input, select { margin-bottom:10px; }
 <label for="default_author">Default author:</label>
 <input type="text" size="50" name="default_author" value="{{ source['default_author'] }}"><br>
 <label for="name">Name: 
-<a href="javascript:(function(){var f=document.forms[0].elements; f['name'].value=f['default_author'].value+(f['type'].selectedIndex==0 ? '\'s site' : '\'s blog')})()">set</a></label>
+<a href="javascript:(function(){var f=document.forms[0].elements; f['name'].value=f['default_author'].value+(f['type'].selectedIndex==0 ? (f['url'].value.indexOf('researchgate') > -1 ? '\'s ResearchGate profile' : '\'s site') : '\'s blog')})()">set</a></label>
 <input type="text" size="50" name="name" value="{{ source['name'] }}"><br>
 <label for="status">Status:</label>
 <select size="1" name="status">
