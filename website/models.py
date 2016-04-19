@@ -101,7 +101,8 @@ class Doc(models.Model):
         returns list of default cats paired with strengths,
         e.g. [('Epistemology', 0.1),...]
         """
-        self.cats.filter(is_default=0)
+        ms = self.doc2cat_set.filter(cat__is_default=True)
+        return [(m.cat.label, m.strength) for m in ms]
     default_cats = property(_default_cats)
 
     def save(self, *args, **kwargs):
