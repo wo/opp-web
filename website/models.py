@@ -119,14 +119,14 @@ class Cat(models.Model):
         
 class Doc2Cat(models.Model):
     doc2cat_id = models.AutoField(primary_key=True)
-    doc_id = models.ForeignKey(Doc, on_delete=models.CASCADE)
-    cat_id = models.ForeignKey(Cat, on_delete=models.CASCADE)
+    doc = models.ForeignKey(Doc, on_delete=models.CASCADE)
+    cat = models.ForeignKey(Cat, on_delete=models.CASCADE)
     strength = models.IntegerField(blank=True, null=True)
     is_training = models.IntegerField(blank=True, null=True)
 
     class Meta:
         db_table = 'docs2cats'
-        unique_together = (('doc_id', 'cat_id'),)
+        unique_together = (('doc', 'cat'),)
 
     def __str__(self):
         return 'Doc {} -> Cat {}'.format(self.doc_id, self.cat_id)
