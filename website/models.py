@@ -23,6 +23,9 @@ class Source(models.Model):
         """set urlhash to MD5(url)"""
         self.urlhash = hashlib.md5.new(self.url).digest()
         super(Model, self).save(*args, **kwargs)
+        
+    def __str__(self):
+        return '{}. {} ({})'.format(self.source_id, self.name, self.url[:40])
 
     class Meta:
         db_table = 'sources'
@@ -43,6 +46,9 @@ class Link(models.Model):
         """set urlhash to MD5(url)"""
         self.urlhash = hashlib.md5.new(self.url).digest()
         super(Model, self).save(*args, **kwargs)
+
+    def __str__(self):
+        return '{}. Source {} -> {}'.format(self.link_id, self.source_id, self.url[:60])
 
     class Meta:
         db_table = 'links'
@@ -82,6 +88,9 @@ class Doc(models.Model):
         self.urlhash = hashlib.md5.new(self.url).digest()
         super(Model, self).save(*args, **kwargs)
 
+    def __str__(self):
+        return '{}. {} ({})'.format(self.doc_id, self.title[:40], self.url[:40])
+        
     class Meta:
         db_table = 'docs'
 
@@ -93,6 +102,9 @@ class AuthorName(models.Model):
 
     class Meta:
         db_table = 'author_names'
+    
+    def __str__(self):
+        return '{}. {}'.format(self.name_id, self.name)
 
 class Cat(models.Model):
     cat_id = models.AutoField(primary_key=True)
@@ -102,14 +114,19 @@ class Cat(models.Model):
     class Meta:
         db_table = 'cats'
 
+    def __str__(self):
+        return self.label
+        
 class Doc2Cat(models.Model):
+    doc2cat_id = models.AutoField(primary_key=True)
     doc_id = models.ForeignKey(Doc, on_delete=models.CASCADE)
     cat_id = models.ForeignKey(Cat, on_delete=models.CASCADE)
     strength = models.IntegerField(blank=True, null=True)
     is_training = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
         db_table = 'docs2cats'
         unique_together = (('doc_id', 'cat_id'),)
 
+    def __str__(self):
+        return 'Doc {} -> Cat {}'.format(self.doc_id, self.cat_id)
