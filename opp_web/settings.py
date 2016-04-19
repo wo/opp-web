@@ -56,7 +56,7 @@ ROOT_URLCONF = 'opp_web.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['opp_web/templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -104,6 +104,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_REDIRECT_URL = 'website.views.index'
+LOGIN_URL = 'django.contrib.auth.views.login'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.9/topics/i18n/

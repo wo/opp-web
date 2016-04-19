@@ -1,0 +1,57 @@
+{% extends "skeleton.html" %}
+
+{% block filtermenu %}
+
+<div id="filtermenu">
+<form name="filterform" id="filterform" action="{{ rootdir }}" method="GET" onsubmit="return false">
+  Showing <select size="1" name="type" onchange="updateDocList()">
+    <option value="all">new papers and blog posts</option>
+    <option value="papers"{% if doctype = 'papers' %} selected="selected"{% endif %}>new papers</option>
+    <option value="blogposts"{% if doctype = 'blogposts' %} selected="selected"{% endif %}>new blog posts</option>
+  </select>
+  in
+</form>
+</div>
+
+{% endblock %}
+
+{% block body %}
+  <ol class='doclist'>
+  {% for doc in docs %}
+    <li>
+      <div class='daysep'>{{ doc.deltadate }}</div>
+      <div class='iAuthor'>
+        <a href='{{ doc.url }}' id='authors{{doc.doc_id}}'>{{ doc.authors }}</a>
+      </div>
+      <div class='iTitle'>
+        <a href='{{ doc.url }}' id='title{{doc.doc_id}}'>{{ doc.title|safe }}</a>
+      </div>
+      {% if doc.error %}
+        <div class='error'>{{ doc.error }}<div>
+      {% endif %}
+      <div class='iUrl'>
+        <a href='{{ doc.url }}'>{{ doc.short_url|safe }} ({{ doc.filetype }}, {{ doc.numwords }} words)</a>
+      </div>
+      <div class='iAbstract' id='abstract{{doc.doc_id}}'>{{ doc.abstract|safe }}</div>
+      {% if doc.topics %}
+      <div class='iTopics'>
+        {% for topic, strength in doc.topics %}
+           <a class='iTopic{{strength}}' href='{{ rootdir}}t/{{ topic|lower }}'>{{ topic }}</a>
+        {% endfor %}
+      </div>
+      {% endif %}
+      <div class='iFooter'>
+        <span>Found {{ doc.reldate|safe }} on <a href="{{ doc.source_url }}">{{ doc.source_name }}</a></span>
+        {% if admin %}
+          <span>doc {{ doc.doc_id }}</span>
+          {% if doc.loc_id %}<span>loc {{ doc.loc_id }}</span>{% endif %}
+          <span>conf: {{ doc.meta_confidence }}</span>
+          <span>spam: {{ doc.spamminess }}</span>
+        {% endif %}
+      </div>
+    </li>
+  {% endfor %}
+  </ol>
+  <div id='nav'>
+  </div>
+{% endblock %}

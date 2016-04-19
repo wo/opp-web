@@ -18,5 +18,6 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^', include('django.contrib.auth.urls')), # login, logout, password_change, etc.
     url(r'^', include('website.urls')),
 ]

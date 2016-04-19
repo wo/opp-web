@@ -101,9 +101,9 @@ class Doc(models.Model):
         returns list of default cats paired with strengths,
         e.g. [('Epistemology', 0.1),...]
         """
-        ms = self.doc2cat_set.filter(cat__is_default=True)
+        ms = self.doc2cat_set.filter(cat__is_default=True, strength__gte=50)
         return [(m.cat.label, m.strength) for m in ms]
-    default_cats = property(_default_cats)
+    topics = property(_default_cats)
 
     def save(self, *args, **kwargs):
         """set urlhash to MD5(url)"""
