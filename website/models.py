@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 import hashlib
 from django.db import models
 
-class Sources(models.Model):
+class Source(models.Model):
     SOURCETYPES = (
         ('personal', 'personal website'),
         ('repo', 'repository'),
@@ -27,7 +27,7 @@ class Sources(models.Model):
     class Meta:
         db_table = 'sources'
 
-class Links(models.Model):
+class Link(models.Model):
     link_id = models.AutoField(primary_key=True)
     url = models.CharField(max_length=512)
     urlhash = models.CharField(max_length=32, editable=False)
@@ -48,7 +48,7 @@ class Links(models.Model):
         db_table = 'links'
         unique_together = (('source_id', 'urlhash'),)
 
-class Docs(models.Model):
+class Doc(models.Model):
     DOCTYPES = (
         ('article', 'article'),
         ('book', 'book'),
@@ -85,7 +85,7 @@ class Docs(models.Model):
     class Meta:
         db_table = 'docs'
 
-class AuthorNames(models.Model):
+class AuthorName(models.Model):
     name_id = models.AutoField(primary_key=True)
     name = models.CharField(unique=True, max_length=64)
     last_searched = models.DateTimeField(blank=True, null=True)
@@ -94,7 +94,7 @@ class AuthorNames(models.Model):
     class Meta:
         db_table = 'author_names'
 
-class Cats(models.Model):
+class Cat(models.Model):
     cat_id = models.AutoField(primary_key=True)
     label = models.CharField(unique=True, max_length=255, blank=True, null=True)
     is_default = models.IntegerField(blank=True, null=True)
@@ -102,9 +102,9 @@ class Cats(models.Model):
     class Meta:
         db_table = 'cats'
 
-class Docs2Cats(models.Model):
-    doc_id = models.ForeignKey(Docs, on_delete=models.CASCADE)
-    cat_id = models.ForeignKey(Cats, on_delete=models.CASCADE)
+class Doc2Cat(models.Model):
+    doc_id = models.ForeignKey(Doc, on_delete=models.CASCADE)
+    cat_id = models.ForeignKey(Cat, on_delete=models.CASCADE)
     strength = models.IntegerField(blank=True, null=True)
     is_training = models.IntegerField(blank=True, null=True)
 
