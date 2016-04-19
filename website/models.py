@@ -2,6 +2,17 @@ from __future__ import unicode_literals
 import hashlib
 from django.db import models
 
+class Cat(models.Model):
+    cat_id = models.AutoField(primary_key=True)
+    label = models.CharField(unique=True, max_length=255, blank=True, null=True)
+    is_default = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = 'cats'
+
+    def __str__(self):
+        return self.label
+    
 class Source(models.Model):
     SOURCETYPES = (
         ('personal', 'personal website'),
@@ -11,7 +22,7 @@ class Source(models.Model):
     )
     source_id = models.AutoField(primary_key=True)
     sourcetype = models.CharField(max_length=16, choices=SOURCETYPES, default='personal')
-    url = models.CharField(max_length=512)
+    url = models.URLField(max_length=512)
     urlhash = models.CharField(unique=True, max_length=32, editable=False)
     status = models.SmallIntegerField(blank=True, default=0)
     found_date = models.DateTimeField()
@@ -32,7 +43,7 @@ class Source(models.Model):
 
 class Link(models.Model):
     link_id = models.AutoField(primary_key=True)
-    url = models.CharField(max_length=512)
+    url = models.URLField(max_length=512)
     urlhash = models.CharField(max_length=32, editable=False)
     status = models.SmallIntegerField(blank=True, default=0)
     source_id = models.IntegerField()
@@ -64,7 +75,7 @@ class Doc(models.Model):
     )
     doc_id = models.AutoField(primary_key=True)
     status = models.SmallIntegerField(blank=True, default=1)
-    url = models.CharField(max_length=512)
+    url = models.URLField(max_length=512)
     urlhash = models.CharField(unique=True, max_length=32, editable=False)
     doctype = models.CharField(max_length=16, choices=DOCTYPES, default='article')
     filetype = models.CharField(max_length=8, blank=True, null=True)
@@ -74,14 +85,24 @@ class Doc(models.Model):
     authors = models.CharField(max_length=255, blank=True, null=True)
     title = models.CharField(max_length=255, blank=True, null=True)
     abstract = models.TextField(blank=True, null=True)
-    numwords = models.SmallIntegerField(blank=True, null=True)
-    numpages = models.SmallIntegerField(blank=True, null=True)
-    source_url = models.CharField(max_length=512, blank=True, null=True)
+    numwords = models.PositiveIntegerField(blank=True, null=True)
+    numpages = models.PositiveSmallIntegerField(blank=True, null=True)
+    source_url = models.URLField(max_length=512, blank=True, null=True)
     source_name = models.CharField(max_length=255, blank=True, null=True)
     meta_confidence = models.IntegerField(blank=True, null=True)
     is_paper = models.IntegerField(blank=True, null=True)
     is_philosophy = models.IntegerField(blank=True, null=True)
     content = models.TextField(blank=True, null=True)
+
+    cats = models.ManyToManyField(Cat, through='Doc2Cat')
+    
+    def _default_cats(self):
+        """
+        returns list of default cats paired with strengths,
+        e.g. [('Epistemology', 0.1),...]
+        """
+        self.cats.filter(is_default=0)
+    default_cats = property(_default_cats)
 
     def save(self, *args, **kwargs):
         """set urlhash to MD5(url)"""
@@ -106,23 +127,12 @@ class AuthorName(models.Model):
     def __str__(self):
         return '{}. {}'.format(self.name_id, self.name)
 
-class Cat(models.Model):
-    cat_id = models.AutoField(primary_key=True)
-    label = models.CharField(unique=True, max_length=255, blank=True, null=True)
-    is_default = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        db_table = 'cats'
-
-    def __str__(self):
-        return self.label
-        
 class Doc2Cat(models.Model):
     doc2cat_id = models.AutoField(primary_key=True)
     doc = models.ForeignKey(Doc, on_delete=models.CASCADE)
     cat = models.ForeignKey(Cat, on_delete=models.CASCADE)
     strength = models.IntegerField(blank=True, null=True)
-    is_training = models.IntegerField(blank=True, null=True)
+    is_training = models.BooleanField(default=0)
 
     class Meta:
         db_table = 'docs2cats'
@@ -130,3 +140,4 @@ class Doc2Cat(models.Model):
 
     def __str__(self):
         return 'Doc {} -> Cat {}'.format(self.doc_id, self.cat_id)
+        
