@@ -1,24 +1,28 @@
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey has `on_delete` set to the desired behavior.
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
 from __future__ import unicode_literals
-
+import hashlib
 from django.db import models
 
 class Sources(models.Model):
+    SOURCETYPES = (
+        ('personal', 'personal website'),
+        ('repo', 'repository'),
+        ('journal', 'journal'),
+        ('blog', 'weblog'),
+    )
     source_id = models.AutoField(primary_key=True)
-    sourcetype = models.CharField(max_length=32, default='personal')
+    sourcetype = models.CharField(max_length=16, choices=SOURCETYPES, default='personal')
     url = models.CharField(max_length=512)
-    urlhash = models.CharField(unique=True, max_length=32)
+    urlhash = models.CharField(unique=True, max_length=32, editable=False)
     status = models.SmallIntegerField(blank=True, default=0)
     found_date = models.DateTimeField()
     last_checked = models.DateTimeField(blank=True, null=True)
     name = models.CharField(max_length=128, blank=True, null=True)
     default_author = models.CharField(max_length=128, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        """set urlhash to MD5(url)"""
+        self.urlhash = hashlib.md5.new(self.url).digest()
+        super(Model, self).save(*args, **kwargs)
 
     class Meta:
         db_table = 'sources'
@@ -26,7 +30,7 @@ class Sources(models.Model):
 class Links(models.Model):
     link_id = models.AutoField(primary_key=True)
     url = models.CharField(max_length=512)
-    urlhash = models.CharField(max_length=32)
+    urlhash = models.CharField(max_length=32, editable=False)
     status = models.SmallIntegerField(blank=True, default=0)
     source_id = models.IntegerField()
     found_date = models.DateTimeField()
@@ -35,16 +39,28 @@ class Links(models.Model):
     filesize = models.IntegerField(blank=True, null=True)
     doc_id = models.IntegerField(blank=True, null=True)
 
+    def save(self, *args, **kwargs):
+        """set urlhash to MD5(url)"""
+        self.urlhash = hashlib.md5.new(self.url).digest()
+        super(Model, self).save(*args, **kwargs)
+
     class Meta:
         db_table = 'links'
         unique_together = (('source_id', 'urlhash'),)
 
 class Docs(models.Model):
+    DOCTYPES = (
+        ('article', 'article'),
+        ('book', 'book'),
+        ('chapter', 'book chapter'),
+        ('thesis', 'thesis'),
+        ('review', 'review'),
+    )
     doc_id = models.AutoField(primary_key=True)
     status = models.SmallIntegerField(blank=True, default=1)
     url = models.CharField(max_length=512)
-    urlhash = models.CharField(unique=True, max_length=32)
-    doctype = models.CharField(max_length=32)
+    urlhash = models.CharField(unique=True, max_length=32, editable=False)
+    doctype = models.CharField(max_length=16, choices=DOCTYPES, default='article')
     filetype = models.CharField(max_length=8, blank=True, null=True)
     filesize = models.IntegerField(blank=True, null=True)
     found_date = models.DateTimeField(blank=True, null=True)
@@ -60,6 +76,11 @@ class Docs(models.Model):
     is_paper = models.IntegerField(blank=True, null=True)
     is_philosophy = models.IntegerField(blank=True, null=True)
     content = models.TextField(blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        """set urlhash to MD5(url)"""
+        self.urlhash = hashlib.md5.new(self.url).digest()
+        super(Model, self).save(*args, **kwargs)
 
     class Meta:
         db_table = 'docs'
