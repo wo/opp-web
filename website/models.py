@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 import hashlib
 from django.db import models
+from django.contrib.auth.models import User
 
 class Cat(models.Model):
     cat_id = models.AutoField(primary_key=True)
@@ -104,6 +105,10 @@ class Doc(models.Model):
         ms = self.doc2cat_set.filter(cat__is_default=True, strength__gte=50)
         return [(m.cat.label, m.strength) for m in ms]
     topics = property(_default_cats)
+    
+    def _low_confidence(self):
+        return self.meta_confidence <= 0.6
+    low_confidence = property(_low_confidence)
 
     def save(self, *args, **kwargs):
         """set urlhash to MD5(url)"""
@@ -133,7 +138,7 @@ class Doc2Cat(models.Model):
     doc = models.ForeignKey(Doc, on_delete=models.CASCADE)
     cat = models.ForeignKey(Cat, on_delete=models.CASCADE)
     strength = models.IntegerField(blank=True, null=True)
-    is_training = models.BooleanField(default=0)
+    is_training = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'docs2cats'
@@ -142,3 +147,15 @@ class Doc2Cat(models.Model):
     def __str__(self):
         return 'Doc {} -> Cat {}'.format(self.doc_id, self.cat_id)
         
+class Doc2User(models.Model):
+    doc = models.ForeignKey(Doc, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    strength = models.IntegerField(blank=True, null=True)
+    is_training = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = 'docs2users'
+        unique_together = (('doc', 'user'),)
+
+    def __str__(self):
+        return 'Doc {} -> User {}'.format(self.doc_id, self.user_id)
