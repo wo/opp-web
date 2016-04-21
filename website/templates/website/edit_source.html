@@ -1,0 +1,46 @@
+<html>
+<style>
+body { font-family:sans-serif; }
+form { float:left; }
+label { display:block; }
+#submitbtn { display:block; margin-top:10px; }
+#id_url, #id_default_author, #id_name { width:30em; }
+ul#related { float:left; list-style-type:none; }
+</style>
+<script>
+function set_name() {
+   var f = document.forms[0].elements;
+   var au = f['id_default_author'].value;
+   var sitetype = f['id_sourcetype'].selectedIndex==0 ?
+                     (f['id_url'].value.indexOf('researchgate') > -1 ? 
+                        "ResearchGate profile" : "site") 
+                     : "blog";
+   f['id_name'].value = au+"'s "+sitetype;
+}
+function update() {
+   var f = document.forms[0];
+   f.method = 'GET';
+   f.submit();
+}
+</script>
+<body>
+  
+<h2>Add/Edit source</h2>
+
+<form action="" method="post">
+{% csrf_token %}
+{{ form.as_p }}
+<a href="javascript:void(set_name())">set name</a>
+<input type="submit" id="submitbtn" value="Submit">
+</form>
+
+<ul id="related">
+<h4>Related source pages</h4>
+{% for src in related %}
+   <li><a href="{{ src.url }}">{{ src.name }}</a></li>
+{% endfor %}
+   <li><a href="javascript:void(update())">update</a></li>
+</ul>
+
+</body>
+</html>
