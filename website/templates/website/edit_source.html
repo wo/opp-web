@@ -5,7 +5,8 @@ form { float:left; }
 label { display:block; }
 #submitbtn { display:block; margin-top:10px; }
 #id_url, #id_default_author, #id_name { width:30em; }
-ul#related { float:left; list-style-type:none; }
+#related { float:left; margin-left:20px; padding:10px; }
+ul { list-style-type:none; }
 </style>
 <script>
 function set_name() {
@@ -31,16 +32,18 @@ function update() {
 {% csrf_token %}
 {{ form.as_p }}
 <a href="javascript:void(set_name())">set name</a>
+&nbsp; <a href="javascript:void(update())">check related</a>
 <input type="submit" id="submitbtn" value="Submit">
 </form>
 
-<ul id="related">
+<div id="related">
 <h4>Related source pages</h4>
+<ul>
 {% for src in related %}
    <li><a href="{{ src.url }}">{{ src.name }}</a></li>
 {% endfor %}
-   <li><a href="javascript:void(update())">update</a></li>
 </ul>
+</div>
 
 </body>
 </html>

@@ -33,8 +33,8 @@ class Source(models.Model):
 
     def save(self, *args, **kwargs):
         """set urlhash to MD5(url)"""
-        self.urlhash = hashlib.md5.new(self.url).digest()
-        super(Model, self).save(*args, **kwargs)
+        self.urlhash = hashlib.md5(self.url.encode('utf-8')).hexdigest()
+        super().save(*args, **kwargs)
         
     def __str__(self):
         return '{}. {} ({})'.format(self.source_id, self.name, self.url[:40])
@@ -56,7 +56,7 @@ class Link(models.Model):
 
     def save(self, *args, **kwargs):
         """set urlhash to MD5(url)"""
-        self.urlhash = hashlib.md5.new(self.url).digest()
+        self.urlhash = hashlib.md5(self.url.encode('utf-8')).hexdigest()
         super(Model, self).save(*args, **kwargs)
 
     def __str__(self):
@@ -112,7 +112,7 @@ class Doc(models.Model):
 
     def save(self, *args, **kwargs):
         """set urlhash to MD5(url)"""
-        self.urlhash = hashlib.md5.new(self.url).digest()
+        self.urlhash = hashlib.md5(self.url.encode('utf-8')).hexdigest()
         super(Model, self).save(*args, **kwargs)
 
     def __str__(self):

@@ -1,6 +1,6 @@
 import re
 from django.shortcuts import render
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Doc, Source
 from .forms import SourceForm
@@ -38,7 +38,7 @@ def edit_source(request):
     form = SourceForm(request.POST or request.GET)
     if request.method == 'POST' and form.is_valid():
         form.save()
-        return HttpResponseRedirect('about:blank')
+        return HttpResponse('OK')
     context = { 'form': form, 'related': [] }
     if request.GET.get('default_author'):
         surname = request.GET.get('default_author').split()[-1]
