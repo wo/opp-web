@@ -1,33 +1,7 @@
 /* general */
 
-body { 
-  padding:0; margin:0; background:#fafafa; color:#000; font-family:Arial,sans-serif;
-}
 a { color: #03b; }
 a:visited { color:#50a; }
-
-#headerwrap {
-  background:#1c6699; border-bottom:1px solid #000;
-}
-#header {
-  margin:0 auto 0 auto; max-width:800px; padding:0; overflow:auto; padding:15px 15px;
-}
-#header h1 {
-  float:left; margin:0; font-size:200%; font-weight:normal;
-}
-#navig {
-  float:right; padding:9px 0;
-}
-#navig span {
-  padding-left:20px;
-}
-#header a {
-  text-decoration: none; color:#fff;
-}
-
-#content {
-  margin:20px auto 50px; max-width:800px; padding:0 15px; border-left:3px solid #;
-}
 
 
 .intro, .msg {
