@@ -13,8 +13,8 @@ try:
     
     from .settings_production import *
 
-    DEBUG = False
-    ALLOWED_HOSTS = ['philosophicalprogress.org']
+    DEBUG = True
+    ALLOWED_HOSTS = ['philosophicalprogress.org', 'www.philosophicalprogress.org']
     STATIC_ROOT = '/home/wo/opp-web/static/'
     
 except ImportError:

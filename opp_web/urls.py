@@ -21,3 +21,8 @@ urlpatterns = [
     url(r'^', include('django.contrib.auth.urls')), # login, logout, password_change, etc.
     url(r'^', include('website.urls')),
 ]
+
+handler403 = 'website.views.err403'
+handler404 = 'website.views.err404'
+handler500 = 'website.views.err500'
+
