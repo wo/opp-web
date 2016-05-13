@@ -25,12 +25,12 @@ class DocAdmin(admin.ModelAdmin):
     )
     
 class SourceAdmin(admin.ModelAdmin):
-    list_display = ('name', 'url', 'found_date')
+    list_display = ('name', 'url', 'status', 'found_date')
     list_display_links = ('name', 'url', 'found_date')
-    list_filter = ['found_date']
+    list_filter = ['sourcetype', 'found_date']
+    search_fields = ['name', 'url']
     date_hierarchy = 'found_date'
-    fields = ('url', 'sourcetype', 'name', 'default_author',  'status', 'found_date')
-
+    fields = ('url', 'sourcetype', 'name', 'default_author', 'status', 'found_date')
 
 admin.site.register(Source, SourceAdmin)
 admin.site.register(Doc, DocAdmin)

@@ -7,3 +7,14 @@ urlpatterns = [
     url(r'^t/(?P<topic_name>\w+)/$$', views.topic, name='topic'),
     url(r'^edit-source$$', views.edit_source, name='edit_source'),
 ]
+
+# error handlers
+
+def err404(request):
+    return HttpResponse('404')
+    
+def err403(request):
+    return HttpResponse('403')
+
+def err500(request):
+    return HttpResponse('500')

@@ -7,6 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>{% if topic %}{{ topic }} | {% endif %}Philosophical Progress</title>
+
 <link rel="alternate" href="feed.xml" title="Daily Updates" type="application/atom+xml">
 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
@@ -19,31 +20,29 @@
 <!--script src="{% static 'js/scripts.js' %}"></script-->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
-{% block extra_headers %}
-{% endblock %}
-
 </head>
 
 <body>
 
+<div class='page-header'>
+  <div class='container'>
+  <div class='btn-toolbar pull-right'>
+    <div class='btn-group'>
+      {% if user.is_authenticated %}
+        <a href="/logout" class='btn btn-primary'>Log out {{ user.username }}</a>
+      {% else %}
+        <a href="/signup" class='btn btn-primary'>Sign up</a>
+        <a href="/login" class='btn btn-primary'>Log in</a>
+      {% endif %}
+    </div>
+  </div>
+  <h1>Philosophical Progress</h1>
+  </div>
+</div>
+
 <div class="container">
 
-<div id="headerwrap">
-<div id="header">
- <h1><a href="/">Philosophical Progress</a></h1>
- <div id="navig">
-  {% if user.is_authenticated %}
-    <span id="user"><a href="/logout">Log out {{ user.username }}</a></span>
-  {% else %}
-    <span><a href="/signup">Sign up</a></span>
-    <span id="user"><a href="/login">Log in</a></span>
-  {% endif %}
-  <!--span id="qa"><a href="/qa">What is this?</a></span-->
- </div>
-</div>
-</div>
-
-<div id="content">
+<div id="doclist">
 {% block filtermenu %}
 {% endblock %}
 
@@ -52,6 +51,8 @@
 </div>
 
 </div>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
 </body>
 </html>
