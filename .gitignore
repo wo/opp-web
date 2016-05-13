@@ -1,0 +1,4 @@
+env/*
+settings_production.py
+__pycache__/
+

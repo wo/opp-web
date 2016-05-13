@@ -53,3 +53,12 @@ def change_password(request):
     template_response = views.password_change(request)
     # Do something with `template_response`
     return template_response
+
+def err403(request):
+    return HttpResponse('Error 403')
+
+def err404(request):
+    return HttpResponse('Error 404')
+
+def err500(request):
+    return HttpResponse('Error 500')

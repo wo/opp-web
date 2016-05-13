@@ -148,6 +148,7 @@ class Doc2Cat(models.Model):
         return 'Doc {} -> Cat {}'.format(self.doc_id, self.cat_id)
         
 class Doc2User(models.Model):
+    doc2user_id = models.AutoField(primary_key=True)
     doc = models.ForeignKey(Doc, on_delete=models.CASCADE)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     strength = models.IntegerField(blank=True, null=True)
