@@ -1,17 +1,22 @@
 {% load staticfiles %}
 <!doctype html>
 
-<html>
+<html lang="en">
 <head>
-<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <title>{% if topic %}{{ topic }} | {% endif %}Philosophical Progress</title>
 <link rel="alternate" href="feed.xml" title="Daily Updates" type="application/atom+xml">
-<link rel="stylesheet" href="{% static 'style.css' %}">
-<script src="{{ rootdir }}static/scripts.js"></script>
+
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<script src="{% static 'js/scripts.js' %}"></script>
+
 <!--script src="static/jquery.js"></script-->
 </head>
 
 <body>
+
+<div class="container">
 
 <div id="headerwrap">
 <div id="header">
@@ -49,6 +54,8 @@ g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.pare
 })();
 </script>
 <noscript><p><img src="http://umsu.de/webstats/piwik/piwik.php?idsite=1" style="border:0;" alt="" /></p></noscript>
+
+</div>
 
 </body>
 </html>
