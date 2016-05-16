@@ -6,7 +6,6 @@ from .models import Doc, Source
 from .forms import SourceForm
 
 def index(request, page=1):
-    return HttpResponse('asdf')
     doclist = Doc.objects.all()
     return list_docs(request, doclist, page=page)
 
@@ -55,7 +54,6 @@ def change_password(request):
     # Do something with `template_response`
     return template_response
 
-<<<<<<< HEAD
 # error handlers
 
 def err404(request):
@@ -66,13 +64,4 @@ def err403(request):
 
 def err500(request):
     return HttpResponse('500')
-=======
-def err403(request):
-    return HttpResponse('Error 403')
 
-def err404(request):
-    return HttpResponse('Error 404')
-
-def err500(request):
-    return HttpResponse('Error 500')
->>>>>>> c08222c6f3d0308164d52b2207f6442f3ba10aea

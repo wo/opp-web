@@ -6,7 +6,6 @@ from django.contrib.auth.models import User
 class Cat(models.Model):
     cat_id = models.AutoField(primary_key=True)
     label = models.CharField(unique=True, max_length=255, blank=True, null=True)
-    is_default = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'cats'
@@ -57,7 +56,7 @@ class Link(models.Model):
     def save(self, *args, **kwargs):
         """set urlhash to MD5(url)"""
         self.urlhash = hashlib.md5(self.url.encode('utf-8')).hexdigest()
-        super(Model, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return '{}. Source {} -> {}'.format(self.link_id, self.source_id, self.url[:60])
@@ -113,7 +112,7 @@ class Doc(models.Model):
     def save(self, *args, **kwargs):
         """set urlhash to MD5(url)"""
         self.urlhash = hashlib.md5(self.url.encode('utf-8')).hexdigest()
-        super(Model, self).save(*args, **kwargs)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return '{}. {} ({})'.format(self.doc_id, self.title[:40], self.url[:40])
