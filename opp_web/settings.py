@@ -14,7 +14,7 @@ try:
     from .settings_production import *
 
     DEBUG = True
-    ALLOWED_HOSTS = ['philosophicalprogress.org']
+    ALLOWED_HOSTS = ['philosophicalprogress.org', 'www.philosophicalprogress.org']
     STATIC_ROOT = '/home/wo/opp-web/static/'
     
 except ImportError:

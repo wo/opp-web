@@ -54,11 +54,14 @@ def change_password(request):
     # Do something with `template_response`
     return template_response
 
-def err403(request):
-    return HttpResponse('Error 403')
+# error handlers
 
 def err404(request):
-    return HttpResponse('Error 404')
+    return HttpResponse('404')
+    
+def err403(request):
+    return HttpResponse('403')
 
 def err500(request):
-    return HttpResponse('Error 500')
+    return HttpResponse('500')
+
