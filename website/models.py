@@ -125,7 +125,7 @@ class AuthorName(models.Model):
     name_id = models.AutoField(primary_key=True)
     name = models.CharField(unique=True, max_length=64)
     last_searched = models.DateTimeField(blank=True, null=True)
-    is_name = models.IntegerField(blank=True, null=True)
+    is_name = models.BooleanField(default=False)
 
     class Meta:
         db_table = 'author_names'
