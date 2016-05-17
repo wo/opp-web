@@ -24,6 +24,8 @@ class DocAdmin(admin.ModelAdmin):
         }),
     )
     
+admin.site.register(Doc, DocAdmin)
+
 class SourceAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'status', 'found_date')
     list_display_links = ('name', 'url', 'found_date')
@@ -33,7 +35,10 @@ class SourceAdmin(admin.ModelAdmin):
     fields = ('url', 'sourcetype', 'name', 'default_author', 'status', 'found_date')
 
 admin.site.register(Source, SourceAdmin)
-admin.site.register(Doc, DocAdmin)
+
+class CatAdmin(admin.ModelAdmin):
+    list_display = ('label', 'num_training_pos', 'num_training_neg')
+
 admin.site.register(Link)
 admin.site.register(AuthorName)
 admin.site.register(Cat)
