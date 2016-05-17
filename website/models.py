@@ -10,6 +10,14 @@ class Cat(models.Model):
     class Meta:
         db_table = 'cats'
 
+    def num_training_pos(self):
+        """number of positive training documents"""
+        return self.doc_set.filter(doc2cat__is_training=1, doc2cat__strength=1).count()
+
+    def num_training_neg(self):
+        """number of negative training documents"""
+        return self.doc_set.filter(doc2cat__is_training=1, doc2cat__strength=0).count()
+
     def __str__(self):
         return self.label
     
@@ -96,14 +104,14 @@ class Doc(models.Model):
 
     cats = models.ManyToManyField(Cat, through='Doc2Cat')
     
-    def _default_cats(self):
+    def _cats(self):
         """
-        returns list of default cats paired with strengths,
-        e.g. [('Epistemology', 0.1),...]
+        returns list of cats paired with strengths, e.g. [('Epistemology',
+        0.1),...]
         """
-        ms = self.doc2cat_set.filter(cat__is_default=True, strength__gte=50)
+        ms = self.doc2cat_set.filter(strength__gte=50)
         return [(m.cat.label, m.strength) for m in ms]
-    topics = property(_default_cats)
+    topics = property(_cats)
     
     def _low_confidence(self):
         return self.meta_confidence <= 0.6
@@ -124,7 +132,7 @@ class AuthorName(models.Model):
     name_id = models.AutoField(primary_key=True)
     name = models.CharField(unique=True, max_length=64)
     last_searched = models.DateTimeField(blank=True, null=True)
-    is_name = models.IntegerField(blank=True, null=True)
+    is_name = models.BooleanField(default=True)
 
     class Meta:
         db_table = 'author_names'
