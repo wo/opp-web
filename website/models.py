@@ -1,4 +1,3 @@
-from __future__ import unicode_literals
 import hashlib
 from django.db import models
 from django.contrib.auth.models import User
@@ -46,20 +45,28 @@ class Source(models.Model):
     def __str__(self):
         return '{}. {} ({})'.format(self.source_id, self.name, self.url[:40])
 
+    def num_links(self):
+        return self.link_set.count()
+
+    def num_docs(self):
+        return self.doc_set.count()
+        
     class Meta:
         db_table = 'sources'
+        ordering = ['name']
 
 class Link(models.Model):
     link_id = models.AutoField(primary_key=True)
     url = models.URLField(max_length=512)
     urlhash = models.CharField(max_length=32, editable=False)
     status = models.SmallIntegerField(blank=True, default=0)
-    source_id = models.IntegerField()
+    source = models.ForeignKey(Source, on_delete=models.CASCADE)
+    #source_id = models.IntegerField()
     found_date = models.DateTimeField()
     last_checked = models.DateTimeField(blank=True, null=True)
     etag = models.CharField(max_length=255, blank=True, null=True)
     filesize = models.IntegerField(blank=True, null=True)
-    doc_id = models.IntegerField(blank=True, null=True)
+    doc = models.ForeignKey('Doc', on_delete=models.SET_NULL, null=True)
 
     def save(self, *args, **kwargs):
         """set urlhash to MD5(url)"""
@@ -67,11 +74,11 @@ class Link(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return '{}. Source {} -> {}'.format(self.link_id, self.source_id, self.url[:60])
+        return '{}. Source {} -> {}'.format(self.link_id, self.source, self.url[:60])
 
     class Meta:
         db_table = 'links'
-        unique_together = (('source_id', 'urlhash'),)
+        unique_together = (('source', 'urlhash'),)
 
 class Doc(models.Model):
     DOCTYPES = (
@@ -95,8 +102,9 @@ class Doc(models.Model):
     abstract = models.TextField(blank=True, null=True)
     numwords = models.PositiveIntegerField(blank=True, null=True)
     numpages = models.PositiveSmallIntegerField(blank=True, null=True)
-    source_url = models.URLField(max_length=512, blank=True, null=True)
-    source_name = models.CharField(max_length=255, blank=True, null=True)
+    #source_url = models.URLField(max_length=512, blank=True, null=True)
+    #source_name = models.CharField(max_length=255, blank=True, null=True)
+    source = models.ForeignKey(Source, on_delete=models.SET_NULL, null=True)
     meta_confidence = models.IntegerField(blank=True, null=True)
     is_paper = models.IntegerField(blank=True, null=True)
     is_philosophy = models.IntegerField(blank=True, null=True)
@@ -106,15 +114,15 @@ class Doc(models.Model):
     
     def _cats(self):
         """
-        returns list of cats paired with strengths, e.g. [('Epistemology',
-        0.1),...]
+        returns list of cats paired with strengths >=50,
+        e.g. [('Epistemology', 70),...]
         """
         ms = self.doc2cat_set.filter(strength__gte=50)
         return [(m.cat.label, m.strength) for m in ms]
     topics = property(_cats)
     
     def _low_confidence(self):
-        return self.meta_confidence <= 0.6
+        return self.meta_confidence <= 60
     low_confidence = property(_low_confidence)
 
     def save(self, *args, **kwargs):

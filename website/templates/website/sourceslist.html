@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+  <h2>Tracked source pages</h2>
+  
+  <h3>Personal pages</h3>
+  <ol class='sources multicol'>
+  {% for src in personal %}
+    <li>
+    {% if admin %} 
+    {% endif %}
+      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.default_author }}</a>{% if src.status > 1%}*{% endif %}
+      --{{ src.num_links }}--{{ src.num_docs }}
+    {% if admin %}
+      {% if src.status > 1 %} (Error {{ src.status }}) {% endif %}
+    {% endif %}
+    </li>
+  {% endfor %}
+  </ol>
+
+  <h3>Repositories</h3>
+  <ol class='sources multicol'>
+  {% for src in repo %}
+    <li>
+    {% if admin %} 
+    {% endif %}
+      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.default_author }}</a>{% if src.status > 1%}*{% endif %}
+    {% if admin %}
+      {% if src.status > 1 %} (Error {{ src.status }}) {% endif %}
+    {% endif %}
+    </li>
+  {% endfor %}
+  </ol>
+
+  <h3>Open Access Journals</h3>
+  <ol class='sources multicol'>
+  {% for src in journals %}
+    <li>
+    {% if admin %} 
+    {% endif %}
+      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.default_author }}</a>{% if src.status > 1%}*{% endif %}
+    {% if admin %}
+      {% if src.status > 1 %} (Error {{ src.status }}) {% endif %}
+    {% endif %}
+    </li>
+  {% endfor %}
+  </ol>
+
+  <h3>Weblogs</h3>
+  <ol class='sources multicol'>
+  {% for src in blogs %}
+    <li>
+    {% if admin %} 
+    {% endif %}
+      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.default_author }}</a>{% if src.status > 1%}*{% endif %}
+    {% if admin %}
+      {% if src.status > 1 %} (Error {{ src.status }}) {% endif %}
+    {% endif %}
+    </li>
+  {% endfor %}
+  </ol>
+  
+  <p>* Sources marked with a star are currently
+  inaccessible or don't seem to contain any links to papers.</p>
+
+{% endblock %}

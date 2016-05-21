@@ -42,6 +42,8 @@ class CatAdmin(admin.ModelAdmin):
     
 admin.site.register(Cat, CatAdmin)
 
+admin.site.register(Cat, CatAdmin)
+
 admin.site.register(Link)
 admin.site.register(AuthorName)
 admin.site.register(Journal)
