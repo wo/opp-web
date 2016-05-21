@@ -140,6 +140,16 @@ class AuthorName(models.Model):
     def __str__(self):
         return '{}. {}'.format(self.name_id, self.name)
 
+class Journal(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(unique=True, max_length=64)
+
+    class Meta:
+        db_table = 'journals'
+    
+    def __str__(self):
+        return self.name
+        
 class Doc2Cat(models.Model):
     doc2cat_id = models.AutoField(primary_key=True)
     doc = models.ForeignKey(Doc, on_delete=models.CASCADE)

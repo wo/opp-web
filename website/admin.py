@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Source,Link,Doc,AuthorName,Cat,Doc2Cat
+from .models import Source,Link,Doc,AuthorName,Journal,Cat,Doc2Cat
 
 class Doc2CatInline(admin.TabularInline):
     model = Doc2Cat
@@ -38,7 +38,10 @@ admin.site.register(Source, SourceAdmin)
 
 class CatAdmin(admin.ModelAdmin):
     list_display = ('label', 'num_training_pos', 'num_training_neg')
+    inlines = (Doc2CatInline,)
+    
+admin.site.register(Cat, CatAdmin)
 
 admin.site.register(Link)
 admin.site.register(AuthorName)
-admin.site.register(Cat)
+admin.site.register(Journal)
