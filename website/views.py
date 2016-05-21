@@ -29,8 +29,25 @@ def list_docs(request, doclist, topic=None, page=1):
     context = { 'docs': docs, 'topic': topic }
     return render(request, 'website/doclist.html', context)
 
+def sources(request):
+    srclist = Source.objects.all()
+    #query = '''SELECT S.*, COUNT(document_id) AS num_papers
+    #    FROM sources S
+    #    LEFT JOIN links USING (source_id)
+    #    LEFT JOIN locations L USING (location_id)
+    #    LEFT JOIN documents D USING (document_id)
+    #    WHERE D.document_id IS NULL OR (L.spamminess < 0.5 AND D.meta_confidence > 0.5)
+    #    GROUP BY S.source_id
+    #    ORDER BY S.default_author, S.name
+    context = {}
+    for cls in ('personal', 'repo', 'journal', 'blog'):
+        context[cls] = [src for src in srclist if src.sourcetype == cls]
+    return render(request, 'website/sourceslist.html', context)
+
 def qa(request):
     return render(request, 'website/qa.html')
+
+
 
 # bookmarklet form:
 

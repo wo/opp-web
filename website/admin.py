@@ -39,6 +39,7 @@ admin.site.register(Source, SourceAdmin)
 class CatAdmin(admin.ModelAdmin):
     list_display = ('label', 'num_training_pos', 'num_training_neg')
 
+admin.site.register(Cat, CatAdmin)
+
 admin.site.register(Link)
 admin.site.register(AuthorName)
-admin.site.register(Cat)
