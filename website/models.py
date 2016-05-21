@@ -66,6 +66,7 @@ class Link(models.Model):
     last_checked = models.DateTimeField(blank=True, null=True)
     etag = models.CharField(max_length=255, blank=True, null=True)
     filesize = models.IntegerField(blank=True, null=True)
+    #doc_id = models.IntegerField()
     doc = models.ForeignKey('Doc', on_delete=models.SET_NULL, null=True)
 
     def save(self, *args, **kwargs):
@@ -102,8 +103,9 @@ class Doc(models.Model):
     abstract = models.TextField(blank=True, null=True)
     numwords = models.PositiveIntegerField(blank=True, null=True)
     numpages = models.PositiveSmallIntegerField(blank=True, null=True)
-    #source_url = models.URLField(max_length=512, blank=True, null=True)
-    #source_name = models.CharField(max_length=255, blank=True, null=True)
+    # The following two fields are there for documents whose source has gone dead
+    source_url = models.URLField(max_length=512, blank=True, null=True)
+    source_name = models.CharField(max_length=255, blank=True, null=True)
     source = models.ForeignKey(Source, on_delete=models.SET_NULL, null=True)
     meta_confidence = models.IntegerField(blank=True, null=True)
     is_paper = models.IntegerField(blank=True, null=True)
@@ -111,7 +113,7 @@ class Doc(models.Model):
     content = models.TextField(blank=True, null=True)
 
     cats = models.ManyToManyField(Cat, through='Doc2Cat')
-    
+
     def _cats(self):
         """
         returns list of cats paired with strengths >=50,
