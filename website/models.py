@@ -137,7 +137,7 @@ class Doc(models.Model):
         
     class Meta:
         db_table = 'docs'
-        ordering = ['found_date-']
+        ordering = ['-found_date']
 
 class AuthorName(models.Model):
     name_id = models.AutoField(primary_key=True)
