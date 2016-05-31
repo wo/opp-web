@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block body %}
+
+  <h2>Sources admin</h2>
+  
+  <h3>Moved</h3>
+
+  <script>
+  function approve301(src_id, new_url) {
+     $.ajax({
+        url: '/sourcesadmin',
+        type: 'POST',
+        data: { source_id: src_id, new_url: new_url },
+        success: function(res) { $('#res'+src_id).text(res) }
+     });
+  }
+  function mark410(src_id) {
+     $.ajax({
+        url: '/sourcesadmin',
+        type: 'POST',
+        data: { source_id: src_id, mark_gone: 1 },
+        success: function(res) { $('#res'+src_id).text(res) }
+     });
+  }
+  </script>
+
+
+  <ol class='sources'>
+  {% for src in moved %}
+    <li>
+     <a href='{{ src.url }}'>{{ src.name }}</a> [status {{ src.status }}, {{ src.num_links }} links, {{ src.num_docs }} docs]<br/>
+     From <tt>{{ src.url }}</tt><br/>
+     to <tt>{{ src.redir_url }}</tt>
+     <button type="button" onclick="approve301({{ src.source_id }}, '{{ src.redir_url }}')">Approve</button>
+     <button type="button" onclick="mark410({{ src.source_id }})">Mark as Gone</button>
+     <span id="res{{ src.source_id }}"></span>
+    </li>
+  {% endfor %}
+  </ol>
+
+  <h3>Gone</h3>
+  <ol class='sources'>
+  {% for src in gone %}
+    <li>
+     <a href='{{ src.url }}'>{{ src.name }}</a> [status {{ src.status }}, {{ src.num_links }} links, {{ src.num_docs }} docs]
+    </li>
+  {% endfor %}
+  </ol>
+
+  <h3>Broken</h3>
+  <ol class='sources'>
+  {% for src in broken %}
+    <li>
+     <a href='{{ src.url }}'>{{ src.name }}</a> [status {{ src.status }}, {{ src.num_links }} links, {{ src.num_docs }} docs]
+    </li>
+  {% endfor %}
+  </ol>
+
+{% endblock %}

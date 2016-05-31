@@ -6,7 +6,8 @@ urlpatterns = [
     #url(r'^qa/$', views.qa, name='qa'),
     url(r'^t/(?P<topic_name>\w+)/?$', views.topic, name='topic'),
     url(r'^sources$', views.sources, name='sources'),
-    url(r'^edit-source$$', views.edit_source, name='edit_source'),
+    url(r'^sourcesadmin$', views.sourcesadmin, name='sourcesadmin'),
+    url(r'^edit-source$', views.edit_source, name='edit_source'),
 ]
 
 # error handlers

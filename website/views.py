@@ -1,6 +1,9 @@
 import re
+import requests
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.contrib.admin.views.decorators import staff_member_required
+from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Doc, Source
 from .forms import SourceForm
@@ -31,23 +34,43 @@ def list_docs(request, doclist, topic=None, page=1):
 
 def sources(request):
     srclist = Source.objects.all()
-    #query = '''SELECT S.*, COUNT(document_id) AS num_papers
-    #    FROM sources S
-    #    LEFT JOIN links USING (source_id)
-    #    LEFT JOIN locations L USING (location_id)
-    #    LEFT JOIN documents D USING (document_id)
-    #    WHERE D.document_id IS NULL OR (L.spamminess < 0.5 AND D.meta_confidence > 0.5)
-    #    GROUP BY S.source_id
-    #    ORDER BY S.default_author, S.name
     context = {}
     for cls in ('personal', 'repo', 'journal', 'blog'):
         context[cls] = [src for src in srclist if src.sourcetype == cls]
     return render(request, 'website/sourceslist.html', context)
 
+@staff_member_required
+@csrf_exempt
+def sourcesadmin(request):
+    if request.method == 'POST':
+        try:
+            src = Source.objects.get(source_id=request.POST.get('source_id'))
+            if request.POST.get('new_url'):
+                src.url = request.POST.get('new_url')
+                src.status = 1
+            elif request.POST.get('mark_gone'):
+                src.status = 410
+            src.save()
+            return HttpResponse('OK')
+        except Exception as e:
+            return HttpResponse('Oh dear: {}'.format(e))
+
+    srclist = Source.objects.all()
+    context = {
+        'moved': [src for src in srclist if src.status == 301],
+        'gone': [src for src in srclist if src.status == 404],
+        'broken': [src for src in srclist if src.status not in (0,1,301,404)]
+    }
+    for src in context['moved'][:40]:
+        try:
+            r = requests.head(src.url, allow_redirects=True, timeout=5)
+            src.redir_url = r.url
+        except Exception as e:
+            src.redir_url = '[requests error: {}]'.format(e)
+    return render(request, 'website/sourcesadmin.html', context)
+
 def qa(request):
     return render(request, 'website/qa.html')
-
-
 
 # bookmarklet form:
 

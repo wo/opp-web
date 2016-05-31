@@ -6,15 +6,9 @@
   
   <h3>Personal pages</h3>
   <ol class='sources multicol'>
-  {% for src in personal %}
+  {% for src in xpersonal %}
     <li>
-    {% if admin %} 
-    {% endif %}
       <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.default_author }}</a>{% if src.status > 1%}*{% endif %}
-      --{{ src.num_links }}--{{ src.num_docs }}
-    {% if admin %}
-      {% if src.status > 1 %} (Error {{ src.status }}) {% endif %}
-    {% endif %}
     </li>
   {% endfor %}
   </ol>
@@ -23,40 +17,25 @@
   <ol class='sources multicol'>
   {% for src in repo %}
     <li>
-    {% if admin %} 
-    {% endif %}
-      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.default_author }}</a>{% if src.status > 1%}*{% endif %}
-    {% if admin %}
-      {% if src.status > 1 %} (Error {{ src.status }}) {% endif %}
-    {% endif %}
+      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.name }}</a>{% if src.status > 1%}*{% endif %}
     </li>
   {% endfor %}
   </ol>
 
   <h3>Open Access Journals</h3>
   <ol class='sources multicol'>
-  {% for src in journals %}
+  {% for src in journal %}
     <li>
-    {% if admin %} 
-    {% endif %}
-      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.default_author }}</a>{% if src.status > 1%}*{% endif %}
-    {% if admin %}
-      {% if src.status > 1 %} (Error {{ src.status }}) {% endif %}
-    {% endif %}
+      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.name }}</a>{% if src.status > 1%}*{% endif %}
     </li>
   {% endfor %}
   </ol>
 
   <h3>Weblogs</h3>
   <ol class='sources multicol'>
-  {% for src in blogs %}
+  {% for src in blog %}
     <li>
-    {% if admin %} 
-    {% endif %}
-      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.default_author }}</a>{% if src.status > 1%}*{% endif %}
-    {% if admin %}
-      {% if src.status > 1 %} (Error {{ src.status }}) {% endif %}
-    {% endif %}
+      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.name }}</a>{% if src.status > 1%}*{% endif %}
     </li>
   {% endfor %}
   </ol>
