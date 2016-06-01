@@ -1,16 +1,57 @@
 {% extends "base.html" %}
 
-{% block filtermenu %}
+{% block xxxfiltermenu %}
 
 <div id="filtermenu">
-<form name="filterform" id="filterform" action="{{ rootdir }}" method="GET" onsubmit="return false">
-  Showing <select size="1" name="type" onchange="updateDocList()">
+Showing 
+<span class="dropdown dropdown-select" id="dropdown1">
+  <button class="btn btn-default dropdown-toggle" type="button" id="filtermenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    new papers and blog posts
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">new papers</a></li>
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">new blog posts</a></li>
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">new papers and blog posts</a></li>
+  </ul>
+</span>
+in
+<span class="dropdown dropdown-select" id="dropdown2">
+  <button class="btn btn-default dropdown-toggle" type="button" id="filtermenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+    all areas of philosophy
+    <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">new papers</a></li>
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">new blog posts</a></li>
+    <li role="presentation"><a role="menuitem" tabindex="-1" href="#">new papers and blog posts</a></li>
+  </ul>
+</span>
+
+
+<script>
+
+$('#dropdown1').on('click', '.dropdown-menu li a', function() { 
+  var target = $(this).html();
+
+	   //Adds active class to selected item
+	   $(this).parents('.dropdown-menu').find('li').removeClass('active');
+	   $(this).parent('li').addClass('active');
+
+	   //Displays selected text on dropdown-toggle button
+	   $(this).parents('.dropdown-select').find('.dropdown-toggle').html(target + ' <span class="caret"></span>');
+	});
+
+</script>
+
+<!--form name="filterform" id="filterform" action="{{ rootdir }}" method="GET" onsubmit="return false">
+  <select size="1" name="type" onchange="updateDocList()">
     <option value="all">new papers and blog posts</option>
     <option value="papers"{% if doctype = 'papers' %} selected="selected"{% endif %}>new papers</option>
     <option value="blogposts"{% if doctype = 'blogposts' %} selected="selected"{% endif %}>new blog posts</option>
   </select>
   in
-</form>
+</form-->
 </div>
 
 {% endblock %}
@@ -26,11 +67,8 @@
       <div class='iTitle'>
         <a href='{{ doc.url }}' id='title{{doc.doc_id}}'>{{ doc.title|safe }}</a>
       </div>
-      {% if doc.error %}
-        <div class='error'>{{ doc.error }}<div>
-      {% endif %}
       <div class='iUrl'>
-        <a href='{{ doc.url }}'>{{ doc.short_url|safe }} ({{ doc.filetype }}, {{ doc.numwords }} words)</a>
+        <a href='{{ doc.url }}'>{{ doc.short_url|safe }} ({{ doc.filetype|upper }}, {{ doc.numwords }} words)</a>
       </div>
       <div class='iAbstract' id='abstract{{doc.doc_id}}'>{{ doc.abstract|safe }}</div>
       {% if doc.topics %}
@@ -41,12 +79,10 @@
       </div>
       {% endif %}
       <div class='iFooter'>
-        <span>Found {{ doc.reldate|safe }} on <a href="{{ doc.source_url }}">{{ doc.source_name }}</a></span>
+        <span>Found {{ doc.found_date|timesince }} ago on <a href="{{ doc.source_url }}">{{ doc.source_name }}</a></span>
         {% if admin %}
           <span>doc {{ doc.doc_id }}</span>
-          {% if doc.loc_id %}<span>loc {{ doc.loc_id }}</span>{% endif %}
           <span>conf: {{ doc.meta_confidence }}</span>
-          <span>spam: {{ doc.spamminess }}</span>
         {% endif %}
       </div>
     </li>
