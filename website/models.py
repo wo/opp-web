@@ -122,7 +122,7 @@ class Doc(models.Model):
         """
         ms = self.doc2cat_set.filter(strength__gte=50)
         pairs = [(m.cat.label, int(round(m.strength, -1))) for m in ms]
-        return sorted(pairs, itemgetter(1))
+        return sorted(pairs, key=itemgetter(1))
     topics = property(_cats)
     
     def _low_confidence(self):
