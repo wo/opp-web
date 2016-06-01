@@ -3,6 +3,8 @@
 xa { color: #03b; }
 xa:visited { color:#50a; }
 
+body { padding-top:0; margin-top:0; }
+
 .page-header { margin: 10px 0; }
 .page-header h1 { margin:10px 0 10px 0; font-size:2.2em; }
 .page-header .btn-toolbar { margin:10px 0; }
