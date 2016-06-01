@@ -1,7 +1,9 @@
 import re
 import requests
+from datetime import datetime
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.utils.timezone import utc
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -29,8 +31,50 @@ def list_docs(request, doclist, topic=None, page=1):
     except EmptyPage:
         # If page is out of range, deliver last page of results:
         docs = paginator.page(paginator.num_pages)
+    for doc in docs:
+        doc.deltadate = seconds_since(doc.found_date)
+        doc.short_url = short_url(doc.url)
     context = { 'docs': docs, 'topic': topic }
     return render(request, 'website/doclist.html', context)
+
+def seconds_since(date):
+    if not date:
+        return 1000000
+    now = datetime.utcnow().replace(tzinfo=utc)
+    timediff = now - date
+    return timediff.total_seconds()
+
+def short_url(url):
+    if not url:
+        return '#'
+    url = re.sub(r'^https?://', '', url)
+    if len(url) > 80:
+        url = url[:38] + '...' + url[-39:]
+    #url = re.sub(r'(\.\w+)$', r'<b>\1</b>', url)
+    return url
+    
+def relative_date(time, diff=False):
+    now = datetime.now()
+    delta = now - time
+    if diff:
+        return int(delta.total_seconds())
+    if delta.days > 730:
+        return str(delta.days / 365) + "&nbsp;years ago"
+    if delta.days > 60:
+        return str(delta.days / 30) + "&nbsp;months ago"
+    if delta.days > 14:
+        return str(delta.days / 7) + "&nbsp;weeks ago"
+    if delta.days > 1:
+        return str(delta.days) + "&nbsp;days ago"
+    if delta.days == 1:
+        return "1&nbsp;day ago"
+    if delta.seconds > 7200:
+        return str(delta.seconds / 3600) + "&nbsp;hours ago"
+    if delta.seconds > 3600:
+        return "1&nbsp;hour ago"
+    if delta.seconds > 119:
+        return str(delta.seconds / 60) + "&nbsp;minutes ago"
+    return "1&nbsp;minute ago"
 
 def sources(request):
     srclist = Source.objects.all()

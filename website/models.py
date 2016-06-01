@@ -116,11 +116,11 @@ class Doc(models.Model):
 
     def _cats(self):
         """
-        returns list of cats paired with strengths >=50,
-        e.g. [('Epistemology', 70),...]
+        returns list of cats paired with strengths >= 50 rounded to
+        multiples of 10, e.g. [('Epistemology', 70),...]
         """
         ms = self.doc2cat_set.filter(strength__gte=50)
-        return [(m.cat.label, m.strength) for m in ms]
+        return [(m.cat.label, int(round(m.strength, -1))) for m in ms]
     topics = property(_cats)
     
     def _low_confidence(self):
