@@ -1,4 +1,5 @@
 import hashlib
+from operator import itemgetter
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -120,7 +121,8 @@ class Doc(models.Model):
         multiples of 10, e.g. [('Epistemology', 70),...]
         """
         ms = self.doc2cat_set.filter(strength__gte=50)
-        return [(m.cat.label, int(round(m.strength, -1))) for m in ms]
+        pairs = [(m.cat.label, int(round(m.strength, -1))) for m in ms]
+        return sorted(pairs, itemgetter(1))
     topics = property(_cats)
     
     def _low_confidence(self):

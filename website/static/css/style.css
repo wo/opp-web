@@ -1,7 +1,7 @@
 /* general */
 
-xa { color: #03b; }
-xa:visited { color:#50a; }
+a { color: #03b; }
+a:visited { color:#30a; }
 
 h1 { margin:0px; }
 h1 a.navbar-brand { font-size:22px; color:#fff!important; } 
@@ -139,13 +139,12 @@ img.down { background:#999; }
 .iTopics a {
   padding-right:1em; font-size:90%; text-decoration:none;
 }
-a.iTopic4 { color:#daa; }
-a.iTopic5 { color:#c99; }
-a.iTopic6 { color:#b77; }
-a.iTopic7 { color:#a55; }
-a.iTopic8 { color:#933; }
-a.iTopic9 { color:#933; }
-a.iTopic10 { color:#933; }
+a.iTopic50 { color:#daa; }
+a.iTopic60 { color:#c99; }
+a.iTopic70 { color:#b77; }
+a.iTopic80 { color:#a66; }
+a.iTopic90 { color:#933; }
+a.iTopic100 { color:#933; }
 
 .iFooter {
   color: #669; font-size:small; margin-top:2px; 
