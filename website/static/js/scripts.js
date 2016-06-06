@@ -27,9 +27,9 @@ function addDaySeparators() {
 
 Date.prototype.prettify = function(abs) {
     var day = this.getDate();
-    var mon = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][this.getMonth()];
+    var mon = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][this.getMonth()];
     var year = this.getFullYear();
-    var absDate = (day > 9 ? day : '0'+day)+' '+mon+' '+year;
+    var absDate = day+' '+mon+' '+year;
     if (abs) return absDate;
     var date = new Date();
     var today = date.prettify(true);

@@ -1,6 +1,6 @@
 /* general */
 
-a { color: #03b; }
+a, a:hover { color: #03b; }
 a:visited { color:#30a; }
 
 h1 { margin:0px; }
