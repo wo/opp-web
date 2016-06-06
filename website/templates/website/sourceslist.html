@@ -6,7 +6,7 @@
   
   <h3>Personal pages</h3>
   <ol class='sources multicol'>
-  {% for src in xpersonal %}
+  {% for src in personal %}
     <li>
       <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.default_author }}</a>{% if src.status > 1%}*{% endif %}
     </li>

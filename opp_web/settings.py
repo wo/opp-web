@@ -13,7 +13,7 @@ try:
     
     from .settings_production import *
 
-    DEBUG = True
+    DEBUG = False
     ALLOWED_HOSTS = ['philosophicalprogress.org', 'www.philosophicalprogress.org']
     STATIC_ROOT = '/home/wo/opp-web/static/'
     
