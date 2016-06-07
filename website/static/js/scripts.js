@@ -72,61 +72,40 @@ function popup(url, width, height) {
 
 
 function edit(doc_id) {
-    // defunct
-    window.processing = false;
     var authors = document.getElementById('authors'+doc_id).innerHTML.replace(/'/g,'&#39;');
     var title = document.getElementById('title'+doc_id).innerHTML.replace(/'/g,'&#39;');
     var url = document.getElementById('title'+doc_id).getAttribute('href').replace(/'/g,'&#39;');
-    var abstract = document.getElementById('abstract'+doc_id).innerHTML.replace(/'/g,'&#39;');
-    self.dialog = document.createElement('div');
-    dialog.setAttribute('id', 'editDialog');
-    dialog.innerHTML = ["<h4>Edit entry ",
-                        "<span id='closeBtn' onclick='document.body.removeChild(self.dialog)'>X</div></h4>",
-                        "<form method='post' action="+rootdir+"edit-doc' id='editform' onsubmit='return submit_edit()'>",
-                        "<input type='hidden' name='doc_id' value='"+doc_id+"'>",
-                        "<input type='hidden' name='doc_url' value='"+url+"'>",
-                        "<input type='hidden' name='quarantied' value='"+quarantined+"'>",
-                        "<input type='hidden' name='next' value='"+self.location.href+"'>",
-                        "<label for='authors'>Authors:</label><br>",
-                        "<input type='text' name='authors' value='"+authors+"'><br>",
-                        "<label for='title'>Title:</label><br>",
-                        "<input type='text' name='title' value='"+title+"'><br>",
-                        "<label for='abstract'>Abstract:</label><br>",
-                        "<textarea name='abstract'>"+abstract+"</textarea><br>",
-                        "<input type='submit' name='submit' value='Submit Changes'>",
-                        "<input type='submit' name='submit' value='Discard Entry' onclick='submit_edit(1)'>",
-                        "</form>"].join("");
-    document.body.appendChild(dialog);
+    var abs = document.getElementById('abstract'+doc_id).innerHTML.replace(/'/g,'&#39;');
+    $('#id_authors').val(authors);
+    $('#id_title').val(title);
+    $('#id_abstract').val(abs);
+    $('#id_doc_id').val(doc_id);
 }
 
+$(document).ready(function() {
+    form = $('#editform');
+    if (form) form.submit(function(e) {
+        submit_edit();
+        e.preventDefault();
+    });
+});
+
 function submit_edit(discard) {
-    // submitting the form by AJAX to get around problems with the dual-server setup 
-    if (window.processing) return false;
-    window.processing = true;
-    var f = document.forms['editform'];
-    var doc_id = f.elements['doc_id'].value;
-    var quarantined = f.elements['quarantied'].value;
-    var doc_url = encodeURIComponent(f.elements['doc_url'].value);
-    var authors = encodeURIComponent(f.elements['authors'].value);
-    var title = encodeURIComponent(f.elements['title'].value);
-    var abstract = encodeURIComponent(f.elements['abstract'].value);
-    var submit = discard ? 'Discard Entry' : 'Submit Changes';
-    var req = new XMLHttpRequest();
-    var url = rootdir+"edit-doc";
-    var params = 'doc_id='+doc_id+'&doc_url='+doc_url+'&quarantined='+quarantined;
-    params += '&authors='+authors+'&title='+title+'&abstract='+abstract;
-    params += '&submit='+submit+'&next='+self.location.href;
-    req.open('POST', url, true);
-    req.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    req.setRequestHeader("Content-length", params.length);
-    req.setRequestHeader("Connection", "close");
-    req.onreadystatechange = function() {
-        if (req.readyState == 4) {
-            if (req.status == 200) self.location.reload();
-            else alert(req.responseText);
-        }
-    }
-    req.send(params);
-    document.body.removeChild(self.dialog);
-    return false;
+    var formData = {
+        'csrfmiddlewaretoken': $('input[name=csrfmiddlewaretoken]').val(),
+        'doc_id': $('input[name=doc_id]').val(),
+        'authors': $('input[name=authors]').val(),
+        'title': $('input[name=title]').val(),
+        'abstract': $('#id_abstract').val(),
+        'hidden': discard ? 1 : 0,
+    };
+    $.ajax({
+        type: 'POST',
+        url: '/edit-doc',
+        data: formData,
+        dataType: 'json',
+        encode: true
+    }).done(function(data) {
+        console.log(data); 
+    });
 }

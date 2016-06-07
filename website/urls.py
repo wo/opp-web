@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^sources$', views.sources, name='sources'),
     url(r'^sourcesadmin$', views.sourcesadmin, name='sourcesadmin'),
     url(r'^edit-source$', views.edit_source, name='edit_source'),
+    url(r'^edit-doc$', views.edit_doc, name='edit_doc'),
 ]
 
 # error handlers

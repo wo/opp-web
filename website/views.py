@@ -8,7 +8,7 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Doc, Source
-from .forms import SourceForm
+from .forms import SourceForm, DocEditForm
 
 def index(request, page=1):
     doclist = Doc.objects.all()
@@ -35,6 +35,8 @@ def list_docs(request, doclist, topic=None, page=1):
         doc.deltadate = seconds_since(doc.found_date)
         doc.short_url = short_url(doc.url)
     context = { 'docs': docs, 'topic': topic }
+    if request.user.is_staff:
+        context['editform'] = DocEditForm()
     return render(request, 'website/doclist.html', context)
 
 def seconds_since(date):
@@ -116,8 +118,22 @@ def sourcesadmin(request):
 def qa(request):
     return render(request, 'website/qa.html')
 
-# bookmarklet form:
+# edit doc form:
+@staff_member_required
+def edit_doc(request): 
+    try:
+        doc = Doc.objects.get(doc_id=request.POST['doc_id'])
+    except:
+        return HttpResponse('Doc object does not exist')
+    form = DocEditForm(instance=doc, data=request.POST)
+    if form.is_valid():
+        form.save()
+        return HttpResponse('OK, entry updated')
+    else:
+        return HttpResponse('invalid form')
 
+# bookmarklet form for adding source pages:
+@staff_member_required
 def edit_source(request):
     form = SourceForm(request.POST or request.GET)
     if request.method == 'POST' and form.is_valid():

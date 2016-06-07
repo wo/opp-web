@@ -108,6 +108,7 @@ class Doc(models.Model):
     source_url = models.URLField(max_length=512, blank=True, null=True)
     source_name = models.CharField(max_length=255, blank=True, null=True)
     source = models.ForeignKey(Source, on_delete=models.SET_NULL, null=True)
+    hidden = models.BooleanField(default=False)
     meta_confidence = models.IntegerField(blank=True, null=True)
     is_paper = models.IntegerField(blank=True, null=True)
     is_philosophy = models.IntegerField(blank=True, null=True)
