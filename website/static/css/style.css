@@ -26,6 +26,8 @@ ol.doclist {
 .doclist li {
   border-bottom: 1px solid #eee; padding: 15px 0px 15px 0;
 }
+.dochidden { background-color: #fec; }
+
 .iClear { 
   clear: both; 
 }
