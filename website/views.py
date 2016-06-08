@@ -12,6 +12,8 @@ from .forms import SourceForm, DocEditForm
 
 def index(request, page=1):
     doclist = Doc.objects.all()
+    if not request.user.is_staff:
+        doclist = doclist.filter(hidden=False)
     return list_docs(request, doclist, page=page)
 
 def topic(request, topic_name, min_strength=50, page=1):
@@ -19,6 +21,8 @@ def topic(request, topic_name, min_strength=50, page=1):
         cats__label=topic_name,
         doc2cat__strength__gte=min_strength
     )
+    if not request.user.is_staff:
+        doclist = doclist.filter(hidden=False)
     return list_docs(request, doclist, topic=topic_name, page=page)
 
 def list_docs(request, doclist, topic=None, page=1):

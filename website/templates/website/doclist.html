@@ -59,10 +59,10 @@ $('#dropdown1').on('click', '.dropdown-menu li a', function() {
 {% block body %}
   <ol class='doclist'>
   {% for doc in docs %}
-    <li>
+    <li{% if doc.hidden %} class="dochidden" {% endif %}>
       <div class='daysep'>{{ doc.deltadate }}</div>
       {% if request.user.is_staff %}
-        <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#editModal" onclick="edit({{ doc.doc_id }})">Edit</button>
+        <button type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#editModal" onclick="edit({{ doc.doc_id }})">Edit</button>
       {% endif %}
       <div class='iAuthor'>
         <a href='{{ doc.url }}' id='authors{{doc.doc_id}}'>{{ doc.authors }}</a>
@@ -83,9 +83,11 @@ $('#dropdown1').on('click', '.dropdown-menu li a', function() {
       {% endif %}
       <div class='iFooter'>
         <span>Found {{ doc.found_date|timesince }} ago on <a href="{{ doc.source_url }}">{{ doc.source_name }}</a></span>
-        {% if admin %}
-          <span>doc {{ doc.doc_id }}</span>
-          <span>conf: {{ doc.meta_confidence }}</span>
+        {% if request.user.is_staff %}
+          <span>[doc {{ doc.doc_id }}]</span>
+          <span>[conf {{ doc.meta_confidence }}]</span>
+          <span>[paper: {{ doc.is_paper }}]</span>
+          <span>[phil: {{ doc.is_philosophy }}]</span>
         {% endif %}
       </div>
     </li>
