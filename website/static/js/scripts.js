@@ -97,7 +97,7 @@ function submit_edit(discard) {
         'authors': $('input[name=authors]').val(),
         'title': $('input[name=title]').val(),
         'abstract': $('#id_abstract').val(),
-        'hidden': discard ? 1 : 0,
+        'hidden': discard ? true : false,
     };
     $.ajax({
         type: 'POST',
