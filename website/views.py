@@ -122,17 +122,22 @@ def sourcesadmin(request):
 def qa(request):
     return render(request, 'website/qa.html')
 
-# edit doc form:
+# edit doc popup form:
 @staff_member_required
 def edit_doc(request): 
     try:
-        doc = Doc.objects.get(doc_id=request.POST['doc_id'])
+        doc = Doc.objects.get(doc_id=request.GET['doc_id'])
     except:
         return HttpResponse('Doc object does not exist')
-    form = DocEditForm(instance=doc, data=request.POST)
+    form = DocEditForm(instance=doc, data=request.GET)
     if form.is_valid():
-        form.save()
-        return HttpResponse('OK, entry updated')
+        if form.cleaned_data.get('hidden'):
+            # 'Discard Entry' was clicked -- remove doc from db:
+            doc.delete()
+            return HttpResponse('OK, entry deleted')
+        else:
+            form.save()
+            return HttpResponse('OK, entry updated')
     else:
         return HttpResponse('invalid form')
 
