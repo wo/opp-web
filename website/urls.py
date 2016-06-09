@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
+    url(r'^page/(?P<page>\d+)$', views.index, name='index_page'),
     #url(r'^qa/$', views.qa, name='qa'),
     url(r'^t/(?P<topic_name>\w+)/?$', views.topic, name='topic'),
     url(r'^sources$', views.sources, name='sources'),
