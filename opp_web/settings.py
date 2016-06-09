@@ -13,7 +13,7 @@ try:
     
     from .settings_production import *
 
-    DEBUG = False
+    DEBUG = True
     ALLOWED_HOSTS = ['philosophicalprogress.org', 'www.philosophicalprogress.org']
     STATIC_ROOT = '/home/wo/opp-web/static/'
     
@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'bootstrap3',
+    'accounts',
     'website',
 ]
 

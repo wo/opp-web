@@ -12,6 +12,8 @@ from .forms import SourceForm, DocEditForm
 
 def index(request, page=1):
     doclist = Doc.objects.all()
+    if not request.user.is_staff:
+        doclist = doclist.filter(hidden=False)
     return list_docs(request, doclist, page=page)
 
 def topic(request, topic_name, min_strength=50, page=1):
@@ -19,18 +21,20 @@ def topic(request, topic_name, min_strength=50, page=1):
         cats__label=topic_name,
         doc2cat__strength__gte=min_strength
     )
+    if not request.user.is_staff:
+        doclist = doclist.filter(hidden=False)
     return list_docs(request, doclist, topic=topic_name, page=page)
 
 def list_docs(request, doclist, topic=None, page=1):
     paginator = Paginator(doclist, 30) # 30 per page
     try:
+        MAX_PAGE = 10
+        page = page if int(page) <= MAX_PAGE else 1
         docs = paginator.page(page)
-    except PageNotAnInteger:
-        # If page is not an integer, deliver first page:
+    except:
+        # no such page
+        raise
         docs = paginator.page(1)
-    except EmptyPage:
-        # If page is out of range, deliver last page of results:
-        docs = paginator.page(paginator.num_pages)
     for doc in docs:
         doc.deltadate = seconds_since(doc.found_date)
         doc.short_url = short_url(doc.url)
@@ -55,29 +59,6 @@ def short_url(url):
     #url = re.sub(r'(\.\w+)$', r'<b>\1</b>', url)
     return url
     
-def relative_date(time, diff=False):
-    now = datetime.now()
-    delta = now - time
-    if diff:
-        return int(delta.total_seconds())
-    if delta.days > 730:
-        return str(delta.days / 365) + "&nbsp;years ago"
-    if delta.days > 60:
-        return str(delta.days / 30) + "&nbsp;months ago"
-    if delta.days > 14:
-        return str(delta.days / 7) + "&nbsp;weeks ago"
-    if delta.days > 1:
-        return str(delta.days) + "&nbsp;days ago"
-    if delta.days == 1:
-        return "1&nbsp;day ago"
-    if delta.seconds > 7200:
-        return str(delta.seconds / 3600) + "&nbsp;hours ago"
-    if delta.seconds > 3600:
-        return "1&nbsp;hour ago"
-    if delta.seconds > 119:
-        return str(delta.seconds / 60) + "&nbsp;minutes ago"
-    return "1&nbsp;minute ago"
-
 def sources(request):
     srclist = Source.objects.all()
     context = {}
@@ -118,20 +99,29 @@ def sourcesadmin(request):
 def qa(request):
     return render(request, 'website/qa.html')
 
-# edit doc form:
+# edit doc popup form:
 @staff_member_required
 def edit_doc(request): 
     try:
         doc = Doc.objects.get(doc_id=request.POST['doc_id'])
     except:
         return HttpResponse('Doc object does not exist')
+    doc_was_hidden = doc.hidden
     form = DocEditForm(instance=doc, data=request.POST)
     if form.is_valid():
-        form.save()
-        return HttpResponse('OK, entry updated')
+        if form.cleaned_data.get('hidden'):
+            # 'Discard Entry' was clicked -- remove doc from db:
+            doc.delete()
+            return HttpResponse('OK, entry deleted')
+        else:
+            doc = form.save(commit=False)
+            if doc_was_hidden:
+                doc.found_date = datetime.utcnow().replace(tzinfo=utc)
+            doc.save()
+            return HttpResponse('OK, entry updated')
     else:
         return HttpResponse('invalid form')
-
+        
 # bookmarklet form for adding source pages:
 @staff_member_required
 def edit_source(request):
