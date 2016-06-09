@@ -1,11 +1,16 @@
 /* general */
 
+.container { max-width:1080px; }
+#maindiv { padding:0; }
+
 a, a:hover { color: #03b; }
 a:visited { color:#30a; }
 
 h1 { margin:0px; }
 h1 a.navbar-brand { font-size:33px; color:#999!important; font-family:Helvetica,sans; font-weight:bold; text-shadow:1px 1px 3px #fff; } 
 .navbar-brand, .navbar li a { line-height: 90px; height: 90px; padding-top: 0; }
+
+#authform { max-width:330px; }
 
 .intro, .msg {
   display:none;
