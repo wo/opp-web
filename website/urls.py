@@ -12,13 +12,3 @@ urlpatterns = [
     url(r'^edit-doc$', views.edit_doc, name='edit_doc'),
 ]
 
-# error handlers
-
-def err404(request):
-    return HttpResponse('404')
-    
-def err403(request):
-    return HttpResponse('403')
-
-def err500(request):
-    return HttpResponse('500')

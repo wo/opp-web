@@ -56,7 +56,7 @@ $('#dropdown1').on('click', '.dropdown-menu li a', function() {
 
 {% endblock %}
 
-{% block body %}
+{% block content %}
 <div id="maindiv">
   <ol class='doclist'>
   {% for doc in docs %}
@@ -105,8 +105,6 @@ $('#dropdown1').on('click', '.dropdown-menu li a', function() {
     </ul>
   </nav>
 </div>
-<div id='nav'>
-</div>
 
 {% if request.user.is_staff %}
 <!-- Modal -->
@@ -147,4 +145,9 @@ $('#dropdown1').on('click', '.dropdown-menu li a', function() {
 </div>
 {% endif %}
 
+{% endblock %}
+
+{% block sidebar %}
+<div id='nav'>
+</div>
 {% endblock %}
