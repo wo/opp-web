@@ -41,7 +41,23 @@
         success: function(res) { msg(src_id, res); }
      });
   }
+  
+  function subscribesrc(src_id) {
+     $.ajax({
+        url: '/feedhandler/subscribe/{}'.format(src_id)
+        type: 'GET',
+        success: function(res) { msg(src_id, res); }
+     });
+  }
 
+  function unsubscribesrc(src_id) {
+     $.ajax({
+        url: '/feedhandler/unsubscribe/{}'.format(src_id)
+        type: 'GET',
+        success: function(res) { msg(src_id, res); }
+     });
+  }
+  
   function searchnew(string) {
      string += ' ~philosophy'
      window.open('https://www.google.com/#q='+string.replace(' ', '+'), '_blank');
@@ -72,48 +88,19 @@
           <button type="button" onclick="track301({{ src.source_id }}, '{{ src.url }}')">get new address</button>
         {% endif %}
       {% endif %}
+      {% if src.sourcetype = 'blog' %}
+          <span>{% if not src.subscribed %}not {% endif %}subscribed</span>
+          <button type="button" onclick="subscribesrc({{ src.source_id }})">Subscribe</button>
+          <button type="button" onclick="unsubscribesrc({{ src.source_id }})">Unsubscribe</button>
+      {% endif %}
       {% if src.status > 1 or src.num_docs = 0 %}
         <button type="button" onclick="removesrc({{ src.source_id }})">Remove</button>
         <button type="button" onclick="searchnew('{{ src.default_author }}')">Search for new site</button>
-        <div id="res{{ src.source_id }}" style="display:none"></div>
       {% endif %}
+      <div id="res{{ src.source_id }}" style="display:none"></div>
     </li>
   {% endfor %}
   </ol>
   {% endfor %}
-
-{% comment "old" %}
-  <ol class='sources'>
-  {% for src in moved %}
-    <li>
-     <a href='{{ src.url }}'>{{ src.name }}</a> [status {{ src.status }}, {{ src.num_links }} links, {{ src.num_docs }} docs]<br/>
-     From <tt>{{ src.url }}</tt><br/>
-     to <tt>{{ src.redir_url }}</tt>
-     <button type="button" onclick="approve301({{ src.source_id }}, '{{ src.redir_url }}')">Approve</button>
-     <button type="button" onclick="mark410({{ src.source_id }})">Mark as Gone</button>
-     <span id="res{{ src.source_id }}"></span>
-    </li>
-  {% endfor %}
-  </ol>
-
-  <h3>Gone</h3>
-  <ol class='sources'>
-  {% for src in gone %}
-    <li>
-     <a href='{{ src.url }}'>{{ src.name }}</a> [status {{ src.status }}, {{ src.num_links }} links, {{ src.num_docs }} docs]
-    </li>
-  {% endfor %}
-  </ol>
-
-  <h3>Broken</h3>
-  <ol class='sources'>
-  {% for src in broken %}
-    <li>
-     <a href='{{ src.url }}'>{{ src.name }}</a> [status {{ src.status }}, {{ src.num_links }} links, {{ src.num_docs }} docs]
-    </li>
-  {% endfor %}
-  </ol>
-
-{% endcomment %}
 
 {% endblock %}

@@ -10,6 +10,5 @@ urlpatterns = [
     url(r'^sourcesadmin$', views.sourcesadmin, name='sourcesadmin'),
     url(r'^edit-source$', views.edit_source, name='edit_source'),
     url(r'^edit-doc$', views.edit_doc, name='edit_doc'),
-    url(r'^superfeedr-ping/(?P<source_id>\d+)$', views.superfeedr_ping, name='superfeedr_ping'),
 ]
 

@@ -1,16 +1,16 @@
 import re
 import requests
-import json
 from datetime import datetime
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.core.urlresolvers import reverse
 from django.utils.timezone import utc
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.conf import settings
 from .models import Doc, Source
 from .forms import SourceForm, DocEditForm
+from feedhandler import superfeedr
 
 def index(request, page=1):
     doclist = Doc.objects.all()
@@ -93,6 +93,21 @@ def sourcesadmin(request):
             return HttpResponse('Oh dear: {}'.format(e))
 
     srclist = Source.objects.all()
+
+    blogsources = []
+    subscribed_urls = superfeedr.subscribed_urls()
+    for src in srclist:
+        if src.sourcetype == 'blog':
+            src.subscribed = (src.url in subscribed_urls)
+            if src.url in subscribed_urls:
+                subscribed_urls.remove(src.url)
+            blogsources.append(src)
+    for url in subscribed_urls:
+        # any subscribed urls that aren't in our db:
+        src = Source(url=url)
+        src.subscribed = True
+        blogsources.append(src)
+
     context = { 
         'sourcetypes': [
             { 
@@ -109,10 +124,11 @@ def sourcesadmin(request):
             },
             { 
                 'heading': 'Weblogs', 
-                'sources': [src for src in srclist if src.sourcetype == 'blog'],
+                'sources': blogsources, 
             },
         ]
     }
+
     return render(request, 'website/sourcesadmin.html', context)
 
 def qa(request):
@@ -150,18 +166,11 @@ def edit_source(request):
         src = form.save(commit=False)
         if form.cleaned_data['source_type'] == 'blog':
             # register new blog subscription on superfeedr:
-            from superscription import Superscription
-            ss = Superscription(settings.SUPERFEEDR_USER, 
-                                password=settings.SUPERFEEDR_PASSWORD)
+            callback = reverse('new_post', args=[src.source_id])
             try:
-                callback = '/superfeedr_ping/{}'.format(src.source_id)
-                assert ss.subscribe(hub_topic=src.url, hub_callback=callback)
-            except:
-                msg = 'could not register blog on superfeedr!'
-                if ss.response.status_code:
-                    msg += ' status {}'.format(ss.response.status_code)
-                else:
-                    msg += ' no response from superfeedr server'
+                superfeedr.subscribe(url=src.url, callback_url=callback)
+            except Exception as e:
+                msg = 'could not register blog on superfeedr! {}'.format(e)
                 return HttpResponse(msg)
         src.save()
         return HttpResponse('OK')
@@ -171,60 +180,6 @@ def edit_source(request):
         surname = request.GET.get('default_author').split()[-1]
         context['related'].extend(Source.objects.filter(default_author__endswith=surname))
     return render(request, 'website/edit_source.html', context)
-
-# receive notifications from superfeedr about new blog posts:
-def superfeedr_ping(request, source_id):
-    try:
-        src = Source.objects.get(pk=source_id)
-    except:
-        return HttpResponse('Unknown source!')
-    try:
-        feed = json.loads(request.body.decode("utf-8"))
-        status = feed['status']['code']
-        #source_url = feed['status']['feed']
-        #app.logger.debug('superfeedr notification for {} (status {})'.format(source_url, status))
-        #app.logger.debug(json.dumps(feed, indent=4, separators=(',',': ')))
-        if status == '0' and not feed.get('items'):
-            #app.logger.debug('superfeedr says feed is broken')
-            return HttpResponse('Got it: feed is broken')
-    except:
-        return HttpResponse('Don\'t know how to handle this request')
-
-    posts = []
-    for item in feed.get('items', []):
-        post = Doc(
-            filetype = 'blogpost',
-            source_url = src.url,
-            source_name = src.name,
-            source_id = source_id,
-            author = src.default_author,
-            url = item.get('permalinkUrl') or item.get('id'),
-            title = item.get('title',''),
-            content = item.get('content') or item.get('summary'),
-            status = 0,
-        )
-        if not post.url or not post.title:
-            #app.logger.error('ignoring superfeedr post without url or title')
-            continue
-        # RSS feeds sometimes only contain a summary of posts, and
-        # often don't contain the author name on group blogs. So we'll
-        # have to fetch content and author from the actual post url.
-        posts.append(post)
-
-    if not posts:
-        #app.logger.warn('no posts to save')
-        return HttpResponse('No posts received')
-
-    return HttpResponse('OK')
-
-# user management
-
-from django.contrib.auth import views
-
-def change_password(request):
-    template_response = views.password_change(request)
-    # Do something with `template_response`
-    return template_response
 
 # error handlers
 
