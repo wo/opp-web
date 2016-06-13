@@ -61,7 +61,7 @@ def unsubscribe(url=None):
     response = requests.post(
         SUPERFEEDR_API,
         params=params,
-        auth=auth.HTTPBasicAuth(user, password),
+        auth=requests.auth.HTTPBasicAuth(user, password),
     )
     response.raise_for_status()
     return True
@@ -76,10 +76,10 @@ def subscribed_urls():
         'hub.mode': 'list',
         'by_page': 500,
     }
-    response = requests.post(
+    response = requests.get(
         SUPERFEEDR_API,
         params=params,
-        auth=auth.HTTPBasicAuth(user, password),
+        auth=requests.auth.HTTPBasicAuth(user, password),
     )
     response.raise_for_status()
     urls = []
@@ -88,7 +88,7 @@ def subscribed_urls():
             urls.append(sub['subscription']['feed']['url'])
         except:
             pass
-   return urls 
+    return urls 
 
 
 

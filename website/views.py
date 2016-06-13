@@ -104,7 +104,7 @@ def sourcesadmin(request):
             blogsources.append(src)
     for url in subscribed_urls:
         # any subscribed urls that aren't in our db:
-        src = Source(url=url)
+        src = Source(url=url, name=url, sourcetype='blog')
         src.subscribed = True
         blogsources.append(src)
 
@@ -166,7 +166,7 @@ def edit_source(request):
         src = form.save(commit=False)
         if form.cleaned_data['source_type'] == 'blog':
             # register new blog subscription on superfeedr:
-            callback = reverse('new_post', args=[src.source_id])
+            callback = request.build_absolute_uri(reverse('new_post', args=[src.source_id]))
             try:
                 superfeedr.subscribe(url=src.url, callback_url=callback)
             except Exception as e:
