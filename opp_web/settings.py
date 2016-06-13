@@ -13,7 +13,7 @@ try:
     
     from .settings_production import *
 
-    DEBUG = True
+    DEBUG = False
     ALLOWED_HOSTS = ['philosophicalprogress.org', 'www.philosophicalprogress.org']
     STATIC_ROOT = '/home/wo/opp-web/static/'
     
@@ -30,8 +30,12 @@ except ImportError:
             'HOST': 'localhost'
         }
     }
+    
     DEBUG = True
     ALLOWED_HOSTS = []
+    
+    SUPERFEEDR_USER = ''
+    SUPERFEEDR_PASSWORD = ''
 
 STATIC_URL = '/static/'
 LOGIN_REDIRECT_URL = 'website.views.index'

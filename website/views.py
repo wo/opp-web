@@ -1,5 +1,6 @@
 import re
 import requests
+import json
 from datetime import datetime
 from django.shortcuts import render
 from django.http import HttpResponse
@@ -7,6 +8,7 @@ from django.utils.timezone import utc
 from django.contrib.admin.views.decorators import staff_member_required
 from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.conf import settings
 from .models import Doc, Source
 from .forms import SourceForm, DocEditForm
 
@@ -72,28 +74,45 @@ def sourcesadmin(request):
     if request.method == 'POST':
         try:
             src = Source.objects.get(source_id=request.POST.get('source_id'))
-            if request.POST.get('new_url'):
+            if request.POST.get('action') == 'get_new_url':
+                try:
+                    r = requests.head(src.url, allow_redirects=True, timeout=5)
+                    return HttpResponse(r.url)
+                except Exception as e:
+                    return HttpResponse('[requests error: {}]'.format(e))
+            elif request.POST.get('action') == 'change_url':
                 src.url = request.POST.get('new_url')
                 src.status = 1
-            elif request.POST.get('mark_gone'):
-                src.status = 410
-            src.save()
-            return HttpResponse('OK')
+                src.save()
+                return HttpResponse('URL changed')
+            elif request.POST.get('action') == 'remove':
+                src.delete()
+                return HttpResponse('Source deleted')
+            return HttpResponse('Unknown action')
         except Exception as e:
             return HttpResponse('Oh dear: {}'.format(e))
 
     srclist = Source.objects.all()
-    context = {
-        'moved': [src for src in srclist if src.status == 301],
-        'gone': [src for src in srclist if src.status == 404],
-        'broken': [src for src in srclist if src.status not in (0,1,301,404)]
+    context = { 
+        'sourcetypes': [
+            { 
+                'heading': 'Personal pages', 
+                'sources': [src for src in srclist if src.sourcetype == 'personal'],
+            },
+            { 
+                'heading': 'Repositories', 
+                'sources': [src for src in srclist if src.sourcetype == 'repo'],
+            },
+            { 
+                'heading': 'Open Access Journals', 
+                'sources': [src for src in srclist if src.sourcetype == 'journal'],
+            },
+            { 
+                'heading': 'Weblogs', 
+                'sources': [src for src in srclist if src.sourcetype == 'blog'],
+            },
+        ]
     }
-    for src in context['moved'][:40]:
-        try:
-            r = requests.head(src.url, allow_redirects=True, timeout=5)
-            src.redir_url = r.url
-        except Exception as e:
-            src.redir_url = '[requests error: {}]'.format(e)
     return render(request, 'website/sourcesadmin.html', context)
 
 def qa(request):
@@ -126,14 +145,77 @@ def edit_doc(request):
 @staff_member_required
 def edit_source(request):
     form = SourceForm(request.POST or request.GET)
+
     if request.method == 'POST' and form.is_valid():
-        form.save()
+        src = form.save(commit=False)
+        if form.cleaned_data['source_type'] == 'blog':
+            # register new blog subscription on superfeedr:
+            from superscription import Superscription
+            ss = Superscription(settings.SUPERFEEDR_USER, 
+                                password=settings.SUPERFEEDR_PASSWORD)
+            try:
+                callback = '/superfeedr_ping/{}'.format(src.source_id)
+                assert ss.subscribe(hub_topic=src.url, hub_callback=callback)
+            except:
+                msg = 'could not register blog on superfeedr!'
+                if ss.response.status_code:
+                    msg += ' status {}'.format(ss.response.status_code)
+                else:
+                    msg += ' no response from superfeedr server'
+                return HttpResponse(msg)
+        src.save()
         return HttpResponse('OK')
+        
     context = { 'form': form, 'related': [] }
     if request.GET.get('default_author'):
         surname = request.GET.get('default_author').split()[-1]
         context['related'].extend(Source.objects.filter(default_author__endswith=surname))
     return render(request, 'website/edit_source.html', context)
+
+# receive notifications from superfeedr about new blog posts:
+def superfeedr_ping(request, source_id):
+    try:
+        src = Source.objects.get(pk=source_id)
+    except:
+        return HttpResponse('Unknown source!')
+    try:
+        feed = json.loads(request.body.decode("utf-8"))
+        status = feed['status']['code']
+        #source_url = feed['status']['feed']
+        #app.logger.debug('superfeedr notification for {} (status {})'.format(source_url, status))
+        #app.logger.debug(json.dumps(feed, indent=4, separators=(',',': ')))
+        if status == '0' and not feed.get('items'):
+            #app.logger.debug('superfeedr says feed is broken')
+            return HttpResponse('Got it: feed is broken')
+    except:
+        return HttpResponse('Don\'t know how to handle this request')
+
+    posts = []
+    for item in feed.get('items', []):
+        post = Doc(
+            filetype = 'blogpost',
+            source_url = src.url,
+            source_name = src.name,
+            source_id = source_id,
+            author = src.default_author,
+            url = item.get('permalinkUrl') or item.get('id'),
+            title = item.get('title',''),
+            content = item.get('content') or item.get('summary'),
+            status = 0,
+        )
+        if not post.url or not post.title:
+            #app.logger.error('ignoring superfeedr post without url or title')
+            continue
+        # RSS feeds sometimes only contain a summary of posts, and
+        # often don't contain the author name on group blogs. So we'll
+        # have to fetch content and author from the actual post url.
+        posts.append(post)
+
+    if not posts:
+        #app.logger.warn('no posts to save')
+        return HttpResponse('No posts received')
+
+    return HttpResponse('OK')
 
 # user management
 

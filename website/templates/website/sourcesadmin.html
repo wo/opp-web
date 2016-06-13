@@ -2,19 +2,51 @@
 
 {% block content %}
 
-  <h2>Sources admin</h2>
-  
-  <h3>Moved</h3>
-
   <script>
-  function approve301(src_id, new_url) {
+
+  function msg(src_id, msg) {
+    el = $('#res'+src_id);
+    el.html(msg);
+    el.show();
+  }
+
+  function track301(src_id, url) {
      $.ajax({
         url: '/sourcesadmin',
         type: 'POST',
-        data: { source_id: src_id, new_url: new_url },
-        success: function(res) { $('#res'+src_id).text(res) }
+        data: { source_id: src_id, action: 'get_new_url' },
+        success: function(res) {
+          msg(src_id, '<tt>'+url+'</tt> redirects to '+(url==res ? 'itself' : '<tt>'+res+'</tt>')
+            +' <button type="button" onclick="approve301('+src_id+', \''+res+'\')">Approve new address</button>');
+        }
      });
   }
+
+  function approve301(src_id, new_url) {
+     new_url = prompt('new url', new_url);
+     if (!new_url) return;
+     $.ajax({
+        url: '/sourcesadmin',
+        type: 'POST',
+        data: { source_id: src_id, action: 'change_url', new_url: new_url },
+        success: function(res) { msg(src_id, res); }
+     });
+  }
+  
+  function removesrc(src_id) {
+     $.ajax({
+        url: '/sourcesadmin',
+        type: 'POST',
+        data: { source_id: src_id, action: 'remove' },
+        success: function(res) { msg(src_id, res); }
+     });
+  }
+
+  function searchnew(string) {
+     string += ' ~philosophy'
+     window.open('https://www.google.com/#q='+string.replace(' ', '+'), '_blank');
+  }
+
   function mark410(src_id) {
      $.ajax({
         url: '/sourcesadmin',
@@ -26,6 +58,31 @@
   </script>
 
 
+  <h2>Tracked source pages</h2>
+  
+  {% for st in sourcetypes %}
+      <h3>{{ st.heading }}</h3>
+  <ol class='sources'>
+  {% for src in st.sources %}
+    <li value="{{ src.source_id }}">
+      <a href='{{ src.url }}' class='src{{ src.status }}'>{{ src.name }}</a> [{{ src.num_links }} links, {{ src.num_docs }} docs]
+      {% if src.status > 1 %}
+        <b>status {{ src.status }}</b>
+        {% if src.status == 301 %}
+          <button type="button" onclick="track301({{ src.source_id }}, '{{ src.url }}')">get new address</button>
+        {% endif %}
+      {% endif %}
+      {% if src.status > 1 or src.num_docs = 0 %}
+        <button type="button" onclick="removesrc({{ src.source_id }})">Remove</button>
+        <button type="button" onclick="searchnew('{{ src.default_author }}')">Search for new site</button>
+        <div id="res{{ src.source_id }}" style="display:none"></div>
+      {% endif %}
+    </li>
+  {% endfor %}
+  </ol>
+  {% endfor %}
+
+{% comment "old" %}
   <ol class='sources'>
   {% for src in moved %}
     <li>
@@ -56,5 +113,7 @@
     </li>
   {% endfor %}
   </ol>
+
+{% endcomment %}
 
 {% endblock %}

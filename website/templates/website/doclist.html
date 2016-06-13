@@ -57,7 +57,8 @@ $('#dropdown1').on('click', '.dropdown-menu li a', function() {
 {% endblock %}
 
 {% block content %}
-<div id="maindiv">
+
+<div id="maindiv" class="col-md-9">
   <ol class='doclist'>
   {% for doc in docs %}
     <li{% if doc.hidden %} class="dochidden" {% endif %}>
@@ -104,6 +105,10 @@ $('#dropdown1').on('click', '.dropdown-menu li a', function() {
       {% endif %}
     </ul>
   </nav>
+
+</div>
+
+<div id="sidebar" class='col-md-3'>
 </div>
 
 {% if request.user.is_staff %}
@@ -147,7 +152,3 @@ $('#dropdown1').on('click', '.dropdown-menu li a', function() {
 
 {% endblock %}
 
-{% block sidebar %}
-<div id='nav'>
-</div>
-{% endblock %}
