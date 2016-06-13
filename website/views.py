@@ -104,7 +104,7 @@ def sourcesadmin(request):
             blogsources.append(src)
     for url in subscribed_urls:
         # any subscribed urls that aren't in our db:
-        src = Source(url=url)
+        src = Source(url=url, name=url, sourcetype='blog')
         src.subscribed = True
         blogsources.append(src)
 
