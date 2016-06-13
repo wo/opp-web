@@ -13,7 +13,7 @@ try:
     
     from .settings_production import *
 
-    DEBUG = False
+    DEBUG = True
     ALLOWED_HOSTS = ['philosophicalprogress.org', 'www.philosophicalprogress.org']
     STATIC_ROOT = '/home/wo/opp-web/static/'
     
@@ -115,3 +115,43 @@ USE_L10N = True
 
 USE_TZ = True
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False, # keep Django's default loggers
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+        },
+        'simple': {
+            'format': '%(levelname)s %(message)s'
+        },
+        'timestampthread': {
+            'format': "%(asctime)s [%(threadName)-12.12s] [%(levelname)-5.5s] [%(name)-20.20s]  %(message)s",
+        },
+    },
+    'handlers': {
+        'logfile': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(BASE_DIR, 'log', 'opp_web.log'),
+            'maxBytes': 50 * 10**6, # 50 MB
+            'backupCount': 3, # keep this many extra historical files
+            'formatter': 'timestampthread'
+        },
+        'console': {
+            'level': 'DEBUG', # DEBUG or higher goes to the console
+            'class': 'logging.StreamHandler',
+        },
+    },
+    'loggers': {
+        'django': { # configure all of Django's loggers
+            'handlers': ['logfile', 'console'],
+            'level': 'INFO', # set to debug to see e.g. database queries
+            'propagate': False, # don't propagate further, to avoid duplication
+        },
+        '': {
+            'handlers': ['logfile', 'console'],
+            'level': 'DEBUG',
+        },
+    },
+}

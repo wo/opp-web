@@ -1,10 +1,15 @@
 import json
+import logging
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
+from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from website.models import Source, Doc
 from . import superfeedr
 
+logger = logging.getLogger(__name__)
+
+@csrf_exempt
 def new_post(request, source_id):
     """
     superfeedr notification of new blog post(s), see
@@ -14,6 +19,7 @@ def new_post(request, source_id):
     often don't contain the author name on group blogs. So we'll
     have to fetch content and author from the actual post url.
     """
+    logger.info('notification: new blog post on source %s', source_id)
     msg = ''
     try:
         src = Source.objects.get(pk=source_id)
@@ -24,8 +30,9 @@ def new_post(request, source_id):
         status = int(feed['status']['code'])
         #source_url = feed['status']['feed']
         if settings.DEBUG:
-            msg += 'notification for {} (status {})'.format(source_id, status))
+            msg += 'notification for {} (status {})'.format(source_id, status)
             msg += '\n'+json.dumps(feed, indent=4, separators=(',',': '))+'\n'
+            logger.debug(msg)
         if status != 200 and not feed.get('items'):
             src.status = status if status > 1 else 410
             msg += 'Got it: feed is broken'
@@ -33,14 +40,13 @@ def new_post(request, source_id):
     except:
         return HttpResponse('Don\'t know how to handle this request')
 
-    posts = []
     for item in feed.get('items', []):
         post = Doc(
-            filetype = 'blogpost',
+            doctype = 'blogpost',
             source_url = src.url,
             source_name = src.name,
             source_id = source_id,
-            author = src.default_author,
+            authors = src.default_author,
             url = item.get('permalinkUrl') or item.get('id'),
             title = item.get('title',''),
             content = item.get('content') or item.get('summary'),
@@ -49,10 +55,7 @@ def new_post(request, source_id):
         if not post.url or not post.title:
             #app.logger.error('ignoring superfeedr post without url or title')
             continue
-        posts.append(post)
-
-    if not posts:
-        return HttpResponse(msg+'No posts received')
+        post.save()
 
     return HttpResponse(msg+'OK')
 
@@ -64,7 +67,7 @@ def subscribe(request, source_id):
         src = Source.objects.get(pk=source_id)
     except:
         return HttpResponse('Unknown source!')
-    callback = reverse('new_post', args=[src.source_id])
+    callback = request.build_absolute_uri(reverse('new_post', args=[src.source_id]))
     try:
         superfeedr.subscribe(url=src.url, callback_url=callback)
     except Exception as e:

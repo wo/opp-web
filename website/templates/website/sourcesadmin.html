@@ -44,7 +44,7 @@
   
   function subscribesrc(src_id) {
      $.ajax({
-        url: '/feedhandler/subscribe/{}'.format(src_id)
+        url: '/feedhandler/subscribe/'+src_id,
         type: 'GET',
         success: function(res) { msg(src_id, res); }
      });
@@ -52,7 +52,7 @@
 
   function unsubscribesrc(src_id) {
      $.ajax({
-        url: '/feedhandler/unsubscribe/{}'.format(src_id)
+        url: '/feedhandler/unsubscribe/'+src_id,
         type: 'GET',
         success: function(res) { msg(src_id, res); }
      });
