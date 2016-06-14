@@ -50,12 +50,14 @@ img.up { background:#999; }
 img.down { background:#999; }
 .iTrain img:hover { background:#1c6699; }
 
-.iAuthor, .iTitle {
+.iAuthor, .iTitle, .iBlogname {
   line-height:150%;
 }
-.iAuthor a {
+.blogpost .iAuthor { display:none; }
+.iAuthor a, .iBlogname a {
   color: #933; text-decoration: none; font-size:120%;
 }
+.iBlogname a { color: #393; }
 .iTitle a {
   text-decoration: none; font-size:140%; 
 }
