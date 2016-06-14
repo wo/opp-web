@@ -50,6 +50,7 @@ def new_post(request, source_id):
             url = item.get('permalinkUrl') or item.get('id'),
             title = item.get('title',''),
             content = item.get('content') or item.get('summary'),
+            filetype = 'html',
             status = 0,
         )
         if not post.url or not post.title:

@@ -40,6 +40,7 @@ def list_docs(request, doclist, topic=None, page=1):
     for doc in docs:
         doc.deltadate = seconds_since(doc.found_date)
         doc.short_url = short_url(doc.url)
+        doc.is_blogpost = (doc.doctype == 'blogpost')
     context = { 'docs': docs, 'topic': topic }
     if request.user.is_staff:
         context['editform'] = DocEditForm()
@@ -163,8 +164,8 @@ def edit_source(request):
     form = SourceForm(request.POST or request.GET)
 
     if request.method == 'POST' and form.is_valid():
-        src = form.save(commit=False)
-        if form.cleaned_data['source_type'] == 'blog':
+        src = form.save()
+        if form.cleaned_data['sourcetype'] == 'blog':
             # register new blog subscription on superfeedr:
             callback = request.build_absolute_uri(reverse('new_post', args=[src.source_id]))
             try:
@@ -172,7 +173,6 @@ def edit_source(request):
             except Exception as e:
                 msg = 'could not register blog on superfeedr! {}'.format(e)
                 return HttpResponse(msg)
-        src.save()
         return HttpResponse('OK')
         
     context = { 'form': form, 'related': [] }

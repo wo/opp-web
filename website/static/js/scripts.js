@@ -80,6 +80,7 @@ function edit(doc_id) {
     $('#id_title').val(title);
     $('#id_abstract').val(abs);
     $('#id_doc_id').val(doc_id);
+    $('#django_link').attr('href', '/admin/website/doc/'+doc_id+'/change/');
 }
 
 $(document).ready(function() {
