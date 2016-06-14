@@ -89,6 +89,7 @@ class Doc(models.Model):
         ('chapter', 'book chapter'),
         ('thesis', 'thesis'),
         ('review', 'review'),
+        ('blogpost', 'blogpost'),
     )
     doc_id = models.AutoField(primary_key=True)
     status = models.SmallIntegerField(blank=True, default=1)

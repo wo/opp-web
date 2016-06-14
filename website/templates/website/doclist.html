@@ -61,7 +61,7 @@ $('#dropdown1').on('click', '.dropdown-menu li a', function() {
 <div id="maindiv" class="col-md-9">
   <ol class='doclist'>
   {% for doc in docs %}
-    <li{% if doc.hidden %} class="dochidden" {% endif %}>
+    <li class="doc{% if doc.hidden %} dochidden{% endif %}{% if doc.is_blogpost %} blogpost{% endif %}">
       <div class='daysep'>{{ doc.deltadate }}</div>
       {% if request.user.is_staff %}
         <button type="button" class="btn btn-default pull-right" data-toggle="modal" data-target="#editModal" onclick="edit({{ doc.doc_id }})">Edit</button>
@@ -69,6 +69,11 @@ $('#dropdown1').on('click', '.dropdown-menu li a', function() {
       <div class='iAuthor'>
         <a href='{{ doc.url }}' id='authors{{doc.doc_id}}'>{{ doc.authors }}</a>
       </div>
+      {% if doc.is_blogpost %}
+        <div class='iBlogname'>
+          <a href='{{ doc.url }}' id='blogname{{doc.doc_id}}'>{{ doc.source_name }}</a>
+        </div>
+      {% endif %}
       <div class='iTitle'>
         <a href='{{ doc.url }}' id='title{{doc.doc_id}}'>{{ doc.title|safe }}</a>
       </div>
@@ -138,6 +143,7 @@ $('#dropdown1').on('click', '.dropdown-menu li a', function() {
           </div>
         </div>
         <div class="modal-footer">
+          <a href="#" id="django_link" class="pull-left">Django admin</a>
           <!--button type="button" class="btn btn-default" data-dismiss="modal">Close</button-->
           <button type="button" class="btn btn-default" data-dismiss="modal" onclick="submit_edit()">Save Changes</button>
           <button type="button" class="btn btn-default" data-dismiss="modal" onclick="submit_edit(1)">Discard Entry</button>

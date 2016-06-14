@@ -18,7 +18,7 @@ class DocAdmin(admin.ModelAdmin):
         }),
         ('More', {
             'classes': ('collapse',),
-            'fields': ('status', 'found_date', 'earlier_id', 'numwords', 'numpages', 
+            'fields': ('status', 'filetype', 'found_date', 'earlier_id', 'numwords', 'numpages', 
                        'source_url', 'source_name', 'meta_confidence', 'is_paper', 
                        'is_philosophy', 'content'),
         }),
