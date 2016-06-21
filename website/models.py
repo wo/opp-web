@@ -12,7 +12,7 @@ class Cat(models.Model):
 
     def num_training_pos(self):
         """number of positive training documents"""
-        return self.doc_set.filter(doc2cat__is_training=1, doc2cat__strength=1).count()
+        return self.doc_set.filter(doc2cat__is_training=1, doc2cat__strength=100).count()
 
     def num_training_neg(self):
         """number of negative training documents"""
