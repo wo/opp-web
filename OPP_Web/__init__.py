@@ -350,11 +350,10 @@ def atom_feed():
     feed = AtomFeed('Philosophical Progress',
                     feed_url=base_url+'feed.xml', url=base_url)
    
-    day = ''
-    updated = None 
-    day_text = u''
+    cur_day = 0
     for doc in docs:
-        if doc['found_day'] != day:
+        if doc.found_date.day() != cur_day:
+doc['found_day'] != day:
             if day:
                 feed.add('Articles found on {}'.format(day), 
                          escape_illegal_chars(day_text),
