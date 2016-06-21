@@ -1,6 +1,7 @@
 import re
 import requests
-from datetime import datetime
+from collections import defaultdict
+from datetime import datetime, timedelta
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
@@ -10,6 +11,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from .models import Doc, Source
 from .forms import SourceForm, DocEditForm
+from django.utils.feedgenerator import Atom1Feed
 from feedhandler import superfeedr
 
 def index(request, page=1):
@@ -180,6 +182,51 @@ def edit_source(request):
         surname = request.GET.get('default_author').split()[-1]
         context['related'].extend(Source.objects.filter(default_author__endswith=surname))
     return render(request, 'website/edit_source.html', context)
+
+# atom feed:
+def atom_feed(request):
+    feed = Atom1Feed(
+        title='Philosophical Progress',
+        link='http://www.philosophicalprogress.org/',
+        description='New online papers in philosophy',
+        feed_url='http://www.philosophicalprogress.org/feed.xml'
+    )
+    docs = Doc.objects.filter(
+        status=1,
+        hidden=False,
+        found_date__lt=datetime.now().date(),
+        found_date__gte=datetime.now().date()-timedelta(days=7)
+    )
+    
+    docs_per_day = defaultdict(list)
+    for doc in docs:
+        daystr = doc.found_date.strftime('%Y%m%d') # for sorting
+        docs_per_day[daystr].append(doc)
+
+    for k in sorted(docs_per_day.keys()):
+        day_text = ''
+        for doc in docs_per_day[k]:
+            authors = doc.source_name if doc.doctype == 'blogpost' else doc.authors
+            day_text += '<b>{}: <a href="{}">{}</a></b>'.format(authors, doc.url, doc.title)
+            day_text += ' ({}, {} words)<br />'.format(doc.filetype, doc.numwords)
+            day_text += ' <div>{}</div><br />\n'.format(doc.abstract)
+        d = docs[0].found_date
+        pubdate = datetime(d.year, d.month, d.day, 23, 59)
+        feed.add_item(
+            title = 'Articles found on {}'.format(d.strftime('%d %B %Y')),
+            link = 'http://www.philosophicalprogress.org/',
+            description = day_text, 
+            pubdate = pubdate,
+            updatedate = pubdate
+        )
+
+    # TODO: cache?
+    return HttpResponse(feed.writeString('utf-8'), content_type=feed.mime_type)
+
+_illegal_xml_chars_RE = re.compile(u'[\x00-\x08\x0b\x0c\x0e-\x1F\uD800-\uDFFF\uFFFE\uFFFF]')
+def escape_illegal_chars(val, replacement='?'):
+    return _illegal_xml_chars_RE.sub(replacement, val)    
+
 
 # error handlers
 
