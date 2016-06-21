@@ -42,7 +42,6 @@ def list_docs(request, doclist, topic=None, page=1):
     for doc in docs:
         doc.deltadate = seconds_since(doc.found_date)
         doc.short_url = short_url(doc.url)
-        doc.is_blogpost = (doc.doctype == 'blogpost')
     context = { 'docs': docs, 'topic': topic }
     if request.user.is_staff:
         context['editform'] = DocEditForm()
@@ -205,12 +204,13 @@ def atom_feed(request):
 
     for k in sorted(docs_per_day.keys()):
         day_text = ''
+        day_docs = sorted(docs_per_day[k], key=lambda doc: (doc.is_blogpost, doc.authors))
         for doc in docs_per_day[k]:
-            authors = doc.source_name if doc.doctype == 'blogpost' else doc.authors
+            authors = doc.source_name if doc.is_blogpost else doc.authors
             day_text += '<b>{}: <a href="{}">{}</a></b>'.format(authors, doc.url, doc.title)
             day_text += ' ({}, {} words)<br />'.format(doc.filetype, doc.numwords)
             day_text += ' <div>{}</div><br />\n'.format(doc.abstract)
-        d = docs[0].found_date
+        d = docs_per_day[k][0].found_date
         pubdate = datetime(d.year, d.month, d.day, 23, 59)
         feed.add_item(
             title = 'Articles found on {}'.format(d.strftime('%d %B %Y')),
