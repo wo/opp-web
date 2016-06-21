@@ -202,15 +202,15 @@ def atom_feed(request):
         daystr = doc.found_date.strftime('%Y%m%d') # for sorting
         docs_per_day[daystr].append(doc)
 
-    for k in sorted(docs_per_day.keys()):
+    for k in sorted(docs_per_day.keys(), reverse=True):
         day_text = ''
         day_docs = sorted(docs_per_day[k], key=lambda doc: (doc.is_blogpost, doc.authors))
-        for doc in docs_per_day[k]:
+        for doc in day_docs:
             authors = doc.source_name if doc.is_blogpost else doc.authors
             day_text += '<b>{}: <a href="{}">{}</a></b>'.format(authors, doc.url, doc.title)
             day_text += ' ({}, {} words)<br />'.format(doc.filetype, doc.numwords)
             day_text += ' <div>{}</div><br />\n'.format(doc.abstract)
-        d = docs_per_day[k][0].found_date
+        d = day_docs[0].found_date
         pubdate = datetime(d.year, d.month, d.day, 23, 59)
         feed.add_item(
             title = 'Articles found on {}'.format(d.strftime('%d %B %Y')),
