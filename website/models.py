@@ -131,6 +131,10 @@ class Doc(models.Model):
         return self.meta_confidence <= 60
     low_confidence = property(_low_confidence)
 
+    def _is_blogpost(self):
+        return self.doctype == 'blogpost'
+    is_blogpost = property(_is_blogpost)
+
     def save(self, *args, **kwargs):
         """set urlhash to MD5(url)"""
         self.urlhash = hashlib.md5(self.url.encode('utf-8')).hexdigest()
