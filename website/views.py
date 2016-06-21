@@ -213,7 +213,7 @@ def atom_feed(request):
         d = day_docs[0].found_date
         pubdate = datetime(d.year, d.month, d.day, 23, 59)
         feed.add_item(
-            title = 'Articles found on {}'.format(d.strftime('%d %B %Y')),
+            title = 'Articles and blog posts found on {}'.format(d.strftime('%d %B %Y')),
             link = 'http://www.philosophicalprogress.org/',
             description = day_text, 
             pubdate = pubdate,
