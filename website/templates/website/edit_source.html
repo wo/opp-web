@@ -23,6 +23,22 @@ function update() {
    f.method = 'GET';
    f.submit();
 }
+window.onload = function(e) {
+   cookie_au = getCookie('sauthor');
+   var f = document.forms[0].elements;
+   var au = f['id_default_author'].value;
+   if (cookie_au && !au) f['id_default_author'].value = cookie_au;
+}
+function getCookie(key) {
+   var key_eq = encodeURIComponent(key) + "=";
+   var ca = document.cookie.split(';');
+   for (var i = 0; i < ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+      if (c.indexOf(key_eq) === 0) return decodeURIComponent(c.substring(key_eq.length, c.length));
+   }
+   return null;
+}
 </script>
 <body>
   

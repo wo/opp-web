@@ -165,7 +165,10 @@ def edit_source(request):
     form = SourceForm(request.POST or request.GET)
 
     if request.method == 'POST' and form.is_valid():
-        src = form.save()
+        try:
+            src = form.save()
+        except IntegrityError:
+            return HttpResponse('URL already in database')
         if form.cleaned_data['sourcetype'] == 'blog':
             # register new blog subscription on superfeedr:
             callback = request.build_absolute_uri(reverse('new_post', args=[src.source_id]))

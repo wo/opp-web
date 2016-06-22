@@ -2,7 +2,7 @@
 
 {% block content %}
 
-  <script>
+<script>
 
   function msg(src_id, msg) {
     el = $('#res'+src_id);
@@ -59,8 +59,13 @@
   }
   
   function searchnew(string) {
+     setCookie('sauthor', string);
      string += ' ~philosophy'
      window.open('https://www.google.com/#q='+string.replace(' ', '+'), '_blank');
+  }
+  
+  function setCookie(key, val) {
+    document.cookie = encodeURIComponent(key) + "=" + encodeURIComponent(val) + "; domain=philosophicalprogress.org";
   }
 
   function mark410(src_id) {
