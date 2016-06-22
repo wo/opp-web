@@ -163,12 +163,11 @@ def edit_doc(request):
 @staff_member_required
 def edit_source(request):
     form = SourceForm(request.POST or request.GET)
-
     if request.method == 'POST' and form.is_valid():
         try:
             src = form.save()
         except IntegrityError:
-            return HttpResponse('URL already in database')
+            return HttpResponse('Address already in database')
         if form.cleaned_data['sourcetype'] == 'blog':
             # register new blog subscription on superfeedr:
             callback = request.build_absolute_uri(reverse('new_post', args=[src.source_id]))
@@ -178,7 +177,8 @@ def edit_source(request):
                 msg = 'could not register blog on superfeedr! {}'.format(e)
                 return HttpResponse(msg)
         return HttpResponse('OK')
-        
+    if Source.objects.filter(url=request.GET.get('url')).exists():
+        return HttpResponse('Address already in database')
     context = { 'form': form, 'related': [] }
     if request.GET.get('default_author'):
         surname = request.GET.get('default_author').split()[-1]

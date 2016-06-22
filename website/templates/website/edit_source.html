@@ -28,6 +28,7 @@ window.onload = function(e) {
    var f = document.forms[0].elements;
    var au = f['id_default_author'].value;
    if (cookie_au && !au) f['id_default_author'].value = cookie_au;
+   set_name();
 }
 function getCookie(key) {
    var key_eq = encodeURIComponent(key) + "=";
