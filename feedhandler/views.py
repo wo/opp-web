@@ -41,13 +41,17 @@ def new_post(request, source_id):
         return HttpResponse('Don\'t know how to handle this request')
 
     for item in feed.get('items', []):
+        url = item.get('permalinkUrl') or item.get('id'),
+        if Doc.objects.filter(url=url).exists():
+            # skip duplicate entry
+            continue
         post = Doc(
             doctype = 'blogpost',
             source_url = src.url,
             source_name = src.name,
             source_id = source_id,
             authors = src.default_author,
-            url = item.get('permalinkUrl') or item.get('id'),
+            url = url, 
             title = item.get('title',''),
             content = item.get('content') or item.get('summary'),
             filetype = 'html',
