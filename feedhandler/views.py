@@ -41,7 +41,7 @@ def new_post(request, source_id):
         return HttpResponse('Don\'t know how to handle this request')
 
     for item in feed.get('items', []):
-        url = item.get('permalinkUrl') or item.get('id'),
+        url = item.get('permalinkUrl') or item.get('id')
         if Doc.objects.filter(url=url).exists():
             # skip duplicate entry
             continue
