@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bootstrap3',
     'accounts',
+    'accesslogger',
     'feedhandler',
     'website',
 ]
@@ -65,6 +66,7 @@ MIDDLEWARE_CLASSES = [
     'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'accesslogger.middleware.AccessLoggerMiddleware',
 ]
 
 ROOT_URLCONF = 'opp_web.urls'

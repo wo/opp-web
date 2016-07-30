@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Accesslogging stats</title>
+</head>
+
+<body>
+
+<h1>Access statistics</h1>
+
+<h2>Pageviews</h2>
+
+<table>
+{% for day, count in hits_per_day %}
+  <tr><td>{{ day }}</td><td>{{ count }}</td></tr>
+{% endfor %}
+<table>
+
+<h2>Latest hits</h2>
+
+<table>
+{% for hit in latest_hits %}
+  <tr>
+    <td>{{ hit.date }}</td>
+    <td>{{ hit.page }}</td>
+    <td>{{ hit.ip }}</td>
+    <td>{{ hit.ua }}</td>
+    <td>{{ hit.username }}</td>
+    <td>{{ hit.referrer }}</td>
+  </tr>
+{% endfor %}
+</table>
+
+</body>
+</html>

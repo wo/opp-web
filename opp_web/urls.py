@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^', include('website.urls')),
     url(r'^user/', include('accounts.urls')),
     url(r'^feedhandler/', include('feedhandler.urls')),
+    url(r'^accesslogger/', include('accesslogger.urls')),
 ]
 
 handler403 = 'website.views.err403'
