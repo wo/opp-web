@@ -98,7 +98,7 @@
           <button type="button" onclick="subscribesrc({{ src.source_id }})">Subscribe</button>
           <button type="button" onclick="unsubscribesrc({{ src.source_id }})">Unsubscribe</button>
       {% endif %}
-      {% if src.status > 1 or src.num_docs = 0 %}
+      {% if 1 = 1 or src.status > 1 or src.num_docs = 0 %}
         <button type="button" onclick="removesrc({{ src.source_id }})">Remove</button>
         <button type="button" onclick="searchnew('{{ src.default_author }}')">Search for new site</button>
       {% endif %}
