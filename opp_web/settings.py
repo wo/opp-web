@@ -69,6 +69,10 @@ MIDDLEWARE_CLASSES = [
     'accesslogger.middleware.AccessLoggerMiddleware',
 ]
 
+# for accesslogger:
+NO_STATS_URLS = ['/media', '/static', '/feed.xml']
+NO_STATS_USERAGENTS = ['dotbot']
+
 ROOT_URLCONF = 'opp_web.urls'
 
 TEMPLATES = [

@@ -21,5 +21,5 @@ def hits_per_day():
     return sorted(res.items())
 
 def latest_hits():
-    NUM_HITS = 30
+    NUM_HITS = 100
     return Visit.objects.all()[:NUM_HITS]
