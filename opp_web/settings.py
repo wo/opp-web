@@ -71,9 +71,10 @@ MIDDLEWARE_CLASSES = [
 
 # for accesslogger:
 NO_STATS_URLS = ['/media', '/static', '/feed.xml', '/feedhandler']
-NO_STATS_USERAGENTS = ['Googlebot', 'bingbot', 'Yandexbot', 'Yahoo!',
-                       'dotbot', 'Baiduspider', 'rogerbot', 
-                       'RSSingBot', 'feedly']
+NO_STATS_USERAGENTS = ['bot', 'Bot', 'duckduckgo',
+                       'feedly', 'Reeder', 'python',
+                       'FunWebProducts', 'WebCapture',
+]
 
 ROOT_URLCONF = 'opp_web.urls'
 
