@@ -9,11 +9,11 @@
 
 <h1>Access statistics</h1>
 
-<h2>Pageviews</h2>
+<h2>Unique visitors</h2>
 
 <table>
-{% for day, count in hits_per_day %}
-  <tr><td>{{ day }}</td><td>{{ count }}</td></tr>
+{% for vc in visitors_per_day %}
+  <tr><td>{{ vc.day }}</td><td>{{ vc.count }}</td></tr>
 {% endfor %}
 <table>
 

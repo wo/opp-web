@@ -2,7 +2,7 @@ import logging
 from django.conf import settings
 from django.utils import timezone
 from accesslogger import utils
-from accesslogger.models import Visit
+from accesslogger.models import Visit, VisitorCount
 
 log = logging.getLogger('accesslogger.middleware')
 
@@ -55,5 +55,8 @@ class AccessLoggerMiddleware(object):
             visit.save()
         except:
             log.error('could not save visit!')
+        
+        # the VisitorCount table is updated and the Visit table
+        # cleaned up in views.py (when the stats are called)
 
         return None

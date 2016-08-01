@@ -11,3 +11,10 @@ class Visit(models.Model):
     class Meta:
         ordering = ('-date',)
 
+class VisitorCount(models.Model):
+    day = models.DateField(editable=False)
+    count = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ('-day',)
+
