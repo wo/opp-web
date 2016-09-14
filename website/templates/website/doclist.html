@@ -47,8 +47,8 @@ $('#dropdown1').on('click', '.dropdown-menu li a', function() {
 <!--form name="filterform" id="filterform" action="{{ rootdir }}" method="GET" onsubmit="return false">
   <select size="1" name="type" onchange="updateDocList()">
     <option value="all">new papers and blog posts</option>
-    <option value="papers"{% if doctype = 'papers' %} selected="selected"{% endif %}>new papers</option>
-    <option value="blogposts"{% if doctype = 'blogposts' %} selected="selected"{% endif %}>new blog posts</option>
+    <option value="papers"{% if doctype == 'papers' %} selected="selected"{% endif %}>new papers</option>
+    <option value="blogposts"{% if doctype == 'blogposts' %} selected="selected"{% endif %}>new blog posts</option>
   </select>
   in
 </form-->
