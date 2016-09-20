@@ -6,9 +6,10 @@
 a, a:hover { color: #03b; }
 a:visited { color:#30a; }
 
+.navbar-default { height:50px; padding:0; background:#204060; }
 h1 { margin:0px; }
-h1 a.navbar-brand { font-size:33px; color:#999!important; font-family:Helvetica,sans; font-weight:bold; text-shadow:1px 1px 3px #fff; } 
-.navbar-brand, .navbar li a { line-height: 90px; height: 90px; padding-top: 0; }
+h1 a.navbar-brand { font-size:22px; color:#fff!important; font-family:Helvetica,sans;  } 
+.navbar-brand, .navbar li a { line-height: 50px; height: 50px; padding-top: 0; }
 
 #authform { max-width:330px; }
 
