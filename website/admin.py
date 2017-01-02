@@ -43,5 +43,10 @@ class CatAdmin(admin.ModelAdmin):
 admin.site.register(Cat, CatAdmin)
 
 admin.site.register(Link)
-admin.site.register(AuthorName)
+
+class AuthorAdmin(admin.ModelAdmin):
+    list_display = ('name_id', 'name')
+    search_fields = ['name']
+admin.site.register(AuthorName, AuthorAdmin)
+
 admin.site.register(Journal)
